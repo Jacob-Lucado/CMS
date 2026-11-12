@@ -1,0 +1,217 @@
+<?php
+
+use App\Jobs\SendRegisteredUserWebhook;
+use App\Models\Miscellaneous\WebsiteBetaCode;
+use App\Models\User;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Testing\TestResponse;
+
+function register(array $overrides = []): TestResponse
+{
+    return test()->post('/register', [
+        'username' => 'Tester',
+        'mail' => 'tester@example.com',
+        'password' => 'Sup3rSecret!',
+        'password_confirmation' => 'Sup3rSecret!',
+        'terms' => 'on',
+        ...$overrides,
+    ]);
+}
+
+test('a visitor can register an account', function () {
+    installHotel();
+
+    register()->assertRedirect(RouteServiceProvider::HOME);
+
+    $this->assertAuthenticated();
+
+    $user = User::where('username', 'Tester')->first();
+
+    expect($user)->not->toBeNull()
+        ->and($user->mail)->toBe('tester@example.com')
+        ->and($user->referral_code)->not->toBeEmpty();
+});
+
+test('registration rejects a weak password', function () {
+    installHotel();
+
+    register([
+        'password' => 'password',
+        'password_confirmation' => 'password',
+    ])->assertSessionHasErrors('password');
+
+    expect(User::where('username', 'Tester')->exists())->toBeFalse();
+});
+
+test('registration is blocked when disabled', function () {
+    installHotel();
+    setSetting('disable_registration', '1');
+
+    register()->assertSessionHasErrors('registration');
+
+    expect(User::where('username', 'Tester')->exists())->toBeFalse();
+});
+
+test('the per-IP account cap is enforced', function () {
+    installHotel();
+    setSetting('max_accounts_per_ip', '1');
+
+    User::factory()->create(); // occupies 127.0.0.1
+
+    register()->assertSessionHasErrors('registration');
+
+    expect(User::where('username', 'Tester')->exists())->toBeFalse();
+});
+
+test('the discord webhook is dispatched after the response', function () {
+    installHotel();
+    setSetting('enable_discord_webhook', '1');
+
+    Bus::fake();
+
+    register()->assertRedirect();
+
+    Bus::assertDispatchedAfterResponse(SendRegisteredUserWebhook::class);
+});
+
+test('a required beta code cannot be omitted or reused', function () {
+    installHotel();
+    setSetting('requires_beta_code', '1');
+
+    register()->assertSessionHasErrors('beta_code');
+
+    $betaCode = WebsiteBetaCode::create(['code' => 'PRIVATE-BETA']);
+
+    register(['beta_code' => $betaCode->code])->assertRedirect();
+
+    expect($betaCode->fresh()->user_id)
+        ->toBe(User::where('username', 'Tester')->value('id'))
+        ->and(DB::table('website_registration_locks')->count())
+        ->toBe(0);
+
+    auth()->logout();
+
+    register([
+        'username' => 'SecondTester',
+        'mail' => 'second@example.com',
+        'beta_code' => $betaCode->code,
+    ])->assertSessionHasErrors('beta_code');
+
+    expect(User::where('username', 'SecondTester')->exists())->toBeFalse();
+});
+
+test('registration and observer side effects roll back together', function () {
+    installHotel();
+    $this->withoutExceptionHandling();
+
+    User::created(function (User $user): void {
+        if ($user->username === 'RollbackTester') {
+            throw new RuntimeException('Simulated initialization failure.');
+        }
+    });
+
+    expect(fn () => register([
+        'username' => 'RollbackTester',
+        'mail' => 'rollback@example.com',
+    ]))->toThrow(RuntimeException::class, 'Simulated initialization failure.');
+
+    expect(User::where('username', 'RollbackTester')->exists())
+        ->toBeFalse()
+        ->and(DB::table('website_registration_locks')->count())
+        ->toBe(0);
+});
+
+test('the register routes follow the fortify naming convention', function () {
+    installHotel();
+
+    expect(route('register', absolute: false))->toBe('/register')
+        ->and(route('register.store', absolute: false))->toBe('/register');
+
+    $this->get(route('register'))->assertOk();
+});
+
+test('an enabled turnstile rejects a missing captcha token with a validation error', function () {
+    installHotel();
+    setSetting('cloudflare_turnstile_enabled', '1');
+    config()->set('turnstile.turnstile_secret_key', 'test-secret');
+
+    register()->assertSessionHasErrors('cf-turnstile-response');
+
+    $this->assertGuest();
+
+    expect(User::where('username', 'Tester')->exists())->toBeFalse();
+});
+
+test('a disabled turnstile never blocks registration', function () {
+    installHotel();
+    setSetting('cloudflare_turnstile_enabled', '0');
+
+    register()->assertRedirect(RouteServiceProvider::HOME);
+
+    $this->assertAuthenticated();
+});
+
+test('an enabled turnstile without configured keys does not block registration', function () {
+    installHotel();
+    setSetting('cloudflare_turnstile_enabled', '1');
+    config()->set('turnstile.turnstile_secret_key', null);
+
+    register()->assertRedirect(RouteServiceProvider::HOME);
+
+    $this->assertAuthenticated();
+});
+
+test('enabled recaptcha rejects missing or malformed registration tokens without making a verification request', function (array $input) {
+    installHotel();
+    setSetting('google_recaptcha_enabled', '1');
+    Http::preventStrayRequests();
+
+    register($input)->assertSessionHasErrors('g-recaptcha-response');
+
+    $this->assertGuest();
+    expect(User::where('username', 'Tester')->exists())->toBeFalse();
+    Http::assertNothingSent();
+})->with([
+    'omitted' => [[]],
+    'blank' => [['g-recaptcha-response' => '   ']],
+    'non-string' => [['g-recaptcha-response' => ['unexpected']]],
+]);
+
+test('a verified recaptcha allows registration', function () {
+    installHotel();
+    setSetting('google_recaptcha_enabled', '1');
+    config()->set('habbo.site.recaptcha_secret_key', 'test-secret');
+    Http::fake(['www.google.com/recaptcha/api/siteverify' => Http::response(['success' => true])]);
+
+    register(['g-recaptcha-response' => 'verified-token'])->assertRedirect(RouteServiceProvider::HOME);
+
+    $this->assertAuthenticated();
+    Http::assertSent(fn ($request) => $request->url() === 'https://www.google.com/recaptcha/api/siteverify'
+        && $request['secret'] === 'test-secret'
+        && $request['response'] === 'verified-token');
+});
+
+test('a rejected recaptcha prevents registration', function () {
+    installHotel();
+    setSetting('google_recaptcha_enabled', '1');
+    Http::fake(['www.google.com/recaptcha/api/siteverify' => Http::response(['success' => false])]);
+
+    register(['g-recaptcha-response' => 'rejected-token'])->assertSessionHasErrors('g-recaptcha-response');
+
+    $this->assertGuest();
+    expect(User::where('username', 'Tester')->exists())->toBeFalse();
+});
+
+test('disabled recaptcha allows registration without contacting Google', function () {
+    installHotel();
+    setSetting('google_recaptcha_enabled', '0');
+    Http::preventStrayRequests();
+
+    register()->assertRedirect(RouteServiceProvider::HOME);
+
+    $this->assertAuthenticated();
+    Http::assertNothingSent();
+});

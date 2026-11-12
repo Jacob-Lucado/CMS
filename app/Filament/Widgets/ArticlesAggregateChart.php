@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Filament\Widgets;
+
+use App\Models\Articles\WebsiteArticle;
+use Filament\Widgets\ChartWidget;
+use Flowframe\Trend\Trend;
+use Flowframe\Trend\TrendValue;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Cache;
+
+class ArticlesAggregateChart extends ChartWidget
+{
+    protected static ?int $sort = 2;
+
+    protected ?string $pollingInterval = null;
+
+    protected ?string $maxHeight = '300px';
+
+    protected string $color = 'primary';
+
+    public function getHeading(): string|Htmlable|null
+    {
+        return __('filament::resources.stats.articles_chart.title');
+    }
+
+    public function getDescription(): string|Htmlable|null
+    {
+        return __('filament::resources.stats.articles_chart.description');
+    }
+
+    protected function getData(): array
+    {
+        $data = Cache::remember(
+            'housekeeping.dashboard.articles-trend.v2',
+            300,
+            fn () => Trend::model(WebsiteArticle::class)
+                ->between(
+                    start: now()->startOfMonth(),
+                    end: now()->endOfMonth(),
+                )
+                ->perDay()
+                ->count()
+                ->map(fn (TrendValue $value): array => ['aggregate' => $value->aggregate, 'date' => $value->date])
+                ->all(),
+        );
+
+        $label = __('filament::resources.stats.articles_chart.label');
+
+        return [
+            'datasets' => [
+                [
+                    'label' => $label,
+                    'data' => array_column($data, 'aggregate'),
+                ],
+            ],
+            'labels' => array_column($data, 'date'),
+        ];
+    }
+
+    protected function getType(): string
+    {
+        return 'line';
+    }
+}

@@ -1,0 +1,54 @@
+/node_modules
+/public/build
+/public/build-housekeeping
+/public/hot
+/public/client
+/public/storage
+/storage/*.key
+/storage/app/livewire-tmp/
+/storage/app/public
+/storage/framework/*
+/vendor
+/public/static
+.env
+.env.backup
+.env.testing
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+auth.json
+npm-debug.log
+/.idea
+/.vscode
+/public/assets/images/generated-logos
+CLAUDE.md
+AUDIT.md
+.agents/
+_ide_helper.php
+_ide_helper_models.php
+.phpunit.cache
+public/js
+public/css
+public/fonts
+public/vendor
+.opencode
+.junie
+.claude
+.ai/*
+!.ai/guidelines/
+.codex
+.cursor
+opencode.json
+.mcp.json
+RELEASE.md
+.env.preview
+
+# Working notes from review sessions, not part of the project.
+CODE_REVIEW.md
+
+# The Ada emulator source, checked out alongside Atom for schema reference.
+# It is its own repository and must not be committed here.
+/ada
+
+# Local backups taken before switching emulator drivers.
+.env.backup-*
