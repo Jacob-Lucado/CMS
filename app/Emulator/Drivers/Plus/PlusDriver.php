@@ -9,6 +9,7 @@ use App\Emulator\Contracts\CurrencyRepository;
 use App\Emulator\Contracts\EmulatorDriver;
 use App\Emulator\Contracts\EmulatorInstaller;
 use App\Emulator\Contracts\FurnitureRepository;
+use App\Emulator\Contracts\MarketplaceRepository;
 use App\Emulator\Contracts\PhotoRepository;
 use App\Emulator\Contracts\PlayerRepository;
 use App\Emulator\Contracts\PlayerSettingsRepository;
@@ -39,6 +40,7 @@ final class PlusDriver implements EmulatorDriver
             BanRepository::class => PlusBanRepository::class,
             CurrencyRepository::class => PlusCurrencyRepository::class,
             FurnitureRepository::class => PlusFurnitureRepository::class,
+            MarketplaceRepository::class => PlusMarketplaceRepository::class,
             PhotoRepository::class => PlusPhotoRepository::class,
             PlayerRepository::class => PlusPlayerRepository::class,
             PlayerSettingsRepository::class => PlusPlayerSettingsRepository::class,

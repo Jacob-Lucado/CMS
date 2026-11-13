@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Social;
 
+use App\Emulator\Contracts\MarketplaceRepository;
 use App\Emulator\Contracts\PhotoRepository;
 use App\Emulator\Data\Photo;
 use App\Http\Controllers\Controller;
@@ -44,6 +45,7 @@ class SocialController extends Controller
                 'profile' => route('social.profile', absolute: false),
                 'notifications' => route('notifications.index', absolute: false),
                 'outfits' => route('outfits.index', absolute: false),
+                'marketplace' => route('marketplace.index', absolute: false),
                 'me' => $this->feed->author($viewer),
                 'owner' => $user ? [...($this->feed->author($user) ?? []), 'background' => $profile?->background, 'motto' => (string) $user->motto] : null,
                 'background' => $viewer->id === $owner->id ? $profile?->background : null,
@@ -81,7 +83,8 @@ class SocialController extends Controller
     {
         $viewer = $this->viewer($request);
         $data = $request->validate([
-            'type' => ['required', Rule::in([SocialPost::STATUS, SocialPost::PHOTO, SocialPost::VIDEO, SocialPost::OUTFIT, SocialPost::PROFILE, SocialPost::SHARE])],
+            'type' => ['required', Rule::in([SocialPost::STATUS, SocialPost::PHOTO, SocialPost::VIDEO, SocialPost::OUTFIT, SocialPost::PROFILE, SocialPost::SHARE, SocialPost::LISTING])],
+            'offer_id' => ['nullable', 'integer'],
             'body' => ['nullable', 'string', 'max:1000'],
             'photos' => ['array', 'max:6'],
             'photos.*' => ['regex:/^[0-9a-f-]{1,36}$/i'],
@@ -132,6 +135,13 @@ class SocialController extends Controller
                 $extra['home'] = route('home.show', $viewer->username, false);
                 $extra['look'] = (string) $viewer->look;
                 $extra['motto'] = (string) $viewer->motto;
+                break;
+            case SocialPost::LISTING:
+                $offer = app(MarketplaceRepository::class)->find((int) ($data['offer_id'] ?? 0));
+                if ($offer === null || $offer->sold) {
+                    throw ValidationException::withMessages(['offer_id' => __('That listing is gone.')]);
+                }
+                $extra = ['offer_id' => $offer->id, 'name' => $offer->name, 'icon' => MarketplaceController::icon($offer->itemName), 'price' => $offer->price, 'mine' => $offer->sellerId === $viewer->id];
                 break;
             case SocialPost::SHARE:
                 $original = SocialPost::query()->findOrFail((int) ($data['shared_post_id'] ?? 0));

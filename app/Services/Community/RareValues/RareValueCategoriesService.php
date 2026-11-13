@@ -6,6 +6,7 @@ use App\Data\PublicUserData;
 use App\Emulator\Contracts\FurnitureRepository;
 use App\Models\Community\RareValue\WebsiteRareValue;
 use App\Models\Community\RareValue\WebsiteRareValueCategory;
+use App\Models\Social\SocialProfile;
 use App\Models\User;
 use App\Support\Sql;
 use Illuminate\Database\Eloquent\Collection;
@@ -49,9 +50,11 @@ class RareValueCategoriesService
     public function itemsPerUser(WebsiteRareValue $value): array
     {
         $resolve = function () use ($value): array {
+            $hidden = SocialProfile::query()->where('hide_from_rare_directory', true)->pluck('user_id')->flip();
             $counts = app(FurnitureRepository::class)
                 ->holdings((int) $value->item_id)
-                ->pluck('item_count', 'user_id');
+                ->pluck('item_count', 'user_id')
+                ->reject(fn (mixed $count, int $userId): bool => $hidden->has($userId));
 
             $users = User::whereKey($counts->keys())->get(PublicUserData::COLUMNS)->keyBy('id');
 

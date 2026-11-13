@@ -29,6 +29,7 @@ use App\Http\Controllers\RadioController;
 use App\Http\Controllers\Shop\ShopController;
 use App\Http\Controllers\Shop\ShopVoucherController;
 use App\Http\Controllers\Social\KudosController;
+use App\Http\Controllers\Social\MarketplaceController;
 use App\Http\Controllers\Social\NotificationController;
 use App\Http\Controllers\Social\OutfitController;
 use App\Http\Controllers\Social\SocialController;
@@ -123,6 +124,11 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
             Route::get('/', 'show')->name('index');
             Route::post('/', 'store')->middleware('throttle:10,1')->name('store');
             Route::post('/{outfit}/vote', 'vote')->middleware('throttle:60,1')->name('vote');
+        });
+        Route::prefix('marketplace')->as('marketplace.')->controller(MarketplaceController::class)->group(function () {
+            Route::get('/', 'show')->name('index');
+            Route::get('/search', 'search')->middleware('throttle:60,1')->name('search');
+            Route::get('/owners/{rare}', 'owners')->middleware('throttle:60,1')->name('owners');
         });
         Route::post('/kudos', KudosController::class)->middleware('throttle:30,1')->name('kudos.store');
 

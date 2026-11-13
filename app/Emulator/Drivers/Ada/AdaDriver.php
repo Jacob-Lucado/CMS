@@ -9,6 +9,7 @@ use App\Emulator\Contracts\CurrencyRepository;
 use App\Emulator\Contracts\EmulatorDriver;
 use App\Emulator\Contracts\EmulatorInstaller;
 use App\Emulator\Contracts\FurnitureRepository;
+use App\Emulator\Contracts\MarketplaceRepository;
 use App\Emulator\Contracts\PhotoRepository;
 use App\Emulator\Contracts\PlayerRepository;
 use App\Emulator\Contracts\PlayerSettingsRepository;
@@ -40,6 +41,7 @@ final class AdaDriver implements EmulatorDriver
             BanRepository::class => AdaBanRepository::class,
             CurrencyRepository::class => AdaCurrencyRepository::class,
             FurnitureRepository::class => AdaFurnitureRepository::class,
+            MarketplaceRepository::class => AdaMarketplaceRepository::class,
             PhotoRepository::class => AdaPhotoRepository::class,
             PlayerRepository::class => AdaPlayerRepository::class,
             PlayerStatsRepository::class => AdaPlayerStatsRepository::class,

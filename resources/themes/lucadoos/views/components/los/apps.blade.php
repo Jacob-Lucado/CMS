@@ -35,6 +35,7 @@
             $page('social.index', __('Social feed'), asset('assets/images/icons/chat.png')),
             $page('social.user', __('My profile'), asset('assets/images/icons/friends.png'), [$user->username]),
             $page('outfits.index', __('Outfit of the Week'), asset('assets/images/icons/star.gif')),
+            $page('marketplace.index', __('Marketplace'), asset('assets/images/icons/catalog.png')),
             $page('notifications.index', __('Notifications'), asset('assets/images/icons/feeds.png')),
         ]];
     }

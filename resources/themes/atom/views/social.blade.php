@@ -288,6 +288,7 @@
             .sf-video button { position: absolute; inset: 0; background: rgba(0, 0, 0, .25); border: 0; color: #fff; font-size: 54px; cursor: pointer; }
             .sf-outfit, .sf-profilecard { display: flex; gap: 14px; align-items: center; padding: 10px; border-radius: 10px; background: var(--soft, rgba(127, 127, 127, .1)); margin-bottom: 8px; }
             .sf-trophy { font-size: 34px; }
+            .sf-profilecard img.sf-furni { height: auto; width: 48px; image-rendering: pixelated; }
             .sf-outfit img, .sf-profilecard img { height: 130px; image-rendering: pixelated; }
             .sf-quote { border: 1px solid var(--line, rgba(127, 127, 127, .25)); border-radius: 10px; padding: 10px; margin-bottom: 8px; }
             .sf-actions { display: flex; gap: 6px; border-top: 1px solid var(--line, rgba(127, 127, 127, .2)); padding-top: 8px; }
@@ -341,9 +342,9 @@
                     verbs: {
                         status: '', photo: @js(__('shared a photo')), collage: @js(__('shared a collage')), video: @js(__('shared a video')),
                         outfit: @js(__('is showing off an outfit')), profile: @js(__('shared their profile')), share: @js(__('shared a post')),
-                        referral: @js(__('brought a friend to the hotel')), listing: @js(__('is selling something')),
+                        referral: @js(__('brought a friend to the hotel')), listing: @js(__('shared a Marketplace listing')),
                     },
-                    visit: @js(__('Visit home')), vote: @js(__('Vote in Outfit of the Week')), posted: @js(__('Posted!')), shared: @js(__('Shared to your feed!')), copied: @js(__('Link copied.')),
+                    visit: @js(__('Visit home')), vote: @js(__('Vote in Outfit of the Week')), market: @js(__('Open the Marketplace')), posted: @js(__('Posted!')), shared: @js(__('Shared to your feed!')), copied: @js(__('Link copied.')),
                     reported: @js(__('Thanks. Staff will take a look.')), sure: @js(__('Delete this post?')), oops: @js(__('Something went wrong. Try again.')),
                 };
                 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -517,6 +518,9 @@
                             const src = d.avatar ? urls.imager + encodeURIComponent(d.look) + '&' + d.avatar : this.imager(d.look);
                             const vote = d.outfit_id && !d.winner ? `<a class="sf-btn" href="${urls.outfits}">👕 ${T.vote}</a>` : '';
                             html += `<div class="sf-outfit"><img src="${esc(src)}" alt="">${d.winner ? '<span class="sf-trophy">🏆</span>' : ''}${vote}</div>`;
+                        }
+                        if (post.type === 'listing') {
+                            html += `<div class="sf-profilecard"><img class="sf-furni" src="${esc(d.icon)}" alt=""><div><b>${esc(d.name)}</b><p class="sf-muted">🪙 ${Number(d.price || 0).toLocaleString()}</p><a class="sf-btn" href="${urls.marketplace}">🛒 ${T.market}</a></div></div>`;
                         }
                         if (post.type === 'profile') {
                             html += `<div class="sf-profilecard"><img src="${esc(this.imager(d.look ?? ''))}" alt=""><div><b>${esc(post.author?.name)}</b><p class="sf-muted">${esc(d.motto ?? '')}</p><a class="sf-btn" href="${esc(d.home ?? post.author?.home)}">🏠 ${T.visit}</a></div></div>`;
