@@ -14,13 +14,13 @@
 
     if ($user) {
         $groups[] = ['label' => __('Me'), 'icon' => '🏠', 'pages' => [
-            $page('me.show', __('Me'), '🏠'),
-            $page('home.show', __('My Home'), '🖼️', [$user->username]),
-            $page('draw-badge', __('Badge Drawer'), '✏️'),
+            $page('me.show', __('Me'), asset('assets/images/icons/navigation/home.png')),
+            $page('home.show', __('My Home'), asset('assets/images/icons/feeds.png'), [$user->username]),
+            $page('draw-badge', __('Badge Drawer'), asset('assets/images/icons/star.gif')),
         ]];
 
         $groups[] = ['label' => setting('hotel_name', __('Hotel')), 'icon' => '🏨', 'hotel' => true, 'pages' => array_values(array_filter([
-            $page('nitro-client', __('Nitro client'), '🏨'),
+            $page('nitro-client', __('Nitro client'), asset('assets/images/icons/lighthouse.png')),
             config('habbo.client.flash_enabled') ? $page('flash-client', __('Flash client'), '⚡') : null,
         ]))];
     } else {
@@ -30,26 +30,26 @@
         ]];
     }
 
-    $groups[] = ['label' => __('News'), 'icon' => '📰', 'pages' => [$page('article.index', __('Articles'), '📰')]];
+    $groups[] = ['label' => __('News'), 'icon' => '📰', 'pages' => [$page('article.index', __('Articles'), asset('assets/images/icons/article.gif'))]];
 
     if ($user) {
         $groups[] = ['label' => __('Community'), 'icon' => '👥', 'pages' => array_values(array_filter([
-            $page('staff.index', __('Staff'), '🛡️'),
-            $page('teams.index', __('Teams'), '👥'),
-            $page('team-applications.index', __('Team applications'), '📝'),
-            $page('staff-applications.index', __('Staff applications'), '📋'),
-            Emulator::supports(Feature::CameraPhotos) ? $page('photos.index', __('Photos'), '📷') : null,
+            $page('staff.index', __('Staff'), asset('assets/images/icons/rank.png')),
+            $page('teams.index', __('Teams'), asset('assets/images/icons/friends.png')),
+            $page('team-applications.index', __('Team applications'), asset('assets/images/icons/chat.png')),
+            $page('staff-applications.index', __('Staff applications'), asset('assets/images/icons/due-chat.png')),
+            Emulator::supports(Feature::CameraPhotos) ? $page('photos.index', __('Photos'), asset('assets/images/icons/camera.png')) : null,
         ]))];
 
-        $groups[] = ['label' => __('Radio'), 'icon' => '📻', 'pages' => [$page('radio.index', __('Radio'), '📻')]];
+        $groups[] = ['label' => __('Radio'), 'icon' => '📻', 'pages' => [$page('radio.index', __('Radio'), 'https://cdn.habboassets.com/images.habbo.com/c_images/album1584/PTG12.gif')]];
 
-        $groups[] = ['label' => __('Leaderboards'), 'icon' => '🏆', 'pages' => [$page('leaderboard.index', __('Leaderboards'), '🏆')]];
+        $groups[] = ['label' => __('Leaderboards'), 'icon' => '🏆', 'pages' => [$page('leaderboard.index', __('Leaderboards'), asset('assets/images/icons/navigation/leaderboards.png'))]];
 
         if (Emulator::supports(Feature::RareValues)) {
-            $groups[] = ['label' => __('Rare values'), 'icon' => '💎', 'pages' => [$page('values.index', __('Rare values'), '💎')]];
+            $groups[] = ['label' => __('Rare values'), 'icon' => '💎', 'pages' => [$page('values.index', __('Rare values'), asset('assets/images/icons/ltd.png'))]];
         }
 
-        $groups[] = ['label' => __('Shop'), 'icon' => '🛒', 'pages' => [$page('shop.index', __('Shop'), '🛒')]];
+        $groups[] = ['label' => __('Shop'), 'icon' => '🛒', 'pages' => [$page('shop.index', __('Shop'), asset('assets/images/icons/catalog.png'))]];
 
         $groups[] = ['label' => __('Help center'), 'icon' => '🛟', 'pages' => array_values(array_filter([
             $page('help-center.index', __('Help center'), '🛟'),
@@ -69,7 +69,7 @@
     }
 
     $links = array_values(array_filter([
-        $link(setting('discord_invitation_link'), __('Discord'), '💬'),
+        $link(setting('discord_invitation_link'), __('Discord'), asset('assets/images/icons/discord.png')),
         $user && hasPermission('housekeeping_access') ? $link(setting('housekeeping_url') ?: url('/housekeeping'), __('Housekeeping'), '🛠️') : null,
         $user && hasPermission('generate_logo') ? $link(route('logo-generator.index'), __('Logo generator'), '🖌️') : null,
     ]));

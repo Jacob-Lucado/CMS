@@ -2156,3 +2156,41 @@ body.los-page-body > .los-content {
 .los-shop .text-yellow-500 {
     color: var(--warn) !important;
 }
+
+/* ------------------------------------------------------------ retro hotel touches */
+/* Habbo pixel art stays crisp at any size. */
+img.los-pixel,
+.los-page img[src*="album1584"],
+.los-page img[src*="habbo-imaging"],
+.los-page img[src*="/icons/"] {
+    image-rendering: pixelated;
+}
+img.los-pixel { object-fit: contain; display: block; margin: auto; }
+.los-icon-art img.los-pixel { width: 40px; height: 40px; }
+.los-tile-art img.los-pixel { width: 30px; height: 30px; }
+.los-start-item i img.los-pixel { width: 22px; height: 22px; }
+.los-win-title img.los-pixel, .los-task img.los-pixel, .los-assist-card img.los-pixel { width: 18px; height: 18px; display: inline-block; vertical-align: -4px; }
+
+/* Windows: a hard pixel edge and a stepped drop shadow, like the hotel's own windows. */
+.los-win {
+    border: 2px solid rgba(6, 18, 31, .85);
+    box-shadow: 0 0 0 1px rgba(117, 184, 255, .25) inset, 6px 6px 0 rgba(6, 18, 31, .35), 0 18px 40px rgba(0, 0, 0, .35);
+}
+.los-win-bar {
+    background-image:
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, .05) 0 1px, transparent 1px 3px),
+        linear-gradient(180deg, rgba(77, 163, 255, .22), rgba(124, 108, 255, .12));
+    border-bottom: 2px solid rgba(6, 18, 31, .6);
+}
+.los-win-title { letter-spacing: .02em; text-shadow: 0 1px 0 rgba(0, 0, 0, .45); }
+
+/* Chunky hotel buttons: a darker bottom edge that presses in. */
+.los-btn {
+    border-bottom: 3px solid rgba(0, 0, 0, .28);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, .18);
+}
+.los-btn:active { transform: translateY(2px); border-bottom-width: 1px; }
+
+/* Desktop icons get a little hotel-style hover hop. */
+.los-icon:hover .los-icon-art img.los-pixel { transform: translateY(-2px); transition: transform .12s steps(2); }

@@ -34,6 +34,14 @@ class AdaBadgeRepository implements BadgeRepository
         return $this->badges($user)->pluck('badges.code')->filter()->values()->all();
     }
 
+    public function search(string $term, int $limit): array
+    {
+        $like = '%' . str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], trim($term)) . '%';
+
+        return DB::table('badges')->where('code', 'like', $like)->distinct()->orderBy('code')->limit($limit)->pluck('code')
+            ->map(fn (mixed $code): string => (string) $code)->values()->all();
+    }
+
     public function grant(User $user, string $badge): void
     {
         // The code lock also serializes definitions shared by different

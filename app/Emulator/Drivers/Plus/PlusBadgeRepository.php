@@ -26,6 +26,14 @@ final class PlusBadgeRepository implements BadgeRepository
         return DB::table('user_badges')->where('user_id', $user->id)->pluck('badge_id')->all();
     }
 
+    public function search(string $term, int $limit): array
+    {
+        $like = '%' . str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], trim($term)) . '%';
+
+        return DB::table('badge_definitions')->where('code', 'like', $like)->orderBy('code')->limit($limit)->pluck('code')
+            ->map(fn (mixed $code): string => (string) $code)->values()->all();
+    }
+
     public function grant(User $user, string $badge): void
     {
         $this->mutex->run($badge, function () use ($badge, $user): void {

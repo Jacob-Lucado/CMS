@@ -4,9 +4,8 @@ namespace App\Filament\Pages;
 
 use App\Enums\CurrencyTypes;
 use App\Exceptions\RconConnectionException;
-use App\Rules\ValidBadgeCode;
+use App\Filament\Forms\BadgePicker;
 use App\Services\Hotel\HotelControl;
-use App\Support\BadgeCode;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -81,12 +80,7 @@ class HotelActions extends Page
             ->icon('heroicon-o-trophy')
             ->modalHeading(__('Give everyone online a badge'))
             ->schema([
-                TextInput::make('badge')
-                    ->label(__('Badge code'))
-                    ->required()
-                    ->maxLength(BadgeCode::MAX_LENGTH)
-                    ->rules([new ValidBadgeCode])
-                    ->dehydrateStateUsing(fn (string $state): string => strtoupper(trim($state))),
+                BadgePicker::make(),
             ])
             ->requiresConfirmation()
             ->action(fn (array $data) => $this->report(

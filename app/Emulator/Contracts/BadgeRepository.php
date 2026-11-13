@@ -31,6 +31,13 @@ interface BadgeRepository
     /**
      * Grant a badge code; granting an already-owned badge is a no-op.
      */
+    /**
+     * Badge codes the hotel knows that contain the term, for pickers.
+     *
+     * @return list<string>
+     */
+    public function search(string $term, int $limit): array;
+
     public function grant(User $user, string $badge): void;
 
     public function revoke(User $user, string $badge): void;

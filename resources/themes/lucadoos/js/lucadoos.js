@@ -26,6 +26,17 @@ const PREFS = "lucadoos-prefs";
 const PINS = "lucadoos-pins";
 const NARROW = 900;
 
+/** An app icon: a picture when it is a path or link, otherwise the emoji itself. */
+function paintIcon(node, icon) {
+    node.replaceChildren();
+    if (/^(\/|https?:)/.test(icon || "")) {
+        node.append(el("img", "los-pixel", { src: icon, alt: "", draggable: "false" }));
+    } else {
+        node.textContent = icon || "";
+    }
+    return node;
+}
+
 function el(tag, cls, attrs = {}, ...kids) {
     const node = document.createElement(tag);
     if (cls) node.className = cls;
@@ -315,7 +326,8 @@ function desktop(data) {
         w.title = title || w.title;
         if (icon) w.icon = icon;
         w.titleText.textContent = w.taskText.textContent = w.title;
-        w.titleIcon.textContent = w.taskIcon.textContent = w.icon;
+        paintIcon(w.titleIcon, w.icon);
+        paintIcon(w.taskIcon, w.icon);
         w.task.title = w.title;
         w.node.setAttribute("aria-label", w.title);
         if (w.node.classList.contains("focus")) document.title = `${w.title} · ${data.hotel}`;
@@ -409,7 +421,7 @@ function desktop(data) {
         Object.assign(box.style, { left: r.x + "px", top: r.y + "px", width: r.w + "px", height: r.h + "px" });
         const row = el("div", "los-assist-row");
         for (const other of others) {
-            const card = el("button", "los-assist-card", { type: "button" }, el("span", "", { "aria-hidden": "true", text: other.icon }), el("b", "", { text: other.title }));
+            const card = el("button", "los-assist-card", { type: "button" }, paintIcon(el("span", "", { "aria-hidden": "true" }), other.icon), el("b", "", { text: other.title }));
             card.addEventListener("click", () => {
                 box.remove();
                 snapTo(other, target);
@@ -868,7 +880,7 @@ function desktop(data) {
         ];
         iconsBox.replaceChildren();
         for (const entry of entries) {
-            const art = el("span", "los-icon-art", { "aria-hidden": "true", text: entry.icon });
+            const art = paintIcon(el("span", "los-icon-art", { "aria-hidden": "true" }), entry.icon);
             const name = el("span", "los-icon-name", { text: entry.label });
             if (entry.href) {
                 iconsBox.append(el("a", "los-icon", { href: entry.href, target: "_blank", rel: "noopener noreferrer", title: entry.label }, art, name));
@@ -926,7 +938,7 @@ function desktop(data) {
                 savePins();
             });
             const wraps = pinned.map((path, i) => {
-                const tile = el("button", "los-tile", { type: "button" }, el("span", "los-tile-art", { "aria-hidden": "true", text: pages[path].icon }), el("span", "", { text: pages[path].title }));
+                const tile = el("button", "los-tile", { type: "button" }, paintIcon(el("span", "los-tile-art", { "aria-hidden": "true" }), pages[path].icon), el("span", "", { text: pages[path].title }));
                 tile.style.setProperty("--tile", hues[i % hues.length]);
                 tile.addEventListener("click", () => {
                     close();
@@ -970,7 +982,7 @@ function desktop(data) {
                 if (!hits.length) continue;
                 results.append(el("div", "los-start-group", { text: group.label }));
                 for (const page of hits) {
-                    const item = el("button", "los-start-item", { type: "button" }, el("i", "", { "aria-hidden": "true", text: page.icon }), el("span", "", { text: page.title }));
+                    const item = el("button", "los-start-item", { type: "button" }, paintIcon(el("i", "", { "aria-hidden": "true" }), page.icon), el("span", "", { text: page.title }));
                     item.addEventListener("click", () => {
                         close();
                         open(page.path);
@@ -987,7 +999,7 @@ function desktop(data) {
             const links = data.links.filter((l) => !query || l.title.toLowerCase().includes(query));
             if (links.length) {
                 results.append(el("div", "los-start-group", { text: S.links }));
-                for (const link of links) results.append(el("a", "los-start-item", { href: link.url, target: "_blank", rel: "noopener noreferrer" }, el("i", "", { "aria-hidden": "true", text: link.icon }), el("span", "", { text: link.title })));
+                for (const link of links) results.append(el("a", "los-start-item", { href: link.url, target: "_blank", rel: "noopener noreferrer" }, paintIcon(el("i", "", { "aria-hidden": "true" }), link.icon), el("span", "", { text: link.title })));
             }
             if (!results.children.length) results.append(el("p", "los-start-none", { text: S.noMatch }));
         }

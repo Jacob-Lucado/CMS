@@ -10,16 +10,14 @@ use App\Emulator\Data\Feature;
 use App\Emulator\Emulator;
 use App\Enums\CurrencyTypes;
 use App\Exceptions\RconConnectionException;
+use App\Filament\Forms\BadgePicker;
 use App\Filament\Resources\User\Users\UserResource;
 use App\Filament\Resources\User\Users\Widgets\PlayerOverview;
 use App\Models\User;
-use App\Rules\ValidBadgeCode;
-use App\Support\BadgeCode;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Exceptions\Halt;
@@ -59,10 +57,10 @@ class EditUser extends EditRecord
                     ->label(__('Give a badge'))
                     ->icon('heroicon-o-trophy')
                     ->schema([
-                        TextInput::make('badge')->label(__('Badge code'))->required()->maxLength(BadgeCode::MAX_LENGTH)->rules([new ValidBadgeCode]),
+                        BadgePicker::make(),
                     ])
                     ->action(fn (array $data) => $this->live(
-                        fn (Rcon $rcon) => $rcon->giveBadge($this->userRecord($this->getRecord()), strtoupper(trim($data['badge']))),
+                        fn (Rcon $rcon) => $rcon->giveBadge($this->userRecord($this->getRecord()), $data['badge']),
                         __('Badge given'),
                     )),
                 Action::make('disconnect')

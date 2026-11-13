@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\Badge\BadgeGrantMutex;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Arcturus stores owned badges in users_badges (user_id, slot_id, badge_code).
@@ -26,6 +27,14 @@ class ArcturusBadgeRepository implements BadgeRepository
     public function codes(User $user): array
     {
         return $this->relation($user)->pluck('badge_code')->all();
+    }
+
+    public function search(string $term, int $limit): array
+    {
+        $like = '%' . str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], trim($term)) . '%';
+
+        return DB::table('users_badges')->where('badge_code', 'like', $like)->distinct()->orderBy('badge_code')->limit($limit)->pluck('badge_code')
+            ->map(fn (mixed $code): string => (string) $code)->values()->all();
     }
 
     public function grant(User $user, string $badge): void
