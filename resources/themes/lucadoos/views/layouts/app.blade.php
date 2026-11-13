@@ -64,7 +64,9 @@
         <x-los.apps />
 
         <div class="los-desk" id="los-desk">
+            <div class="los-stars" aria-hidden="true"></div>
             <div class="los-logo" aria-hidden="true"></div>
+            <div class="los-hotel" aria-hidden="true"></div>
 
             <nav class="los-icons" aria-label="{{ __('Desktop') }}"></nav>
 

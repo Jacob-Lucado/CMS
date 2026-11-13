@@ -25,8 +25,8 @@
         ]))];
     } else {
         $groups[] = ['label' => __('Welcome'), 'icon' => '🏠', 'pages' => [
-            $page('welcome', __('Welcome'), '🏠'),
-            $page('register', __('Create an account'), '✨'),
+            $page('welcome', __('Welcome'), asset('assets/images/icons/navigation/home.png')),
+            $page('register', __('Create an account'), asset('assets/images/icons/star.gif')),
         ]];
     }
 
@@ -55,7 +55,7 @@
             $page('help-center.index', __('Help center'), '🛟'),
             $page('help-center.ticket.create', __('New ticket'), '🎫'),
             hasPermission('manage_website_tickets') ? $page('help-center.ticket.index', __('Open tickets'), '📂') : null,
-            $page('help-center.rules.index', __('Rules'), '📜'),
+            $page('help-center.rules.index', __('Rules'), asset('assets/images/icons/navigation/rules.gif')),
         ]))];
 
         $groups[] = ['label' => __('Settings'), 'icon' => '⚙️', 'pages' => [
@@ -65,7 +65,7 @@
             $page('settings.session-logs', __('Session logs'), '🕘'),
         ]];
     } else {
-        $groups[] = ['label' => __('Rules'), 'icon' => '📜', 'pages' => [$page('help-center.rules.index', __('Rules'), '📜')]];
+        $groups[] = ['label' => __('Rules'), 'icon' => '📜', 'pages' => [$page('help-center.rules.index', __('Rules'), asset('assets/images/icons/navigation/rules.gif'))]];
     }
 
     $links = array_values(array_filter([
@@ -73,6 +73,9 @@
         $user && hasPermission('housekeeping_access') ? $link(setting('housekeeping_url') ?: url('/housekeeping'), __('Housekeeping'), '🛠️') : null,
         $user && hasPermission('generate_logo') ? $link(route('logo-generator.index'), __('Logo generator'), '🖌️') : null,
     ]));
+
+    // Each group shows its first app's pixel icon.
+    $groups = array_map(fn (array $group): array => $group['pages'] === [] ? $group : [...$group, 'icon' => $group['pages'][0]['icon']], $groups);
 
     $losData = [
         'hotel' => setting('hotel_name', config('app.name')),

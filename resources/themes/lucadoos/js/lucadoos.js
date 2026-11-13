@@ -777,6 +777,7 @@ function desktop(data) {
         ["sunset", "Sunset", "linear-gradient(135deg, #42275a 0%, #a8456b 55%, #f09a5b 100%)"],
         ["forest", "Forest", "linear-gradient(135deg, #0b3d2e 0%, #1c7a52 60%, #6bbf8a 100%)"],
         ["graphite", "Graphite", "linear-gradient(135deg, #16181d 0%, #2b2f38 100%)"],
+        ["island", "Hotel island", "url(/assets/images/default-background.png) center / cover no-repeat, linear-gradient(180deg, #0b2a4a, #0f1724)"],
         ["aurora", "Aurora", "radial-gradient(900px 600px at 20% 10%, #2dd4bf55, transparent 60%), radial-gradient(900px 600px at 85% 80%, #8b5cf655, transparent 60%), linear-gradient(135deg, #0b1220, #101a33)"],
     ];
     let prefs = { wall: "default", waves: true };
@@ -802,6 +803,7 @@ function desktop(data) {
                 tone = lum > 0.6 ? "light" : "dark";
             }
         }
+        document.body.classList.toggle("los-wall-art", prefs.wall === "island");
         document.body.classList.toggle("los-wall-dark", tone === "dark");
         document.body.classList.toggle("los-wall-light", tone === "light");
         wavesReady = true;
