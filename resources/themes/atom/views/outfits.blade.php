@@ -113,6 +113,7 @@
             .ow-controls { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; align-content: start; }
             .ow-controls label { display: grid; gap: 4px; font-size: 12.5px; font-weight: 600; }
             .ow-check { display: flex !important; gap: 6px; align-items: center; }
+            .ow-controls > .ow-row:last-child { grid-column: 1 / -1; }
             .ow-input { background: var(--input-bg, transparent); color: var(--text, inherit); border: 1px solid var(--line, rgba(127, 127, 127, .3)); border-radius: 8px; padding: 6px 8px; font: inherit; font-size: 13px; }
             .ow-input option { color: #111; }
             .ow-toast { position: fixed; left: 50%; bottom: 70px; transform: translateX(-50%); z-index: 9100; background: var(--panel-solid, #16202c); color: var(--text, #e8eef5); border: 1px solid var(--line, rgba(127, 127, 127, .3)); padding: 8px 16px; border-radius: 999px; box-shadow: 0 10px 30px rgba(0, 0, 0, .35); }
