@@ -82,6 +82,7 @@
             'credits' => (int) $user->credits,
             'duckets' => (int) $user->currency('duckets'),
             'diamonds' => (int) $user->currency('diamonds'),
+            'balance' => route('me.balance', absolute: false),
         ] : null,
         'home' => $user ? $page('me.show', '', '')['path'] : '/',
         'clients' => array_values(array_filter([

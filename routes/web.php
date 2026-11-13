@@ -36,6 +36,7 @@ use App\Http\Controllers\User\PasswordSettingsController;
 use App\Http\Controllers\User\ReferralController;
 use App\Http\Controllers\User\TwoFactorAuthenticationController;
 use App\Http\Controllers\User\UserReferralController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 
@@ -89,6 +90,15 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
     Route::middleware('auth')->group(function () {
         Route::prefix('user')->group(function () {
             Route::get('/me', MeController::class)->name('me.show');
+            Route::get('/balance', function () {
+                $user = Auth::user();
+
+                return response()->json([
+                    'credits' => (int) $user->fresh()->credits,
+                    'duckets' => $user->currency('duckets'),
+                    'diamonds' => $user->currency('diamonds'),
+                ])->header('Cache-Control', 'no-store');
+            })->middleware('throttle:60,1')->name('me.balance');
             Route::post('/claim/referral-reward', ReferralController::class)
                 ->middleware('throttle:5,1')
                 ->name('claim.referral-reward');

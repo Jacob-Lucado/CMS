@@ -1060,13 +1060,31 @@ function desktop(data) {
         const box = el("div", "los-tray");
         if (data.user) {
             const fmt = (n) => Number(n).toLocaleString("en-US");
+            const coins = {};
+            const coin = (kind) => (coins[kind] = el("b", "", { text: fmt(data.user[kind]) }));
             box.append(
                 el("span", "los-purse", { title: "Credits · Duckets · Diamonds" },
-                    el("span", "los-coin credits", {}, el("i", "", { "aria-hidden": "true" }), el("b", "", { text: fmt(data.user.credits) })),
-                    el("span", "los-coin duckets", {}, el("i", "", { "aria-hidden": "true" }), el("b", "", { text: fmt(data.user.duckets) })),
-                    el("span", "los-coin diamonds", {}, el("i", "", { "aria-hidden": "true" }), el("b", "", { text: fmt(data.user.diamonds) })),
+                    el("span", "los-coin credits", {}, el("i", "", { "aria-hidden": "true" }), coin("credits")),
+                    el("span", "los-coin duckets", {}, el("i", "", { "aria-hidden": "true" }), coin("duckets")),
+                    el("span", "los-coin diamonds", {}, el("i", "", { "aria-hidden": "true" }), coin("diamonds")),
                 ),
             );
+            // Spending in the game shows up here without a page reload.
+            const refresh = () => {
+                if (document.hidden) return;
+                fetch(data.user.balance, { headers: { Accept: "application/json" }, credentials: "same-origin" })
+                    .then((res) => (res.ok ? res.json() : null))
+                    .then((balance) => {
+                        if (!balance) return;
+                        for (const kind of Object.keys(coins)) {
+                            if (kind in balance) coins[kind].textContent = fmt(balance[kind]);
+                        }
+                    })
+                    .catch(() => {});
+            };
+            setInterval(refresh, 10000);
+            document.addEventListener("visibilitychange", refresh);
+            window.addEventListener("focus", refresh);
             const me = el("button", "los-who", { type: "button", title: data.user.name }, el("img", "", { src: data.user.head, alt: "", width: "27", height: "30" }), el("span", "", { text: data.user.name }));
             me.addEventListener("click", () => open(data.home));
             box.append(me);

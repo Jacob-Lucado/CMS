@@ -101,3 +101,15 @@ test('a player made by staff gets an invite code on their profile', function () 
     expect($user->fresh()->referral_code)->not->toBeEmpty()
         ->toStartWith((string) $user->id);
 });
+
+test('the taskbar balance reads the latest currencies for the signed in player', function () {
+    $user = User::factory()->create(['credits' => 10]);
+    DB::table('users')->where('id', $user->id)->update(['credits' => 1380]);
+
+    $this->actingAs($user)->getJson('/user/balance')
+        ->assertOk()
+        ->assertJson(['credits' => 1380])
+        ->assertJsonStructure(['credits', 'duckets', 'diamonds']);
+    auth()->logout();
+    $this->getJson('/user/balance')->assertUnauthorized();
+});
