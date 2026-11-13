@@ -124,7 +124,7 @@
                                           if (!query.trim()) return;
                                           confirmAction = '{{ route('shop.buy-package', $package) }}';
                                           confirmReceiver = query;
-                                          confirmMessage = '{{ __('You are about to gift :package to', ['package' => $package->name]) }} ' + query + '. {{ __('You will be charged :cost. This action is non-refundable.', ['cost' => $package->formattedPrice()]) }}';
+                                          confirmMessage = {{ Js::from(__('You are about to gift :package to', ['package' => $package->name]) . ' ') }} + query + {{ Js::from('. ' . __('You will be charged :cost. This action is non-refundable.', ['cost' => $package->formattedPrice()])) }};
                                           open = false;
                                           $nextTick(() => { confirmOpen = true; });
                                       ">
@@ -188,7 +188,7 @@
                   x-on:submit.prevent="
                       confirmAction = '{{ route('shop.buy-package', $package) }}';
                       confirmReceiver = '';
-                      confirmMessage = '{{ __('You are about to purchase :package for :cost. This action is non-refundable. Are you sure?', ['package' => $package->name, 'cost' => $package->formattedPrice()]) }}';
+                      confirmMessage = {{ Js::from(__('You are about to purchase :package for :cost. This action is non-refundable. Are you sure?', ['package' => $package->name, 'cost' => $package->formattedPrice()])) }};
                       confirmOpen = true;
                   ">
                 @csrf

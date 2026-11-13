@@ -76,7 +76,7 @@ test('teams use the staff layout with team descriptions', function (string $them
         ->assertSee(__('Our community teams bring players together to host events, help others, and make :hotel a fun place to be.', ['hotel' => setting('hotel_name')]))
         ->assertSee(route('team-applications.index'), false)
         ->assertDontSee('Hide empty teams');
-})->with(['atom', 'dusk']);
+})->with(['lucadoos', 'atom', 'dusk']);
 
 test('empty teams keep their staff layout and application sidebar', function (string $theme) {
     setSetting('theme', $theme);
@@ -93,7 +93,7 @@ test('empty teams keep their staff layout and application sidebar', function (st
     $this->actingAs(User::factory()->create())->get(route('teams.index'))
         ->assertOk()
         ->assertSee(['Empty Crew', 'We currently have no members in this team', 'How to join a team']);
-})->with(['atom', 'dusk']);
+})->with(['lucadoos', 'atom', 'dusk']);
 
 test('the teams page explains when no team exists yet', function (string $theme) {
     setSetting('theme', $theme);
@@ -102,7 +102,7 @@ test('the teams page explains when no team exists yet', function (string $theme)
     $this->actingAs(User::factory()->create())->get(route('teams.index'))
         ->assertOk()
         ->assertSee(['No teams found', 'There are no teams to display right now.', 'How to join a team']);
-})->with(['atom', 'dusk']);
+})->with(['lucadoos', 'atom', 'dusk']);
 
 test('switching language stores the locale', function () {
     $user = User::factory()->create();

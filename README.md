@@ -16,7 +16,7 @@ A modern, community-driven website (CMS) for retro hotels, built with Laravel.
 
 ## About
 
-Atom CMS runs the website of your hotel: registration, login, news, shop and an admin panel (housekeeping). It has two themes, Atom and Dusk. It works with the Arcturus Morningstar 3.5.5 and Ada emulators.
+Atom CMS runs the website of your hotel: registration, login, news, shop and an admin panel (housekeeping). It has three themes: LucadoOS, Atom and Dusk. It works with the PlusEMU, Arcturus Morningstar 3.5.5 and Ada emulators.
 
 ## Setup
 

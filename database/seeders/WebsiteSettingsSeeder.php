@@ -12,8 +12,8 @@ class WebsiteSettingsSeeder extends Seeder
         $settings = [
             [
                 'key' => 'theme',
-                'value' => 'dusk',
-                'comment' => 'Specifies the active CMS theme (dusk, atom)',
+                'value' => 'lucadoos',
+                'comment' => 'Specifies the active CMS theme (lucadoos, dusk, atom)',
             ],
             [
                 'key' => 'hotel_name',

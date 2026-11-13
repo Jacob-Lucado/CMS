@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Console\Commands\Concerns\ReadsStringInputs;
 use App\Emulator\EmulatorManager;
 use App\Services\OperatingMode;
+use App\Services\SettingsService;
 use App\Support\EnvironmentFile;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -35,7 +36,7 @@ class AtomInstallCommand extends Command
         {--fresh : Drop every table in the target database before importing (destroys existing data)}
         {--skip-arcturus : Skip importing the bundled Arcturus base database and catalog}
         {--skip-catalog : Skip importing the bundled catalog on top of the base database}
-        {--theme= : Theme to activate and build (atom or dusk)}
+        {--theme= : Theme to activate and build (lucadoos, atom or dusk)}
         {--skip-build : Skip building required assets}
         {--headless : Install without a public PHP theme}
         {--frontend-url= : Origin of the independent frontend}
@@ -45,7 +46,7 @@ class AtomInstallCommand extends Command
 
     protected $description = 'One-command installer for a supported emulator';
 
-    private const THEMES = ['atom', 'dusk'];
+    private const THEMES = ['lucadoos', 'atom', 'dusk'];
 
     public function handle(EmulatorManager $emulators): int
     {
@@ -367,6 +368,15 @@ class AtomInstallCommand extends Command
         $seeded = DB::table('website_settings')->where('key', 'theme')->value('value');
 
         $theme = $this->stringOption('theme');
+        $pinned = SettingsService::pinnedTheme();
+
+        if ($pinned !== null) {
+            if ($theme !== null && $theme !== $pinned) {
+                note("CMS_THEME pins the '{$pinned}' theme, so --theme={$theme} is ignored.");
+            }
+
+            $theme = $pinned;
+        }
 
         if ($theme !== null && ! in_array($theme, self::THEMES, true)) {
             warning("Unknown theme '{$theme}' - expected one of: " . implode(', ', self::THEMES) . '. Keeping the current theme.');
@@ -377,7 +387,7 @@ class AtomInstallCommand extends Command
             $selectedTheme = $this->choice(
                 'Which theme do you want to use?',
                 self::THEMES,
-                in_array($seeded, self::THEMES, true) ? $seeded : 'atom',
+                in_array($seeded, self::THEMES, true) ? $seeded : 'lucadoos',
             );
 
             if (is_string($selectedTheme)) {
@@ -385,7 +395,7 @@ class AtomInstallCommand extends Command
             }
         }
 
-        $theme ??= in_array($seeded, self::THEMES, true) ? $seeded : 'atom';
+        $theme ??= in_array($seeded, self::THEMES, true) ? $seeded : 'lucadoos';
 
         if ($theme !== $seeded) {
             DB::table('website_settings')->where('key', 'theme')->update(['value' => $theme]);

@@ -1,0 +1,1440 @@
+/*
+ * LucadoOS for Atom CMS. Atom's own styles are the base, so every page and component keeps working; on top of them the
+ * grays become the LucadoOS navy, Atom's gold becomes the LucadoOS blue, and the desktop, windows, taskbar and Start menu
+ * come from LucadoOS itself. LucadoOS™ is a trademark of Jacob Lucado.
+ */
+@import "../../atom/css/app.css";
+
+@theme {
+    --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+    /* the LucadoOS navy, light to dark; light mode uses the top of the scale and dark mode the bottom */
+    --color-gray-50: #eef3f9;
+    --color-gray-100: #e4eaf3;
+    --color-gray-200: #cdd9e8;
+    --color-gray-300: #b4c3d6;
+    --color-gray-400: #8396ad;
+    --color-gray-500: #6b7f99;
+    --color-gray-600: #3a4d6b;
+    --color-gray-700: #23334d;
+    --color-gray-800: #162134;
+    --color-gray-900: #0f1724;
+    --color-gray-950: #0a1019;
+}
+
+:root {
+    --sb-a: #7c6cff;
+    --sb-b: #4da3ff;
+    --bg: #0f1724;
+    --bg-glow: #17304d;
+    --nav: rgba(15, 23, 36, 0.82);
+    --panel: #162134;
+    --panel-2: #1b2a40;
+    --line: rgba(148, 176, 214, 0.14);
+    --text: #cdd9e8;
+    --muted: #8396ad;
+    --white: #f4f8fd;
+    --accent: #4da3ff;
+    --accent-2: #7c6cff;
+    --accent-hover: #75b8ff;
+    --on-accent: #06121f;
+    --good: #3ddc97;
+    --warn: #f2b84b;
+    --bad: #ff6b6b;
+    --input-bg: #0d1522;
+    --glow-2: rgba(124, 108, 255, 0.12);
+    --hover-row: rgba(77, 163, 255, 0.08);
+    --soft: rgba(255, 255, 255, 0.06);
+    --soft-2: rgba(255, 255, 255, 0.1);
+    --radius: 14px;
+    --los-logo-opacity: 0.07;
+    color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+    --sb-a: #6a55ec;
+    --sb-b: #165fc0;
+    --bg: #e4eaf3;
+    --bg-glow: #cbd9ec;
+    --nav: rgba(228, 234, 243, 0.88);
+    --panel: #f4f7fb;
+    --panel-2: #e6edf6;
+    --line: rgba(20, 40, 80, 0.16);
+    --text: #1f2d44;
+    --muted: #4a5c75;
+    --white: #0a1424;
+    --accent: #165fc0;
+    --accent-2: #6a55ec;
+    --accent-hover: #3b8cf0;
+    --on-accent: #ffffff;
+    --good: #0b6b49;
+    --warn: #8a5608;
+    --bad: #b42b2b;
+    --input-bg: #fbfcfe;
+    --glow-2: rgba(106, 85, 236, 0.08);
+    --hover-row: rgba(22, 95, 192, 0.08);
+    --soft: rgba(20, 40, 80, 0.06);
+    --soft-2: rgba(20, 40, 80, 0.12);
+    --los-logo-opacity: 0.1;
+    color-scheme: light;
+}
+
+* {
+    font-family: var(--font-sans);
+}
+
+body {
+    color: var(--text);
+    background: var(--bg);
+    -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
+}
+
+::selection {
+    background: color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+/* thin two-tone scrollbars, as in LucadoOS */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--sb-b) transparent;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 99px;
+    background: linear-gradient(var(--sb-a), var(--sb-b)) border-box;
+    background-clip: padding-box;
+}
+
+/* ------------------------------------------------ Atom's colors, LucadoOS style */
+
+.site-bg,
+.app.dark .site-bg {
+    background: transparent !important;
+}
+
+.bg-white {
+    background-color: var(--panel);
+}
+
+[class*="bg-[#eeb425]"],
+[class*="bg-[#e9b124]"],
+[class*="bg-[#e3aa1e]"] {
+    background-color: var(--accent) !important;
+    border-color: color-mix(in srgb, var(--accent) 70%, #fff) !important;
+    color: var(--on-accent) !important;
+}
+
+[class*="hover:bg-[#d49f1c]"]:hover,
+[class*="hover:bg-[#cf9d15]"]:hover {
+    background-color: var(--accent-hover) !important;
+}
+
+[class*="text-[#eeb425]"] {
+    color: var(--accent) !important;
+}
+
+[class*="border-[#eeb425]"],
+[class*="border-b-[#eeb425]"] {
+    border-color: var(--accent) !important;
+}
+
+[class*="focus:border-[#eeb425]"]:focus {
+    border-color: var(--accent) !important;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]),
+select,
+textarea {
+    border-width: 1px !important;
+    border-color: var(--line) !important;
+    border-radius: 9px !important;
+    background-color: var(--input-bg) !important;
+    color: var(--text) !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent) !important;
+    outline: none;
+}
+
+.prose {
+    --tw-prose-body: var(--text);
+    --tw-prose-headings: var(--white);
+    --tw-prose-links: var(--accent);
+    --tw-prose-bold: var(--white);
+    --tw-prose-invert-body: var(--text);
+    --tw-prose-invert-headings: var(--white);
+    --tw-prose-invert-links: var(--accent);
+}
+
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* the panels pages are built from */
+.los-card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    overflow: hidden;
+    padding-bottom: 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--panel) 92%, transparent);
+    box-shadow: 0 10px 30px rgba(3, 8, 18, 0.22);
+    backdrop-filter: blur(6px);
+}
+
+.los-card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+    background: var(--soft);
+}
+
+.los-card-head .icon {
+    min-width: 46px;
+    max-width: 46px;
+    min-height: 46px;
+    max-height: 46px;
+    border-radius: 12px;
+    background-color: var(--soft-2);
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.los-card-title {
+    margin: 0;
+    color: var(--white);
+    font-size: 15px;
+    font-weight: 650;
+}
+
+.los-card-sub {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.los-card-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0 14px;
+}
+
+.los-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 34px;
+    padding: 6px 14px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-size: 14px;
+    font-weight: 650;
+    cursor: pointer;
+    transition:
+        background-color 0.18s ease,
+        transform 0.18s ease;
+}
+
+.los-btn:hover {
+    background: var(--accent-hover);
+}
+
+.los-btn:active {
+    transform: translateY(1px);
+}
+
+.los-btn.gray {
+    border-color: var(--line);
+    background: var(--soft);
+    color: var(--text);
+}
+
+.los-btn.gray:hover {
+    background: var(--soft-2);
+}
+
+.los-btn.full {
+    width: 100%;
+}
+
+/* ------------------------------------------------ a page inside a window */
+
+html.los-embed,
+html.los-embed body.los-page-body {
+    min-height: 100%;
+    background:
+        radial-gradient(900px 420px at 85% -80px, var(--bg-glow), transparent 70%),
+        radial-gradient(700px 360px at -10% 0, var(--glow-2), transparent 70%),
+        var(--bg);
+    background-attachment: fixed;
+}
+
+.los-content {
+    position: relative;
+    min-height: 100%;
+}
+
+@keyframes los-view-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+}
+
+.los-content > div > * {
+    animation: los-view-in 0.26s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* ------------------------------------------------ the desktop */
+
+body.los-os {
+    overflow: hidden;
+    height: 100vh;
+    margin: 0;
+    background: var(--wall, radial-gradient(900px 520px at 80% 0, var(--bg-glow), transparent 65%), radial-gradient(700px 480px at 0 100%, var(--glow-2), transparent 65%)), var(--bg);
+}
+
+.los-desk {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.los-waves {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* Jacob's mark, faded behind everything, and the name in the corner */
+.los-logo {
+    position: absolute;
+    top: 46%;
+    left: 50%;
+    z-index: 0;
+    width: min(80vmin, 820px);
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    background: url("/assets/images/lucadoos/mark.webp") center / contain no-repeat;
+    opacity: var(--los-logo-opacity);
+    pointer-events: none;
+}
+
+.los-desk::after {
+    content: "LucadoOS";
+    position: absolute;
+    right: 24px;
+    bottom: 62px;
+    color: var(--muted);
+    font-size: 38px;
+    font-weight: 200;
+    letter-spacing: 0.04em;
+    opacity: 0.25;
+    pointer-events: none;
+}
+
+.los-tm {
+    position: absolute;
+    right: 26px;
+    bottom: 52px;
+    z-index: 1;
+    margin: 0;
+    color: var(--muted);
+    font-size: 10px;
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+.los-icons {
+    position: absolute;
+    top: 14px;
+    bottom: 62px;
+    left: 14px;
+    z-index: 1;
+    display: grid;
+    grid-auto-columns: 96px;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(auto-fill, 92px);
+    gap: 4px;
+    align-content: start;
+}
+
+.los-icon {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 4px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: none;
+    color: var(--white);
+    font-size: 12px;
+    text-align: center;
+    text-decoration: none;
+    cursor: default;
+}
+
+.los-icon:hover {
+    background: var(--soft);
+}
+
+.los-icon.sel,
+.los-icon:focus-visible {
+    border-color: var(--accent);
+    background: var(--hover-row);
+    outline: none;
+}
+
+.los-icon-art {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent-2), var(--accent));
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    color: #fff;
+    font-size: 22px;
+    line-height: 1;
+}
+
+.los-icon-name {
+    overflow-wrap: anywhere;
+    line-height: 1.15;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+:root[data-theme="light"] .los-icon-name {
+    color: var(--text);
+    text-shadow: none;
+}
+
+body.los-wall-dark .los-icon-name,
+:root[data-theme="light"] body.los-wall-dark .los-icon-name {
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+}
+
+body.los-wall-light .los-icon-name,
+:root[data-theme="light"] body.los-wall-light .los-icon-name {
+    color: #14181f;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.los-layer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 48px;
+    left: 0;
+    z-index: 2;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+/* ------------------------------------------------ windows */
+
+.los-win {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    min-width: 360px;
+    min-height: 240px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--bg);
+    box-shadow: 0 12px 34px rgba(3, 8, 18, 0.38);
+    pointer-events: auto;
+}
+
+.los-win[hidden] {
+    display: none;
+}
+
+.los-win.focus {
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+    box-shadow: 0 18px 50px rgba(3, 8, 18, 0.5);
+}
+
+.los-win.max {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: 0;
+}
+
+.los-win.snapped {
+    border-radius: 0;
+}
+
+/* frames swallow the pointer, so while a window moves they step aside */
+.los-win.dragging iframe,
+body:has(.los-win.dragging) iframe {
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .los-win {
+        animation: los-pop 0.12s ease-out;
+    }
+}
+
+@keyframes los-pop {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+}
+
+.los-win-bar {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px 6px 12px;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--white);
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+}
+
+.los-win.dragging .los-win-bar {
+    cursor: grabbing;
+}
+
+.los-win-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.los-win-title i {
+    color: var(--accent);
+    font-size: 14px;
+    font-style: normal;
+}
+
+.los-win-title span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.los-win-btns {
+    display: flex;
+    gap: 4px;
+}
+
+.los-win-btn {
+    width: 30px;
+    height: 24px;
+    border: 0;
+    border-radius: 7px;
+    background: none;
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.los-win-btn:hover {
+    background: var(--soft-2);
+}
+
+.los-win-btn.close:hover {
+    background: var(--bad);
+    color: #fff;
+}
+
+.los-win-body {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+}
+
+.los-win-body.los-page {
+    overflow: hidden;
+    padding: 0;
+}
+
+.los-scroll {
+    position: absolute;
+    inset: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+    background:
+        radial-gradient(900px 420px at 85% -80px, var(--bg-glow), transparent 70%),
+        radial-gradient(700px 360px at -10% 0, var(--glow-2), transparent 70%),
+        var(--bg);
+}
+
+.los-win-body.los-native {
+    padding: 16px 20px;
+    background: var(--bg);
+}
+
+.los-frame {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: var(--bg);
+}
+
+.los-win-grip {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 16px;
+    height: 16px;
+    cursor: nwse-resize;
+    touch-action: none;
+}
+
+.los-win.max .los-win-grip {
+    display: none;
+}
+
+/* snapping */
+.los-snap-preview {
+    position: absolute;
+    z-index: 1000;
+    border: 2px solid color-mix(in srgb, var(--accent) 80%, #fff);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
+    pointer-events: none;
+    transition: all 0.08s ease-out;
+}
+
+.los-assist {
+    position: absolute;
+    z-index: 900;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow: auto;
+    padding: 18px;
+    background: color-mix(in srgb, var(--panel) 86%, transparent);
+    backdrop-filter: blur(10px);
+    color: var(--text);
+    pointer-events: auto;
+}
+
+.los-assist p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.los-assist-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.los-assist-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 140px;
+    padding: 14px 8px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--soft);
+    color: var(--text);
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.los-assist-card span {
+    font-size: 26px;
+}
+
+.los-assist-card:hover {
+    border-color: var(--accent);
+    background: var(--hover-row);
+}
+
+.los-flyout {
+    position: fixed;
+    z-index: 2000;
+    display: grid;
+    grid-template-columns: repeat(2, 84px);
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--panel);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.los-fly-layout {
+    position: relative;
+    height: 52px;
+    border-radius: 6px;
+    background: var(--soft);
+}
+
+.los-fly-zone {
+    position: absolute;
+    box-sizing: border-box;
+    padding: 0;
+    border: 2px solid var(--panel);
+    border-radius: 5px;
+    background: var(--soft-2);
+    cursor: pointer;
+}
+
+.los-fly-zone:hover {
+    background: var(--accent);
+}
+
+/* ------------------------------------------------ taskbar */
+
+.los-taskbar {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 48px;
+    padding: 0 10px;
+    border-top: 1px solid var(--line);
+    background: var(--nav);
+    backdrop-filter: blur(14px);
+    color: var(--text);
+}
+
+.los-startbtn {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 8px;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: var(--panel);
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.los-startbtn::after {
+    content: "LucadoOS";
+}
+
+.los-startbtn:hover,
+.los-startbtn[aria-expanded="true"] {
+    border-color: var(--accent);
+}
+
+.los-winlogo {
+    display: grid;
+    grid-template: 1fr 1fr / 1fr 1fr;
+    gap: 2px;
+    width: 17px;
+    height: 17px;
+}
+
+.los-winlogo i {
+    border-radius: 2px;
+    background: var(--accent);
+}
+
+.los-searchbox {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 8px;
+    width: 220px;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: var(--input-bg);
+    color: var(--muted);
+    font-size: 13px;
+    cursor: text;
+}
+
+.los-searchbox span {
+    font-size: 18px;
+}
+
+.los-searchbox input,
+.los-searchbox input:focus {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+    height: auto;
+    margin: 0;
+    padding: 0 !important;
+    border: 0 !important;
+    background: none !important;
+    box-shadow: none !important;
+    color: var(--text) !important;
+    font: inherit;
+}
+
+.los-tasks {
+    display: flex;
+    flex: 1;
+    gap: 6px;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.los-task {
+    display: flex;
+    flex: 0 1 170px;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    height: 34px;
+    padding: 0 10px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: var(--soft);
+    color: var(--text);
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.los-task i {
+    color: var(--accent);
+    font-size: 16px;
+    font-style: normal;
+}
+
+.los-task span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.los-task:hover {
+    background: var(--soft-2);
+}
+
+.los-task.on {
+    border-color: var(--accent);
+    background: var(--hover-row);
+    color: var(--white);
+}
+
+.los-tray {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+}
+
+.los-purse {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 10px;
+    height: 34px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: var(--soft);
+}
+
+.los-coin {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--white);
+}
+
+.los-coin i {
+    width: 16px;
+    height: 16px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.los-coin.credits i {
+    background-image: url("/assets/images/icons/currency/credits.png");
+}
+
+.los-coin.duckets i {
+    background-image: url("/assets/images/icons/currency/duckets.png");
+}
+
+.los-coin.diamonds i {
+    background-image: url("/assets/images/icons/currency/diamonds.png");
+}
+
+.los-who {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 34px;
+    padding: 0 10px 0 4px;
+    overflow: hidden;
+    border: 0;
+    border-radius: 9px;
+    background: none;
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.los-who:hover {
+    background: var(--soft-2);
+}
+
+.los-who img {
+    width: 27px;
+    height: 30px;
+    object-fit: cover;
+    object-position: top;
+    image-rendering: pixelated;
+}
+
+.los-traybtn {
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--text);
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.los-traybtn:hover {
+    background: var(--soft-2);
+}
+
+.los-clock {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.25;
+}
+
+/* ------------------------------------------------ start menu */
+
+.los-start {
+    position: absolute;
+    bottom: 56px;
+    left: 10px;
+    z-index: 50;
+    display: grid;
+    grid-template-columns: 48px 270px minmax(0, 1fr);
+    width: 660px;
+    max-width: calc(100vw - 20px);
+    height: min(560px, calc(100vh - 70px));
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--panel);
+    box-shadow: 0 18px 50px rgba(3, 8, 18, 0.5);
+    color: var(--text);
+}
+
+.los-start[hidden] {
+    display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .los-start:not([hidden]) {
+        animation: los-rise 0.16s ease-out;
+    }
+}
+
+@keyframes los-rise {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+}
+
+.los-start-rail {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background: var(--soft);
+}
+
+.los-rail-btn {
+    height: 48px;
+    border: 0;
+    background: none;
+    color: var(--text);
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.los-rail-btn:hover {
+    background: var(--hover-row);
+}
+
+.los-start-list {
+    overflow-y: auto;
+    padding: 6px 0;
+}
+
+.los-start-group {
+    margin: 10px 14px 4px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.los-start-row {
+    display: flex;
+    align-items: center;
+}
+
+.los-start-row .los-start-item {
+    flex: 1;
+    min-width: 0;
+}
+
+.los-start-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 7px 14px;
+    border: 0;
+    background: none;
+    color: var(--text);
+    font-size: 13px;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.los-start-item i {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, var(--accent-2), var(--accent));
+    color: #fff;
+    font-size: 13px;
+    font-style: normal;
+}
+
+.los-start-item:hover,
+.los-start-item:focus-visible {
+    background: var(--hover-row);
+    outline: none;
+}
+
+.los-pin {
+    padding: 6px 12px;
+    border: 0;
+    background: none;
+    color: var(--muted);
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.los-pin:hover,
+.los-pin.on {
+    color: #f5c542;
+}
+
+.los-start-none {
+    margin: 16px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.los-start-tiles {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    align-content: start;
+    overflow-y: auto;
+    padding: 6px 12px 12px;
+}
+
+.los-start-tiles .los-start-group {
+    grid-column: 1 / -1;
+    margin-left: 2px;
+}
+
+.los-start-brand {
+    display: flex;
+    flex-direction: column;
+    grid-column: 1 / -1;
+    padding: 6px 2px 4px;
+}
+
+.los-start-brand b {
+    color: var(--white);
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+}
+
+.los-start-brand small {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.los-pins-head {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.los-pins-head small {
+    flex: 1;
+    color: var(--muted);
+    font-weight: 400;
+}
+
+.los-pin-reset {
+    border: 0;
+    background: none;
+    color: var(--accent);
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.los-tile-wrap {
+    position: relative;
+}
+
+.los-tile-wrap.drag {
+    opacity: 0.5;
+}
+
+.los-tile {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    height: 88px;
+    padding: 8px 10px;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    background: var(--tile, #0a64c8);
+    color: #fff;
+    font-size: 12px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.los-tile:hover {
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+.los-tile-art {
+    font-size: 24px;
+}
+
+.los-tile-x {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.45);
+    color: #fff;
+    font-size: 11px;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.los-tile-wrap:hover .los-tile-x,
+.los-tile-x:focus-visible {
+    opacity: 1;
+}
+
+/* ------------------------------------------------ personalize */
+
+.pz h3 {
+    margin: 14px 0 8px;
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 650;
+}
+
+.pz h3:first-child {
+    margin-top: 0;
+}
+
+.pz-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.pz-wall {
+    display: grid;
+    align-items: end;
+    justify-items: start;
+    width: 110px;
+    height: 70px;
+    padding: 6px 8px;
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    background: var(--panel);
+    color: #fff;
+    font-size: 12px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+    cursor: pointer;
+}
+
+.pz-wall.on {
+    border-color: var(--accent);
+    outline: 2px solid var(--accent);
+}
+
+.pz-color {
+    display: grid;
+    justify-items: center;
+    gap: 4px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.pz-color.on {
+    color: var(--accent);
+}
+
+.pz-color input {
+    width: 110px;
+    height: 70px;
+    padding: 0;
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    background: none;
+    cursor: pointer;
+}
+
+.pz-waves {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 16px;
+    cursor: pointer;
+}
+
+.pz-waves b {
+    color: var(--white);
+}
+
+.pz-waves small {
+    display: block;
+    color: var(--muted);
+}
+
+.pz-note {
+    margin-top: 16px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* ------------------------------------------------ sign in */
+
+.los-signin {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.los-signin-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.los-signin-mark {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--accent-2), var(--accent));
+    font-size: 24px;
+}
+
+.los-signin h2 {
+    margin: 0;
+    color: var(--white);
+    font-size: 19px;
+    font-weight: 650;
+}
+
+.los-signin p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.los-signin-links {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    text-align: center;
+}
+
+.los-signin-links a {
+    color: var(--accent);
+}
+
+.los-signin-links a:hover {
+    text-decoration: underline;
+}
+
+/* ------------------------------------------------ odds and ends */
+
+.los-warning {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 3000;
+    padding: 8px 16px;
+    background: var(--bad);
+    color: #fff;
+    text-align: center;
+}
+
+.los-noscript {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 50;
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    padding: 14px;
+    background: var(--nav);
+}
+
+/* a small screen: one window at a time, the full width, with the taskbar kept to what fits */
+body.los-narrow .los-icons,
+body.los-narrow .los-searchbox,
+body.los-narrow .los-purse,
+body.los-narrow .los-clock,
+body.los-narrow .los-who span,
+body.los-narrow .los-desk::after,
+body.los-narrow .los-tm {
+    display: none;
+}
+
+body.los-narrow .los-win {
+    border: 0;
+    border-radius: 0;
+}
+
+body.los-narrow .los-win-bar {
+    cursor: default;
+}
+
+body.los-narrow .los-task {
+    flex-basis: 44px;
+    justify-content: center;
+}
+
+body.los-narrow .los-task span {
+    display: none;
+}
+
+body.los-narrow .los-startbtn::after {
+    content: none;
+}
+
+@media (max-width: 700px) {
+    .los-start {
+        grid-template-columns: 48px minmax(0, 1fr);
+    }
+
+    .los-start-tiles {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .los-content > div > * {
+        animation: none;
+    }
+}
+
+/* a full-screen window that carries the waves: its background moves under them so they roll between it and the page */
+.los-win-body.los-waves-host {
+    background:
+        radial-gradient(900px 420px at 85% -80px, var(--bg-glow), transparent 70%),
+        radial-gradient(700px 360px at -10% 0, var(--glow-2), transparent 70%),
+        var(--bg);
+}
+
+.los-waves-host > .los-scroll {
+    z-index: 1;
+    background: none;
+}
+
+body.los-page-body > .los-waves {
+    position: fixed;
+}
+
+body.los-page-body > .los-content {
+    z-index: 1;
+}

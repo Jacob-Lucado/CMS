@@ -25,6 +25,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Pinned Theme
+    |--------------------------------------------------------------------------
+    |
+    | A theme set here wins over the "theme" website setting and over the
+    | --theme option of atom:install, so an installer that asks for another
+    | theme still gets this one. Leave it empty to pick the theme in the
+    | website settings instead.
+    |
+    */
+
+    'pinned' => env('CMS_THEME'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Base Path
     |--------------------------------------------------------------------------
     |

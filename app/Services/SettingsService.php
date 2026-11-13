@@ -43,7 +43,25 @@ class SettingsService
      */
     public function getOrDefault(string $key, mixed $default = null): mixed
     {
+        if ($key === 'theme' && ($pinned = self::pinnedTheme()) !== null) {
+            return $pinned;
+        }
+
         return $this->settings()->get($key, $default);
+    }
+
+    /**
+     * The theme CMS_THEME pins, when it names a theme this CMS ships.
+     */
+    public static function pinnedTheme(): ?string
+    {
+        $theme = config('theme.pinned');
+
+        if (! is_string($theme) || preg_match('/^[a-z0-9_-]+$/', $theme) !== 1) {
+            return null;
+        }
+
+        return is_dir(resource_path("themes/{$theme}")) ? $theme : null;
     }
 
     /**
