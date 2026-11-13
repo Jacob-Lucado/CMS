@@ -53,13 +53,13 @@
                     <strong class="los-balance">{{ \App\Support\StorefrontMoney::format(auth()->user()->website_balance) }}</strong>
                 </header>
                 <div class="los-card-body">
-                    @if (\App\Services\Payments\StripeCheckout::isConfigured())
-                        <form action="{{ route('stripe.checkout') }}" method="POST" class="los-copy">
+                    @if (\App\Services\Payments\SquareCheckout::isConfigured())
+                        <form action="{{ route('square.checkout') }}" method="POST" class="los-copy">
                             @csrf
                             <input name="amount" type="number" min="1" max="250" step="1" value="5" aria-label="{{ __('Amount') }}">
                             <button type="submit" class="los-btn">{{ __('Top up with card') }}</button>
                         </form>
-                        <p class="los-card-sub">{{ __('Secure checkout by Stripe. Cards, Apple Pay and Google Pay work.') }}</p>
+                        <p class="los-card-sub">{{ __('Secure checkout by Square. Cards, Apple Pay, Google Pay and Cash App Pay work.') }}</p>
                     @else
                         <p class="los-empty">{{ __('Top-ups are not switched on yet.') }}</p>
                     @endif

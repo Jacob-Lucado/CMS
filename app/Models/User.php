@@ -21,7 +21,7 @@ use App\Models\Help\WebsiteHelpCenterTicket;
 use App\Models\Miscellaneous\CameraWeb;
 use App\Models\Miscellaneous\WebsiteBetaCode;
 use App\Models\Shop\WebsitePaypalTransaction;
-use App\Models\Shop\WebsiteStripePayment;
+use App\Models\Shop\WebsiteSquarePayment;
 use App\Models\Shop\WebsiteUsedShopVoucher;
 use App\Models\User\Ban;
 use App\Models\User\ClaimedReferralLog;
@@ -408,10 +408,10 @@ class User extends Authenticatable implements FilamentUser, HasName
         return $this->hasMany(WebsiteArticleComment::class);
     }
 
-    /** @return HasMany<WebsiteStripePayment, $this> */
-    public function stripePayments(): HasMany
+    /** @return HasMany<WebsiteSquarePayment, $this> */
+    public function squarePayments(): HasMany
     {
-        return $this->hasMany(WebsiteStripePayment::class);
+        return $this->hasMany(WebsiteSquarePayment::class);
     }
 
     /**

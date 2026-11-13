@@ -74,9 +74,12 @@ return [
 
     'password_reset_token_time' => env('PASSWORD_RESET_TOKEN_TIME', 15),
 
-    'stripe' => [
-        'secret' => env('STRIPE_SECRET_KEY', ''),
-        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET', ''),
+    'square' => [
+        'environment' => env('SQUARE_ENVIRONMENT', 'sandbox'), // 'sandbox' or 'production'
+        'access_token' => env('SQUARE_ACCESS_TOKEN', ''),
+        'location_id' => env('SQUARE_LOCATION_ID', ''),
+        'webhook_signature_key' => env('SQUARE_WEBHOOK_SIGNATURE_KEY', ''),
+        'webhook_url' => env('SQUARE_WEBHOOK_URL', ''),
     ],
 
     'paypal' => [

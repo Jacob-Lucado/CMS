@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\HotelApiController;
 use App\Http\Controllers\Shop\PaypalWebhookController;
-use App\Http\Controllers\Shop\StripeWebhookController;
+use App\Http\Controllers\Shop\SquareWebhookController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,4 +21,4 @@ Route::get('/users/search', [HotelApiController::class, 'searchUsers'])->name('a
 Route::get('/online-users', [HotelApiController::class, 'onlineUsers'])->name('api.online-users')->middleware('throttle:50,1');
 Route::get('/online-count', [HotelApiController::class, 'onlineUserCount'])->name('api.online-count')->middleware('throttle:50,1');
 Route::post('/paypal/webhook', PaypalWebhookController::class)->name('paypal.webhook');
-Route::post('/stripe/webhook', StripeWebhookController::class)->middleware('throttle:120,1')->name('stripe.webhook');
+Route::post('/square/webhook', SquareWebhookController::class)->middleware('throttle:120,1')->name('square.webhook');

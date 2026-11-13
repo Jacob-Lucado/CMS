@@ -2,7 +2,7 @@
 
 use App\Actions\Fortify\Controllers\TwoFactorAuthenticatedSessionController;
 use App\Http\Controllers\Shop\PaypalController;
-use App\Http\Controllers\Shop\StripeController;
+use App\Http\Controllers\Shop\SquareController;
 use App\Http\Controllers\User\ForgotPasswordController;
 use App\Http\Controllers\User\TwoFactorAuthenticationController;
 use Illuminate\Support\Facades\Route;
@@ -35,8 +35,7 @@ if (Features::enabled(Features::twoFactorAuthentication())) {
         ->name('two-factor.login.store');
 }
 
-Route::middleware('auth')->controller(StripeController::class)->prefix('stripe')->group(function () {
-    Route::post('/checkout', 'checkout')->middleware(['maintenance', 'check.ban', 'force.staff.2fa', 'throttle:10,1'])->name('stripe.checkout');
-    Route::get('/success', 'success')->name('stripe.success');
-    Route::get('/cancel', 'cancel')->name('stripe.cancel');
+Route::middleware('auth')->controller(SquareController::class)->prefix('square')->group(function () {
+    Route::post('/checkout', 'checkout')->middleware(['maintenance', 'check.ban', 'force.staff.2fa', 'throttle:10,1'])->name('square.checkout');
+    Route::get('/return', 'return')->name('square.return');
 });

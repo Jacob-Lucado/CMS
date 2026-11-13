@@ -92,8 +92,8 @@
                 {{ __('Current balance: :balance', ['balance' => \App\Support\StorefrontMoney::format(auth()->user()->website_balance)]) }}
             </div>
 
-            @if(\App\Services\Payments\StripeCheckout::isConfigured())
-                <form action="{{ route('stripe.checkout') }}" method="POST" class="mt-3">
+            @if(\App\Services\Payments\SquareCheckout::isConfigured())
+                <form action="{{ route('square.checkout') }}" method="POST" class="mt-3">
                     @csrf
 
                     <x-form.input name="amount" type="number" value="5" placeholder="amount" />
