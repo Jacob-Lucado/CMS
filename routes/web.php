@@ -25,6 +25,7 @@ use App\Http\Controllers\Miscellaneous\InstallationController;
 use App\Http\Controllers\Miscellaneous\LocaleController;
 use App\Http\Controllers\Miscellaneous\LogoGeneratorController;
 use App\Http\Controllers\Miscellaneous\MaintenanceController;
+use App\Http\Controllers\RadioController;
 use App\Http\Controllers\Shop\ShopController;
 use App\Http\Controllers\Shop\ShopVoucherController;
 use App\Http\Controllers\User\AccountSettingsController;
@@ -88,6 +89,16 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
 
     // Can only be accessed if logged in
     Route::middleware('auth')->group(function () {
+        Route::prefix('radio')->controller(RadioController::class)->group(function () {
+            Route::get('/', 'show')->name('radio.index');
+            Route::get('/feed', 'feed')->middleware('throttle:60,1')->name('radio.feed');
+            Route::post('/', 'store')->middleware('throttle:10,1')->name('radio.store');
+            Route::post('/on-air', 'onAir')->middleware('throttle:30,1')->name('radio.on-air');
+            Route::post('/{entry}/approve', 'approve')->name('radio.approve');
+            Route::post('/{entry}/reject', 'reject')->name('radio.reject');
+            Route::delete('/{entry}', 'destroy')->name('radio.destroy');
+        });
+
         Route::prefix('user')->group(function () {
             Route::get('/me', MeController::class)->name('me.show');
             Route::get('/balance', function () {

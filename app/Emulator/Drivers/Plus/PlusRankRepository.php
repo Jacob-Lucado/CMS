@@ -3,9 +3,11 @@
 namespace App\Emulator\Drivers\Plus;
 
 use App\Emulator\Contracts\RankRepository;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\DB;
 
 final class PlusRankRepository implements RankRepository
 {
@@ -37,6 +39,22 @@ final class PlusRankRepository implements RankRepository
             ->orderByRaw("CASE WHEN security_level = 1 AND slug IN ('user', 'default', 'member') THEN 0 ELSE 1 END")
             ->orderByDesc('weight')->get()
             ->unique('security_level')->pluck('name', 'security_level')->all();
+    }
+
+    public function roleOptions(): array
+    {
+        return PlusRank::query()->orderByDesc('weight')->orderBy('id')->pluck('name', 'id')->all();
+    }
+
+    public function holdsAny(User $user, array $keys): bool
+    {
+        if ($keys === []) {
+            return false;
+        }
+
+        return DB::table('user_roles')->where('user_id', $user->id)->whereIn('role_id', $keys)
+            ->where(fn ($query) => $query->whereNull('expires_at')->orWhere('expires_at', '>', now('UTC')->format('Y-m-d H:i:s.u')))
+            ->exists();
     }
 
     public function forDisplay(Builder|Relation $query): Builder|Relation

@@ -4,6 +4,7 @@ namespace App\Emulator\Drivers\Ada;
 
 use App\Emulator\Contracts\RankRepository;
 use App\Models\Ada\AdaRole;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -36,6 +37,16 @@ class AdaRankRepository implements RankRepository
             ->where('id', '<', $rank)
             ->pluck('name', 'id')
             ->all();
+    }
+
+    public function roleOptions(): array
+    {
+        return AdaRole::query()->orderByDesc('id')->pluck('name', 'id')->all();
+    }
+
+    public function holdsAny(User $user, array $keys): bool
+    {
+        return in_array((int) $user->rank, array_map('intval', $keys), true);
     }
 
     public function forDisplay(Builder|Relation $query): Builder|Relation

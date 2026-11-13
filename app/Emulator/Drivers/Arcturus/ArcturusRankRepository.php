@@ -4,6 +4,7 @@ namespace App\Emulator\Drivers\Arcturus;
 
 use App\Emulator\Contracts\RankRepository;
 use App\Models\Game\Permission;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -36,6 +37,16 @@ class ArcturusRankRepository implements RankRepository
             ->where('id', '<', $rank)
             ->pluck('rank_name', 'id')
             ->all();
+    }
+
+    public function roleOptions(): array
+    {
+        return Permission::query()->orderByDesc('id')->pluck('rank_name', 'id')->all();
+    }
+
+    public function holdsAny(User $user, array $keys): bool
+    {
+        return in_array((int) $user->rank, array_map('intval', $keys), true);
     }
 
     public function forDisplay(Builder|Relation $query): Builder|Relation

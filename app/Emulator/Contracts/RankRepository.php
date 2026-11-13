@@ -3,6 +3,7 @@
 namespace App\Emulator\Contracts;
 
 use App\Emulator\Models\Rank;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -30,6 +31,16 @@ interface RankRepository
 
     /** @return array<int|string, string> */
     public function optionsBelow(int $rank): array;
+
+    /**
+     * Every rank or role a player can hold, keyed the way holdsAny() expects.
+     *
+     * @return array<int|string, string>
+     */
+    public function roleOptions(): array;
+
+    /** @param array<int, int|string> $keys */
+    public function holdsAny(User $user, array $keys): bool;
 
     /**
      * @param  Builder<Rank>|Relation<Rank, covariant Model, covariant mixed>  $query

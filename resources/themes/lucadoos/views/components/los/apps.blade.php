@@ -41,6 +41,8 @@
             Emulator::supports(Feature::CameraPhotos) ? $page('photos.index', __('Photos'), '📷') : null,
         ]))];
 
+        $groups[] = ['label' => __('Radio'), 'icon' => '📻', 'pages' => [$page('radio.index', __('Radio'), '📻')]];
+
         $groups[] = ['label' => __('Leaderboards'), 'icon' => '🏆', 'pages' => [$page('leaderboard.index', __('Leaderboards'), '🏆')]];
 
         if (Emulator::supports(Feature::RareValues)) {
