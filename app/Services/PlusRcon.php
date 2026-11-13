@@ -135,9 +135,13 @@ final readonly class PlusRcon implements Rcon
         $this->dispatch('disconnect_user', [$user->id]);
     }
 
+    /**
+     * PlusEMU reads a player's rank from their saved roles, so the rank must
+     * already be stored. A player who has left picks it up on their next login.
+     */
     public function setRank(User $user, int $rank): void
     {
-        $this->dispatch('reload_user_rank', [$user->id]);
+        $this->sendCommand('reload_user_rank', ['parameter_0' => $user->id]);
     }
 
     public function updateCatalog(): void

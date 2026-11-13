@@ -1,12 +1,14 @@
 <?php
 
 use App\Actions\Fortify\CreateNewUser;
+use App\Contracts\Rcon;
 use App\Emulator\Contracts\CurrencyRepository;
 use App\Emulator\Contracts\PlayerRepository;
 use App\Enums\CurrencyTypes;
 use App\Filament\Resources\User\Users\Pages\EditUser;
 use App\Models\User;
 use App\Services\Community\StaffService;
+use App\Services\FakeRcon;
 use Filament\Actions\DeleteAction;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\DB;
@@ -153,4 +155,25 @@ test('housekeeping deletes a player, or refuses while plus keeps rows that refer
     expect(DB::table('users')->where('id', $deletable->id)->exists())->toBeFalse()
         ->and(DB::table('user_currencies')->where('user_id', $deletable->id)->exists())->toBeFalse()
         ->and(DB::table('users')->whereIn('id', [$paying->id, $landlord->id])->count())->toBe(2);
+});
+
+test('housekeeping saves a new rank for an online player before the game server reloads it', function () {
+    installHotel();
+    grantHousekeepingPermission('can_access_housekeeping', 6);
+    grantHousekeepingPermission('edit_user', 6);
+    $rcon = (new FakeRcon)->connected();
+    app()->instance(Rcon::class, $rcon);
+    $this->actingAs(User::factory()->create(['rank' => 7]));
+    Filament::setCurrentPanel(Filament::getPanel('housekeeping'));
+    $target = User::factory()->create(['rank' => 1]);
+    $target->forceFill(['online' => true])->save();
+
+    Livewire::test(EditUser::class, ['record' => $target->getRouteKey()])
+        ->fillForm(['rank' => 4, 'motto' => 'Hello', 'mail' => 'online@example.com'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect((int) DB::table('users')->where('id', $target->id)->value('rank'))->toBe(4)
+        ->and(DB::table('user_roles')->where('user_id', $target->id)->pluck('role_id')->sort()->values()->all())->toBe([1, 4])
+        ->and(collect($rcon->calls)->pluck('method')->all())->toContain('setRank');
 });

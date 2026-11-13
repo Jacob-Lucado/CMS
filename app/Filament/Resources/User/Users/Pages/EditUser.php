@@ -333,9 +333,9 @@ class EditUser extends EditRecord
             $this->halt();
         }
 
-        if (! $user->online) {
-            $user->forceFill(['rank' => $data['rank']])->save();
+        $user->forceFill(['rank' => $data['rank']])->save();
 
+        if (! $user->online) {
             return;
         }
 
