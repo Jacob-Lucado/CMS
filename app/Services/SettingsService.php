@@ -47,7 +47,14 @@ class SettingsService
             return $pinned;
         }
 
-        return $this->settings()->get($key, $default);
+        $value = $this->settings()->get($key, $default);
+
+        // Badge links are built as path + code, so the folder always ends in one slash.
+        if ($key === 'badges_path' && is_string($value) && $value !== '') {
+            return rtrim($value, '/') . '/';
+        }
+
+        return $value;
     }
 
     /**

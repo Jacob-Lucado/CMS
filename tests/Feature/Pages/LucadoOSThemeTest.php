@@ -113,3 +113,9 @@ test('the taskbar balance reads the latest currencies for the signed in player',
     auth()->logout();
     $this->getJson('/user/balance')->assertUnauthorized();
 });
+
+test('the badge folder always ends in one slash', function (string $stored) {
+    setSetting('badges_path', $stored);
+
+    expect(setting('badges_path'))->toBe('https://hotel.example.com/album1584/');
+})->with(['https://hotel.example.com/album1584', 'https://hotel.example.com/album1584/', 'https://hotel.example.com/album1584//']);
