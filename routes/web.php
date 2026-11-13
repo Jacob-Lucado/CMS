@@ -28,6 +28,9 @@ use App\Http\Controllers\Miscellaneous\MaintenanceController;
 use App\Http\Controllers\RadioController;
 use App\Http\Controllers\Shop\ShopController;
 use App\Http\Controllers\Shop\ShopVoucherController;
+use App\Http\Controllers\Social\KudosController;
+use App\Http\Controllers\Social\NotificationController;
+use App\Http\Controllers\Social\SocialController;
 use App\Http\Controllers\User\AccountSettingsController;
 use App\Http\Controllers\User\BannedController;
 use App\Http\Controllers\User\DiscordAccountController;
@@ -37,6 +40,7 @@ use App\Http\Controllers\User\PasswordSettingsController;
 use App\Http\Controllers\User\ReferralController;
 use App\Http\Controllers\User\TwoFactorAuthenticationController;
 use App\Http\Controllers\User\UserReferralController;
+use App\Models\Social\WebsiteNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
@@ -99,6 +103,30 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
             Route::delete('/{entry}', 'destroy')->name('radio.destroy');
         });
 
+        Route::prefix('social')->as('social.')->controller(SocialController::class)->group(function () {
+            Route::get('/', 'show')->name('index');
+            Route::get('/feed', 'feed')->middleware('throttle:120,1')->name('feed');
+            Route::get('/photos', 'photos')->middleware('throttle:120,1')->name('photos');
+            Route::get('/users', 'users')->middleware('throttle:120,1')->name('users');
+            Route::get('/comments', 'comments')->middleware('throttle:120,1')->name('comments');
+            Route::post('/posts', 'store')->middleware('throttle:10,1')->name('posts.store');
+            Route::delete('/posts/{post}', 'destroy')->name('posts.destroy');
+            Route::post('/posts/{post}/report', 'report')->middleware('throttle:10,1')->name('posts.report');
+            Route::post('/like', 'like')->middleware('throttle:60,1')->name('like');
+            Route::post('/comments', 'comment')->middleware('throttle:20,1')->name('comments.store');
+            Route::delete('/comments/{comment}', 'destroyComment')->name('comments.destroy');
+            Route::post('/profile', 'updateProfile')->middleware('throttle:20,1')->name('profile');
+            Route::get('/u/{user:username}', 'show')->name('user');
+        });
+        Route::post('/kudos', KudosController::class)->middleware('throttle:30,1')->name('kudos.store');
+
+        Route::prefix('notifications')->as('notifications.')->controller(NotificationController::class)->group(function () {
+            Route::get('/', 'show')->name('index');
+            Route::get('/feed', 'feed')->middleware('throttle:120,1')->name('feed');
+            Route::post('/read', 'read')->middleware('throttle:60,1')->name('read');
+            Route::delete('/', 'clear')->middleware('throttle:10,1')->name('clear');
+        });
+
         Route::prefix('user')->group(function () {
             Route::get('/me', MeController::class)->name('me.show');
             Route::get('/balance', function () {
@@ -108,6 +136,7 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
                     'credits' => (int) $user->fresh()->credits,
                     'duckets' => $user->currency('duckets'),
                     'diamonds' => $user->currency('diamonds'),
+                    'unread' => WebsiteNotification::query()->where('user_id', $user->id)->whereNull('read_at')->count(),
                 ])->header('Cache-Control', 'no-store');
             })->middleware('throttle:60,1')->name('me.balance');
             Route::post('/claim/referral-reward', ReferralController::class)

@@ -30,8 +30,8 @@ final class PlusBadgeRepository implements BadgeRepository
     {
         $like = '%' . str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], trim($term)) . '%';
 
-        return DB::table('badge_definitions')->where('code', 'like', $like)->orderBy('code')->limit($limit)->pluck('code')
-            ->map(fn (mixed $code): string => (string) $code)->values()->all();
+        return array_values(DB::table('badge_definitions')->where('code', 'like', $like)->orderBy('code')->limit($limit)->pluck('code')
+            ->map(fn (mixed $code): string => (string) $code)->all());
     }
 
     public function grant(User $user, string $badge): void

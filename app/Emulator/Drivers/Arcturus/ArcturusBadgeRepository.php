@@ -33,8 +33,8 @@ class ArcturusBadgeRepository implements BadgeRepository
     {
         $like = '%' . str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], trim($term)) . '%';
 
-        return DB::table('users_badges')->where('badge_code', 'like', $like)->distinct()->orderBy('badge_code')->limit($limit)->pluck('badge_code')
-            ->map(fn (mixed $code): string => (string) $code)->values()->all();
+        return array_values(DB::table('users_badges')->where('badge_code', 'like', $like)->distinct()->orderBy('badge_code')->limit($limit)->pluck('badge_code')
+            ->map(fn (mixed $code): string => (string) $code)->all());
     }
 
     public function grant(User $user, string $badge): void

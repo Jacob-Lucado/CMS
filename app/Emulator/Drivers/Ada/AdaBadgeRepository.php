@@ -38,8 +38,8 @@ class AdaBadgeRepository implements BadgeRepository
     {
         $like = '%' . str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], trim($term)) . '%';
 
-        return DB::table('badges')->where('code', 'like', $like)->distinct()->orderBy('code')->limit($limit)->pluck('code')
-            ->map(fn (mixed $code): string => (string) $code)->values()->all();
+        return array_values(DB::table('badges')->where('code', 'like', $like)->distinct()->orderBy('code')->limit($limit)->pluck('code')
+            ->map(fn (mixed $code): string => (string) $code)->all());
     }
 
     public function grant(User $user, string $badge): void

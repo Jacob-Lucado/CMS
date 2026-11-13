@@ -24,7 +24,7 @@ class HomeController extends Controller
     {
         return view('home.show', [
             'user' => $user,
-            'isMe' => Auth::id() === $user->id,
+            'isMe' => Auth::user() instanceof User && app(HomeService::class)->canEdit(Auth::user(), $user),
         ]);
     }
 

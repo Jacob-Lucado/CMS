@@ -2228,3 +2228,60 @@ body.los-wall-art .los-stars,
 body.los-wall-light .los-stars { display: none; }
 .los-desk::after { right: auto; left: 24px; }
 @media (max-width: 760px) { .los-hotel { height: 34vh; opacity: .8; } }
+
+/* Notification bell */
+.los-bell {
+    position: relative;
+}
+
+.los-bell .los-badge {
+    position: absolute;
+    top: 1px;
+    right: -2px;
+    min-width: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #e5484d;
+    color: #fff;
+    font-size: 10px;
+    line-height: 16px;
+    text-align: center;
+    pointer-events: none;
+}
+
+.los-bell .los-badge[hidden] {
+    display: none;
+}
+
+/* Leaderboard kudos */
+.los-kudos {
+    margin-left: auto;
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+    padding: 2px 8px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: none;
+    color: var(--text);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.los-kudos:hover:not(:disabled) {
+    background: var(--soft-2);
+}
+
+.los-kudos.is-me {
+    cursor: default;
+    opacity: .75;
+}
+
+.los-kudos.is-given {
+    border-color: #3ddc97;
+}
+
+.los-kudos.is-denied {
+    border-color: #e5484d;
+}

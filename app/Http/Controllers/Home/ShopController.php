@@ -10,7 +10,6 @@ use App\Models\User;
 use App\Services\Home\HomeService;
 use App\Support\AuthenticatedUser;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
 
 class ShopController extends Controller
 {
@@ -65,8 +64,6 @@ class ShopController extends Controller
 
     public function inventory(User $user): JsonResponse
     {
-        abort_unless($user->id === Auth::id(), 403);
-
         $allInventoryItems = app(HomeService::class)->inventory(AuthenticatedUser::current(), $user, true);
 
         $filterByType = fn (HomeItemType $type) => $allInventoryItems

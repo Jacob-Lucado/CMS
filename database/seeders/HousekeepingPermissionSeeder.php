@@ -187,6 +187,11 @@ class HousekeepingPermissionSeeder extends Seeder
                 'description' => 'The minimum rank required before being able to review radio suggestions and choose which roles are radio DJs',
             ],
             [
+                'permission' => 'manage_social',
+                'min_rank' => 6,
+                'description' => 'The minimum rank required before being able to review reported posts and send website notifications',
+            ],
+            [
                 'permission' => 'manage_shop',
                 'min_rank' => 7,
                 'description' => 'The minimum rank required before being able to manage shop packages, items and categories',

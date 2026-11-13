@@ -88,6 +88,8 @@
             'duckets' => (int) $user->currency('duckets'),
             'diamonds' => (int) $user->currency('diamonds'),
             'balance' => route('me.balance', absolute: false),
+            'notifications' => '/' . ltrim(parse_url(route('notifications.index'), PHP_URL_PATH), '/'),
+            'unread' => \App\Models\Social\WebsiteNotification::query()->where('user_id', $user->id)->whereNull('read_at')->count(),
         ] : null,
         'home' => $user ? $page('me.show', '', '')['path'] : '/',
         'clients' => array_values(array_filter([

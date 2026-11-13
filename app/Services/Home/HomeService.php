@@ -9,6 +9,7 @@ use App\Models\Home\HomeCategory;
 use App\Models\Home\HomeItem;
 use App\Models\Home\UserHomeItem;
 use App\Models\User;
+use App\Services\PermissionsService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
@@ -83,7 +84,7 @@ class HomeService
     /** @param  array{backgroundId?: int, items?: list<array<string, mixed>>}  $data */
     public function saveItems(User $actor, User $user, array $data): void
     {
-        abort_unless($actor->is($user), 403);
+        abort_unless($this->canEdit($actor, $user), 403);
         if (isset($data['backgroundId'])) {
             $background = $user->inventoryHomeItems()->find($data['backgroundId']);
 
@@ -182,7 +183,7 @@ class HomeService
     /** @return Collection<int, UserHomeItem> */
     public function inventory(User $actor, User $owner, bool $grouped = false): Collection
     {
-        abort_unless($actor->is($owner), 403);
+        abort_unless($this->canEdit($actor, $owner), 403);
         $query = $grouped ? $owner->groupedInventoryItems() : $owner->inventoryHomeItems()->with('homeItem');
 
         return $query->get();
@@ -232,5 +233,11 @@ class HomeService
             'my-guestbook' => $user->loadGuestbookForHome(),
             default => $user,
         };
+    }
+
+    /** Owners edit their own home; staff with `min_home_edit_rank` can edit anyone's. */
+    public function canEdit(User $actor, User $owner): bool
+    {
+        return $actor->is($owner) || app(PermissionsService::class)->allows($actor, 'min_home_edit_rank');
     }
 }

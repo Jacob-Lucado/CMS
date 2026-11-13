@@ -1,0 +1,353 @@
+<?php
+
+namespace App\Http\Controllers\Social;
+
+use App\Emulator\Data\Feature;
+use App\Emulator\Emulator;
+use App\Http\Controllers\Controller;
+use App\Models\Miscellaneous\CameraWeb;
+use App\Models\Social\SocialComment;
+use App\Models\Social\SocialLike;
+use App\Models\Social\SocialPost;
+use App\Models\Social\SocialProfile;
+use App\Models\Social\SocialReport;
+use App\Models\User;
+use App\Services\PermissionsService;
+use App\Services\Social\Notifier;
+use App\Services\Social\SocialFeed;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+
+class SocialController extends Controller
+{
+    private const PAGE = 15;
+
+    public function __construct(private readonly SocialFeed $feed, private readonly Notifier $notifier, private readonly PermissionsService $permissions) {}
+
+    public function show(Request $request, ?User $user = null): View
+    {
+        $viewer = $this->viewer($request);
+        $owner = $user ?? $viewer;
+        $profile = SocialProfile::query()->find($owner->id);
+
+        return view('social', [
+            'profileUser' => $user,
+            'config' => [
+                'feed' => route('social.feed', absolute: false),
+                'post' => route('social.posts.store', absolute: false),
+                'base' => rtrim(route('social.index', absolute: false), '/'),
+                'photos' => route('social.photos', absolute: false),
+                'users' => route('social.users', absolute: false),
+                'profile' => route('social.profile', absolute: false),
+                'notifications' => route('notifications.index', absolute: false),
+                'me' => $this->feed->author($viewer),
+                'owner' => $user ? [...($this->feed->author($user) ?? []), 'background' => $profile?->background, 'motto' => (string) $user->motto] : null,
+                'background' => $viewer->id === $owner->id ? $profile?->background : null,
+                'staff' => $this->isStaff($viewer),
+                'imager' => (string) setting('avatar_imager'),
+                'camera' => Emulator::supports(Feature::CameraPhotos),
+            ],
+        ]);
+    }
+
+    public function feed(Request $request): JsonResponse
+    {
+        $viewer = $this->viewer($request);
+        $filters = $request->validate([
+            'before' => ['nullable', 'integer'],
+            'user' => ['nullable', 'integer'],
+            'post' => ['nullable', 'integer'],
+        ]);
+
+        $posts = SocialPost::query()
+            ->when($filters['before'] ?? null, fn ($query, $before) => $query->where('id', '<', $before))
+            ->when($filters['user'] ?? null, fn ($query, $userId) => $query->where(fn ($inner) => $inner->where('user_id', $userId)->orWhereHas('tagged', fn ($tag) => $tag->where('users.id', $userId))))
+            ->when($filters['post'] ?? null, fn ($query, $postId) => $query->whereKey($postId))
+            ->latest('id')
+            ->limit(self::PAGE)
+            ->get();
+
+        return response()->json([
+            'posts' => $this->feed->posts($posts, $viewer, $this->isStaff($viewer)),
+            'more' => $posts->count() === self::PAGE,
+        ])->header('Cache-Control', 'no-store');
+    }
+
+    public function store(Request $request): JsonResponse
+    {
+        $viewer = $this->viewer($request);
+        $data = $request->validate([
+            'type' => ['required', Rule::in([SocialPost::STATUS, SocialPost::PHOTO, SocialPost::VIDEO, SocialPost::OUTFIT, SocialPost::PROFILE, SocialPost::SHARE])],
+            'body' => ['nullable', 'string', 'max:1000'],
+            'photos' => ['array', 'max:6'],
+            'photos.*' => ['integer'],
+            'video' => ['nullable', 'string', 'max:200'],
+            'shared_post_id' => ['nullable', 'integer'],
+            'tags' => ['array', 'max:20'],
+            'tags.*' => ['string', 'max:25'],
+        ]);
+
+        $body = trim((string) ($data['body'] ?? ''));
+        $extra = [];
+        $sharedId = null;
+
+        switch ($data['type']) {
+            case SocialPost::STATUS:
+                if ($body === '') {
+                    throw ValidationException::withMessages(['body' => __('Write something first.')]);
+                }
+                break;
+            case SocialPost::PHOTO:
+                abort_unless(Emulator::supports(Feature::CameraPhotos), 422, __('Photos are not available on this hotel yet.'));
+                $photos = CameraWeb::query()->whereIn('id', $data['photos'] ?? [])->where('visible', 1)->get(['id', 'url', 'user_id']);
+                if ($photos->isEmpty()) {
+                    throw ValidationException::withMessages(['photos' => __('Pick at least one photo.')]);
+                }
+                $extra['photos'] = $photos->map(fn (CameraWeb $photo): array => ['id' => $photo->id, 'url' => $photo->url])->values()->all();
+                break;
+            case SocialPost::VIDEO:
+                $video = SocialFeed::youtubeId((string) ($data['video'] ?? ''));
+                if ($video === null) {
+                    throw ValidationException::withMessages(['video' => __("That doesn't look like a YouTube link.")]);
+                }
+                $extra['video'] = $video;
+                break;
+            case SocialPost::OUTFIT:
+                $extra['look'] = (string) $viewer->look;
+                $extra['gender'] = (string) $viewer->gender;
+                break;
+            case SocialPost::PROFILE:
+                $extra['home'] = route('home.show', $viewer->username, false);
+                $extra['look'] = (string) $viewer->look;
+                $extra['motto'] = (string) $viewer->motto;
+                break;
+            case SocialPost::SHARE:
+                $original = SocialPost::query()->findOrFail((int) ($data['shared_post_id'] ?? 0));
+                $sharedId = $original->shared_post_id ?? $original->id;
+                break;
+        }
+
+        $post = SocialPost::query()->create([
+            'user_id' => $viewer->id,
+            'type' => $data['type'],
+            'body' => $body === '' ? null : $body,
+            'data' => $extra === [] ? null : $extra,
+            'shared_post_id' => $sharedId,
+        ]);
+
+        $this->afterPosting($post, $viewer, array_values(array_map(strval(...), (array) ($data['tags'] ?? []))));
+
+        return response()->json(['post' => $this->feed->posts(SocialPost::query()->whereKey($post->id)->get(), $viewer, $this->isStaff($viewer))[0]], 201);
+    }
+
+    public function destroy(Request $request, SocialPost $post): JsonResponse
+    {
+        $viewer = $this->viewer($request);
+        $staff = $this->isStaff($viewer);
+        abort_unless($staff || $post->user_id === $viewer->id, 403);
+
+        if ($post->user_id !== $viewer->id) {
+            $this->notifier->send($post->user_id, 'post_removed', __('A staff member removed one of your posts.'), null, $viewer);
+        }
+
+        SocialReport::query()->where('post_id', $post->id)->whereNull('resolved_at')->update(['resolved_by' => $viewer->id, 'resolved_at' => now()]);
+        $post->delete();
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function like(Request $request): JsonResponse
+    {
+        $viewer = $this->viewer($request);
+        [$type, $id, $ownerId, $url] = $this->target($request);
+        $key = ['target_type' => $type, 'target_id' => $id, 'user_id' => $viewer->id];
+
+        $existing = SocialLike::query()->where($key);
+        if ($existing->exists()) {
+            $existing->delete();
+            $liked = false;
+        } else {
+            SocialLike::query()->create($key);
+            $liked = true;
+            $this->notifier->send($ownerId, $this->likeType($type, $id), __(':name liked your :thing.', ['name' => $viewer->username, 'thing' => $type === SocialFeed::PHOTO ? __('photo') : __('post')]), $url, $viewer);
+        }
+
+        return response()->json([
+            'liked' => $liked,
+            'likes' => SocialLike::query()->where('target_type', $type)->where('target_id', $id)->count(),
+        ]);
+    }
+
+    public function comments(Request $request): JsonResponse
+    {
+        $viewer = $this->viewer($request);
+        [$type, $id] = $this->target($request);
+        $staff = $this->isStaff($viewer);
+
+        $comments = SocialComment::query()->with('user')->where('target_type', $type)->where('target_id', $id)->oldest('id')->limit(200)->get();
+
+        return response()->json(['comments' => $comments->map(fn (SocialComment $comment): array => $this->feed->comment($comment, $viewer, $staff))->values()]);
+    }
+
+    public function comment(Request $request): JsonResponse
+    {
+        $viewer = $this->viewer($request);
+        [$type, $id, $ownerId, $url] = $this->target($request);
+        $body = trim((string) $request->validate(['body' => ['required', 'string', 'max:500']])['body']);
+
+        $comment = SocialComment::query()->create(['target_type' => $type, 'target_id' => $id, 'user_id' => $viewer->id, 'body' => $body]);
+
+        $this->notifier->send($ownerId, $type === SocialFeed::PHOTO ? 'photo_comment' : 'post_comment', __(':name commented: ":text"', ['name' => $viewer->username, 'text' => mb_strimwidth($body, 0, 80, '...')]), $url, $viewer);
+
+        foreach ($this->feed->mentions($body) as $tagged) {
+            if ($tagged->id !== $ownerId) {
+                $this->notifier->send($tagged, 'tag', __(':name mentioned you in a comment.', ['name' => $viewer->username]), $url, $viewer);
+            }
+        }
+
+        return response()->json(['comment' => $this->feed->comment($comment->load('user'), $viewer, $this->isStaff($viewer))], 201);
+    }
+
+    public function destroyComment(Request $request, SocialComment $comment): JsonResponse
+    {
+        $viewer = $this->viewer($request);
+        abort_unless($this->isStaff($viewer) || $comment->user_id === $viewer->id, 403);
+        $comment->delete();
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function report(Request $request, SocialPost $post): JsonResponse
+    {
+        $viewer = $this->viewer($request);
+        $reason = $request->validate(['reason' => ['required', 'string', 'max:300']])['reason'];
+
+        $report = SocialReport::query()->firstOrCreate(['post_id' => $post->id, 'user_id' => $viewer->id], ['reason' => $reason]);
+
+        if ($report->wasRecentlyCreated) {
+            $this->notifier->staff('min_staff_rank', 'post_reported', __(':name reported a post by :author.', ['name' => $viewer->username, 'author' => $post->user->username ?? '?']), $this->postUrl($post->id), $viewer);
+        }
+
+        return response()->json(['message' => __('Thanks. Staff will take a look.')]);
+    }
+
+    public function photos(Request $request): JsonResponse
+    {
+        $viewer = $this->viewer($request);
+        if (! Emulator::supports(Feature::CameraPhotos)) {
+            return response()->json(['photos' => [], 'more' => false]);
+        }
+
+        $filters = $request->validate(['before' => ['nullable', 'integer'], 'mine' => ['nullable', 'boolean'], 'id' => ['nullable', 'integer']]);
+
+        $photos = CameraWeb::query()
+            ->where('visible', 1)
+            ->when($filters['before'] ?? null, fn ($query, $before) => $query->where('id', '<', $before))
+            ->when($filters['mine'] ?? false, fn ($query) => $query->where('user_id', $viewer->id))
+            ->when($filters['id'] ?? null, fn ($query, $id) => $query->where('id', '<=', $id))
+            ->latest('id')
+            ->limit(12)
+            ->get();
+
+        return response()->json(['photos' => $this->feed->photos($photos, $viewer), 'more' => $photos->count() === 12])->header('Cache-Control', 'no-store');
+    }
+
+    public function users(Request $request): JsonResponse
+    {
+        $term = (string) $request->validate(['q' => ['required', 'string', 'min:1', 'max:25']])['q'];
+
+        $users = User::query()->where('username', 'like', str_replace(['%', '_'], ['\%', '\_'], $term) . '%')->orderBy('username')->limit(8)->get(['id', 'username', 'look']);
+
+        return response()->json(['users' => $users->map(fn (User $user): ?array => $this->feed->author($user))->values()]);
+    }
+
+    public function updateProfile(Request $request): JsonResponse
+    {
+        $viewer = $this->viewer($request);
+        $data = $request->validate([
+            'background' => ['nullable', 'string', 'max:300', 'regex:~^(https://\S+\.(png|jpe?g|gif|webp)(\?\S*)?|/\S+)$~i'],
+            'muted' => ['array'],
+            'muted.*' => ['string', Rule::in(Notifier::types())],
+            'hide_from_rare_directory' => ['boolean'],
+        ]);
+
+        $profile = SocialProfile::query()->firstOrNew(['user_id' => $viewer->id]);
+        $profile->fill(array_intersect_key($data, $request->all()))->save();
+
+        return response()->json(['ok' => true, 'background' => $profile->background]);
+    }
+
+    /** @param  list<string>  $picked */
+    private function afterPosting(SocialPost $post, User $viewer, array $picked): void
+    {
+        $url = $this->postUrl($post->id);
+        $tagged = $this->feed->mentions((string) $post->body, $picked)->reject(fn (User $user): bool => $user->id === $viewer->id);
+        $post->tagged()->sync($tagged->pluck('id')->all());
+
+        foreach ($tagged as $user) {
+            $this->notifier->send($user, 'tag', __(':name tagged you in a post.', ['name' => $viewer->username]), $url, $viewer);
+        }
+
+        if ($post->type === SocialPost::SHARE && $post->shared) {
+            $this->notifier->send($post->shared->user_id, 'post_share', __(':name shared your post.', ['name' => $viewer->username]), $url, $viewer);
+        }
+
+        if ($post->type === SocialPost::PHOTO) {
+            foreach (array_column((array) ($post->data['photos'] ?? []), 'id') as $photoId) {
+                $ownerId = (int) CameraWeb::query()->whereKey($photoId)->value('user_id');
+                $this->notifier->send($ownerId, 'post_share', __(':name shared your photo.', ['name' => $viewer->username]), $url, $viewer);
+            }
+        }
+    }
+
+    /** @return array{0: string, 1: int, 2: int, 3: string} */
+    private function target(Request $request): array
+    {
+        $data = $request->validate([
+            'target_type' => ['required', Rule::in([SocialFeed::POST, SocialFeed::PHOTO])],
+            'target_id' => ['required', 'integer'],
+        ]);
+        $id = (int) $data['target_id'];
+
+        if ($data['target_type'] === SocialFeed::PHOTO) {
+            abort_unless(Emulator::supports(Feature::CameraPhotos), 404);
+            $photo = CameraWeb::query()->where('visible', 1)->findOrFail($id);
+
+            return [SocialFeed::PHOTO, $id, (int) $photo->user_id, route('social.index', ['photo' => $id], false)];
+        }
+
+        $post = SocialPost::query()->findOrFail($id);
+
+        return [SocialFeed::POST, $id, $post->user_id, $this->postUrl($id)];
+    }
+
+    private function likeType(string $type, int $id): string
+    {
+        if ($type === SocialFeed::PHOTO) {
+            return 'photo_like';
+        }
+
+        return SocialPost::query()->whereKey($id)->value('type') === SocialPost::OUTFIT ? 'outfit_like' : 'post_like';
+    }
+
+    private function postUrl(int $id): string
+    {
+        return route('social.index', ['post' => $id], false);
+    }
+
+    private function isStaff(User $user): bool
+    {
+        return $this->permissions->allows($user, 'min_staff_rank');
+    }
+
+    private function viewer(Request $request): User
+    {
+        $user = $request->user();
+        abort_unless($user instanceof User, 401);
+
+        return $user;
+    }
+}

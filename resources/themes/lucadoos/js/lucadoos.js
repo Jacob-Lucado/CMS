@@ -1093,9 +1093,21 @@ function desktop(data) {
                         for (const kind of Object.keys(coins)) {
                             if (kind in balance) coins[kind].textContent = fmt(balance[kind]);
                         }
+                        if ("unread" in balance) setUnread(balance.unread);
                     })
                     .catch(() => {});
             };
+            const bell = el("button", "los-traybtn los-bell", { type: "button", title: "Notifications" }, el("span", "", { text: "🔔", "aria-hidden": "true" }));
+            const badge = el("b", "los-badge");
+            bell.append(badge);
+            const setUnread = (n) => {
+                badge.textContent = n > 99 ? "99+" : String(n);
+                badge.hidden = !n;
+                bell.title = n ? `Notifications (${n} new)` : "Notifications";
+            };
+            setUnread(Number(data.user.unread || 0));
+            bell.addEventListener("click", () => open(data.user.notifications));
+            box.append(bell);
             setInterval(refresh, 10000);
             document.addEventListener("visibilitychange", refresh);
             window.addEventListener("focus", refresh);

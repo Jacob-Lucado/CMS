@@ -16,6 +16,7 @@ use App\Services\InstallationService;
 use App\Services\Payments\SrmklivePaypalGateway;
 use App\Services\PermissionsService;
 use App\Services\SettingsService;
+use App\Services\Social\SocialActivity;
 use App\Services\ViteService;
 use Filament\Tables\Table;
 use GuzzleHttp\Client as HttpClient;
@@ -84,6 +85,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        SocialActivity::register();
+
         Livewire::addPersistentMiddleware([
             BannedMiddleware::class,
             MaintenanceMiddleware::class,

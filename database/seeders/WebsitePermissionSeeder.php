@@ -46,6 +46,16 @@ class WebsitePermissionSeeder extends Seeder
                 'min_rank' => '7',
                 'description' => 'Minimum required rank to use the logo generator',
             ],
+            [
+                'permission' => 'min_staff_rank',
+                'min_rank' => '5',
+                'description' => 'Minimum rank to moderate the social feed and receive post reports',
+            ],
+            [
+                'permission' => 'min_home_edit_rank',
+                'min_rank' => '7',
+                'description' => 'Minimum rank to edit any user\'s home',
+            ],
         ];
 
         foreach ($permissions as $permission) {
