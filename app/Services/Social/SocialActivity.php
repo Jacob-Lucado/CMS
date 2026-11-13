@@ -65,6 +65,14 @@ class SocialActivity
             $package = (string) ($purchase->package->name ?? __('a package'));
             $url = route('shop.index', absolute: false);
 
+            app(DiscordWebhook::class)->send(
+                $purchase->gifted_to ? __('🎁 Gift sent') : __('🛒 New purchase'),
+                $purchase->gifted_to
+                    ? __(':name gifted :package to :friend.', ['name' => self::name($purchase->user_id), 'package' => $package, 'friend' => self::name($purchase->gifted_to)])
+                    : __(':name bought :package.', ['name' => self::name($purchase->user_id), 'package' => $package]),
+                0x3DDC97,
+            );
+
             if ($purchase->gifted_to) {
                 self::notifier()->send($purchase->gifted_to, 'gift_received', __(':name sent you :package as a gift!', ['name' => self::name($purchase->user_id), 'package' => $package]), $url);
                 self::notifier()->send($purchase->user_id, 'gift_sent', __('Your gift of :package was sent to :name.', ['package' => $package, 'name' => self::name($purchase->gifted_to)]), $url);
@@ -85,6 +93,7 @@ class SocialActivity
 
         Referral::created(fn (Referral $referral) => self::safely(function () use ($referral): void {
             $newcomer = self::name($referral->referred_user_id);
+            app(DiscordWebhook::class)->send(__('🤝 New referral'), __(':name invited :friend to the hotel.', ['name' => self::name($referral->user_id), 'friend' => $newcomer]), 0xEEB425);
             SocialPost::query()->create([
                 'user_id' => $referral->user_id,
                 'type' => SocialPost::REFERRAL,

@@ -8,7 +8,9 @@ use App\Models\Social\SocialProfile;
 use App\Models\Social\WebsiteNotification;
 use App\Models\User;
 use App\Services\PermissionsService;
+use App\Services\Social\DiscordWebhook;
 use App\Services\Social\SocialFeed;
+use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
     installHotel();
@@ -149,4 +151,22 @@ it('renders the feed and notification pages', function () {
     poster($user)->get(route('social.user', $user->username))->assertOk();
     poster($user)->get(route('notifications.index'))->assertOk()->assertSee('hotelNotifications');
     poster($user)->getJson(route('social.feed'))->assertJsonPath('posts.0.body', 'First!');
+});
+
+it('posts referrals to the Discord webhook when one is set', function () {
+    Http::fake(['discord.com/*' => Http::response('', 204)]);
+    setSetting('discord_webhook_url', 'https://discord.com/api/webhooks/123/abc-DEF');
+    $inviter = User::factory()->create();
+
+    $inviter->userReferrals()->create(['referred_user_id' => User::factory()->create()->id, 'referred_user_ip' => '1.2.3.4']);
+
+    Http::assertSent(fn ($request) => str_contains($request['embeds'][0]['title'], 'referral'));
+    expect(SocialPost::query()->where('user_id', $inviter->id)->value('type'))->toBe('referral');
+});
+
+it('skips the webhook when none is set', function () {
+    Http::fake();
+
+    expect(app(DiscordWebhook::class)->send('Hi', 'There'))->toBeFalse();
+    Http::assertNothingSent();
 });

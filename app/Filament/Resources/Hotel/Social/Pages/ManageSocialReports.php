@@ -3,7 +3,10 @@
 namespace App\Filament\Resources\Hotel\Social\Pages;
 
 use App\Filament\Resources\Hotel\Social\SocialReportResource;
+use App\Models\Miscellaneous\WebsiteSetting;
 use App\Models\User;
+use App\Services\SettingsService;
+use App\Services\Social\DiscordWebhook;
 use App\Services\Social\Notifier;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
@@ -19,6 +22,28 @@ class ManageSocialReports extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('discord')
+                ->label(__('Discord webhook'))
+                ->icon('heroicon-o-link')
+                ->color('gray')
+                ->modalHeading(__('Discord webhook'))
+                ->modalDescription(__('Shop purchases, gifts and referrals get posted to this Discord channel. Leave it empty to turn it off.'))
+                ->fillForm(fn (): array => ['url' => (string) setting('discord_webhook_url', '')])
+                ->schema([
+                    TextInput::make('url')
+                        ->label(__('Webhook URL'))
+                        ->placeholder('https://discord.com/api/webhooks/...')
+                        ->regex(DiscordWebhook::PATTERN)
+                        ->maxLength(300),
+                ])
+                ->action(function (array $data): void {
+                    WebsiteSetting::query()->updateOrCreate(['key' => 'discord_webhook_url'], ['value' => (string) ($data['url'] ?? ''), 'comment' => 'Discord webhook for hotel events']);
+                    app(SettingsService::class)->refresh();
+
+                    $sent = filled($data['url'] ?? null) && app(DiscordWebhook::class)->send(__('✅ Webhook connected'), __('Hotel events will show up here.'));
+
+                    Notification::make()->success()->title($sent ? __('Saved. Check Discord for a test message.') : __('Saved'))->send();
+                }),
             Action::make('notify')
                 ->label(__('Send a notification'))
                 ->icon('heroicon-o-bell-alert')
