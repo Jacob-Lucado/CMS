@@ -30,6 +30,14 @@
         ]];
     }
 
+    if ($user) {
+        $groups[] = ['label' => __('Social'), 'icon' => '💬', 'pages' => [
+            $page('social.index', __('Social feed'), asset('assets/images/icons/chat.png')),
+            $page('social.user', __('My profile'), asset('assets/images/icons/friends.png'), [$user->username]),
+            $page('notifications.index', __('Notifications'), asset('assets/images/icons/feeds.png')),
+        ]];
+    }
+
     $groups[] = ['label' => __('News'), 'icon' => '📰', 'pages' => [$page('article.index', __('Articles'), asset('assets/images/icons/article.gif'))]];
 
     if ($user) {

@@ -170,3 +170,11 @@ it('skips the webhook when none is set', function () {
     expect(app(DiscordWebhook::class)->send('Hi', 'There'))->toBeFalse();
     Http::assertNothingSent();
 });
+
+it('lists the social apps in the LucadoOS start menu', function () {
+    setSetting('theme', 'lucadoos');
+    setSetting('enable_caching', '0');
+    $user = User::factory()->create();
+
+    poster($user)->get(route('me.show'))->assertOk()->assertSee('Social feed')->assertSee('My profile');
+});
