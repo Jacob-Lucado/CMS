@@ -92,19 +92,19 @@
                 {{ __('Current balance: :balance', ['balance' => \App\Support\StorefrontMoney::format(auth()->user()->website_balance)]) }}
             </div>
 
-            @if(\App\Support\PaypalConfiguration::isConfigured())
-                <form action="{{ route('paypal.process-transaction') }}" method="POST" class="mt-3">
+            @if(\App\Services\Payments\StripeCheckout::isConfigured())
+                <form action="{{ route('stripe.checkout') }}" method="POST" class="mt-3">
                     @csrf
 
-                    <x-form.input name="amount" type="number" value="0" placeholder="amount" />
+                    <x-form.input name="amount" type="number" value="5" placeholder="amount" />
 
                     <button type="submit" class="mt-2 w-full rounded bg-blue-600 hover:bg-blue-700 text-white p-2 border-2 border-blue-500 transition ease-in-out duration-150 font-semibold">
-                        {{ __('Donate') }}
+                        {{ __('Top up with card') }}
                     </button>
                 </form>
             @else
                 <p class="dark:text-gray-100  mt-4 text-xs">
-                    {{ __('Please setup the paypal credentials to allow for top ups') }}
+                    {{ __('Top-ups are not switched on yet.') }}
                 </p>
             @endif
         </x-content.content-card>

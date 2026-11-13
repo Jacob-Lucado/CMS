@@ -74,6 +74,11 @@ return [
 
     'password_reset_token_time' => env('PASSWORD_RESET_TOKEN_TIME', 15),
 
+    'stripe' => [
+        'secret' => env('STRIPE_SECRET_KEY', ''),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET', ''),
+    ],
+
     'paypal' => [
         'mode' => env('PAYPAL_MODE', 'sandbox'), // Can only be 'sandbox' Or 'live'. If empty or invalid, 'live' will be used.
         'sandbox' => [
