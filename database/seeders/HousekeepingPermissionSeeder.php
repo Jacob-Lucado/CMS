@@ -172,6 +172,16 @@ class HousekeepingPermissionSeeder extends Seeder
                 'description' => 'The minimum rank required before being able to manage website advertisements',
             ],
             [
+                'permission' => 'manage_hotel',
+                'min_rank' => 7,
+                'description' => 'The minimum rank required before being able to alert everyone, give everyone online gifts and reload the game server',
+            ],
+            [
+                'permission' => 'manage_discord_accounts',
+                'min_rank' => 6,
+                'description' => 'The minimum rank required before being able to see and unlink players\' Discord accounts',
+            ],
+            [
                 'permission' => 'manage_shop',
                 'min_rank' => 7,
                 'description' => 'The minimum rank required before being able to manage shop packages, items and categories',

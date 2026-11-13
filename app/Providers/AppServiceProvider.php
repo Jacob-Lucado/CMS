@@ -97,9 +97,11 @@ class AppServiceProvider extends ServiceProvider
 
         Model::preventLazyLoading(! $this->app->isProduction());
 
+        // Every theme's components compile the same way, so a page shared by the themes works whichever compiled it first.
         Blaze::optimize()
             ->in(resource_path('themes/atom/views/components'))
-            ->in(resource_path('themes/dusk/views/components'));
+            ->in(resource_path('themes/dusk/views/components'))
+            ->in(resource_path('themes/lucadoos/views/components'));
 
         if (config('habbo.site.force_https')) {
             URL::forceScheme('https');

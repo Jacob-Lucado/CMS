@@ -2,3 +2,266 @@
 
 @source "../../../../app/Filament";
 @source "../../../views/filament";
+
+/*
+ * Housekeeping in the LucadoOS look: the navy desktop with its blue and violet glow, glassy panels,
+ * and the same rounded, roomy feel as the site. LucadoOS™ is a trademark of Jacob Lucado.
+ */
+
+:root {
+    --hk-glow-a: rgba(77, 163, 255, 0.16);
+    --hk-glow-b: rgba(124, 108, 255, 0.12);
+    --hk-panel: rgba(255, 255, 255, 0.72);
+    --hk-line: rgba(20, 40, 80, 0.12);
+    --hk-radius: 14px;
+}
+
+.dark {
+    --hk-glow-a: rgba(77, 163, 255, 0.18);
+    --hk-glow-b: rgba(124, 108, 255, 0.14);
+    --hk-panel: rgba(22, 33, 52, 0.78);
+    --hk-line: rgba(148, 176, 214, 0.14);
+}
+
+.fi-body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background:
+        radial-gradient(1000px 500px at 90% -120px, var(--hk-glow-a), transparent 70%),
+        radial-gradient(800px 420px at -10% 0, var(--hk-glow-b), transparent 70%),
+        var(--gray-50);
+    background-attachment: fixed;
+}
+
+.dark .fi-body {
+    background:
+        radial-gradient(1000px 500px at 90% -120px, var(--hk-glow-a), transparent 70%),
+        radial-gradient(800px 420px at -10% 0, var(--hk-glow-b), transparent 70%),
+        #0f1724;
+    background-attachment: fixed;
+}
+
+/* the sidebar and top bar read like the LucadoOS taskbar: glass over the glow */
+.fi-sidebar,
+.fi-topbar nav,
+.fi-topbar {
+    background: color-mix(in srgb, var(--hk-panel) 85%, transparent) !important;
+    backdrop-filter: blur(14px);
+}
+
+.fi-sidebar {
+    border-inline-end: 1px solid var(--hk-line);
+}
+
+.fi-topbar nav {
+    border-bottom: 1px solid var(--hk-line);
+    box-shadow: none;
+}
+
+.fi-sidebar-header {
+    border-bottom: 1px solid var(--hk-line);
+}
+
+.fi-logo {
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    background: linear-gradient(90deg, #7c6cff, #4da3ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.fi-sidebar-item-btn {
+    border-radius: 10px;
+}
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-btn {
+    background: color-mix(in srgb, var(--primary-500) 16%, transparent);
+}
+
+/* panels: rounded glass cards with a soft shadow, like the windows on the site */
+.fi-section,
+.fi-wi-stats-overview-stat,
+.fi-ta-ctn,
+.fi-fo-tabs,
+.fi-modal-window {
+    border-radius: var(--hk-radius) !important;
+    background: var(--hk-panel) !important;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 10px 30px rgba(3, 8, 18, 0.12) !important;
+    --tw-ring-color: var(--hk-line);
+}
+
+.dark .fi-section,
+.dark .fi-wi-stats-overview-stat,
+.dark .fi-ta-ctn,
+.dark .fi-fo-tabs,
+.dark .fi-modal-window {
+    box-shadow: 0 12px 34px rgba(3, 8, 18, 0.32) !important;
+}
+
+.fi-wi-stats-overview-stat-value {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.fi-btn {
+    border-radius: 10px;
+}
+
+.fi-header-heading {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+/* ---------------------------------------------------- pieces for the hotel widgets and pages */
+
+.hk-empty {
+    margin: 0;
+    color: var(--gray-500);
+    font-size: 0.875rem;
+}
+
+.hk-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.hk-rows li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 10px;
+    border-radius: 10px;
+}
+
+.hk-rows li:hover {
+    background: color-mix(in srgb, var(--primary-500) 8%, transparent);
+}
+
+.hk-row-main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.hk-row-main strong {
+    color: var(--gray-950);
+    font-size: 0.9rem;
+}
+
+.dark .hk-row-main strong {
+    color: #fff;
+}
+
+.hk-row-main small {
+    color: var(--gray-500);
+    font-size: 0.78rem;
+}
+
+.hk-count {
+    flex: none;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--success-500) 16%, transparent);
+    color: var(--success-600);
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.dark .hk-count {
+    color: var(--success-400);
+}
+
+.hk-mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.hk-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.hk-status {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.hk-status-tile {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 16px 18px;
+    border: 1px solid var(--hk-line);
+    border-radius: var(--hk-radius);
+    background: var(--hk-panel);
+}
+
+.hk-status-tile span {
+    color: var(--gray-500);
+    font-size: 0.82rem;
+}
+
+.hk-status-tile strong {
+    color: var(--success-600);
+    font-size: 1.6rem;
+    font-weight: 800;
+}
+
+.dark .hk-status-tile strong {
+    color: var(--success-400);
+}
+
+.hk-status-tile.is-bad strong {
+    color: var(--danger-500);
+}
+
+.hk-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+}
+
+.hk-discord {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.hk-discord img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.hk-discord div {
+    display: flex;
+    flex-direction: column;
+}
+
+.hk-discord small {
+    color: var(--gray-500);
+    font-size: 0.78rem;
+}
+
+.hk-facts {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 6px 14px;
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.hk-facts dt {
+    color: var(--gray-500);
+}
+
+.hk-facts dd {
+    margin: 0;
+}

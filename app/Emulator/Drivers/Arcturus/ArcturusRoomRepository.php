@@ -3,6 +3,7 @@
 namespace App\Emulator\Drivers\Arcturus;
 
 use App\Emulator\Contracts\RoomRepository;
+use App\Emulator\Data\RoomActivity;
 use App\Emulator\Data\RoomSummary;
 use App\Models\Room;
 use App\Models\User;
@@ -26,5 +27,15 @@ class ArcturusRoomRepository implements RoomRepository
     public function count(): int
     {
         return Room::query()->count();
+    }
+
+    public function busiest(int $limit): Collection
+    {
+        return Room::query()
+            ->where('users', '>', 0)
+            ->orderByDesc('users')
+            ->limit($limit)
+            ->get(['id', 'name', 'owner_name', 'users'])
+            ->map(fn (Room $room) => new RoomActivity((int) $room->id, (string) $room->name, (string) $room->owner_name, (int) $room->users));
     }
 }

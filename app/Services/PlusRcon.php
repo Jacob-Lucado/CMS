@@ -16,7 +16,8 @@ final readonly class PlusRcon implements Rcon
     /** @var list<string> */
     private const COMMANDS = [
         'alert_user', 'disconnect_user', 'give_user_badge', 'give_user_currency',
-        'reload_catalog', 'reload_filter', 'reload_user_motto', 'reload_user_rank', 'take_user_currency',
+        'reload_bans', 'reload_catalog', 'reload_filter', 'reload_items', 'reload_navigator', 'reload_ranks',
+        'reload_server_settings', 'reload_user_motto', 'reload_user_rank', 'take_user_badge', 'take_user_currency',
     ];
 
     public function __construct(

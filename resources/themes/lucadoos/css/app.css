@@ -1928,3 +1928,231 @@ body.los-page-body > .los-content {
         display: none;
     }
 }
+
+/* settings menu, shared by every settings page */
+.los-side-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--panel) 92%, transparent);
+}
+
+.los-side-nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    color: var(--text);
+    transition: background-color 0.15s ease;
+}
+
+.los-side-nav a:hover {
+    background: var(--hover-row);
+}
+
+.los-side-nav a.is-active {
+    background: color-mix(in srgb, var(--accent) 16%, transparent);
+    box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.los-side-nav strong {
+    display: block;
+    color: var(--white);
+    font-size: 14px;
+}
+
+.los-side-nav small {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.los-side-icon {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: var(--soft-2);
+    font-size: 17px;
+}
+
+/* leaderboards */
+.los-ranks {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+    padding: 0 14px;
+    list-style: none;
+}
+
+.los-ranks li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 58px;
+    overflow: hidden;
+    padding: 0 10px;
+    border-radius: 12px;
+    background: var(--soft);
+}
+
+.los-ranks li.is-top {
+    background: linear-gradient(90deg, color-mix(in srgb, var(--accent-2) 18%, transparent), color-mix(in srgb, var(--accent) 10%, transparent));
+}
+
+.los-rank-place {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--soft-2);
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.los-ranks li.is-top .los-rank-place {
+    background: var(--accent);
+    color: var(--on-accent);
+}
+
+.los-ranks img {
+    margin-top: 18px;
+    image-rendering: pixelated;
+}
+
+.los-rank-name {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.los-rank-name strong {
+    overflow: hidden;
+    color: var(--white);
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.los-rank-name small {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.los-head-emoji img {
+    max-width: 22px;
+    max-height: 22px;
+}
+
+/* shop */
+.los-notice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line));
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    color: var(--text);
+    font-size: 14px;
+}
+
+.los-notice button {
+    color: var(--accent);
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.los-shop-top {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+.los-balance {
+    margin-left: auto;
+    color: var(--white);
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.los-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.los-tabs a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--soft);
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.los-tabs a:hover {
+    background: var(--soft-2);
+}
+
+.los-tabs a.is-active {
+    border-color: transparent;
+    background: var(--accent);
+    color: var(--on-accent);
+}
+
+.los-tabs img {
+    max-width: 22px;
+    max-height: 22px;
+    image-rendering: pixelated;
+}
+
+.los-package-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    align-items: stretch;
+}
+
+.los-package {
+    height: 100%;
+}
+
+.los-package .los-card-body {
+    gap: 10px;
+    color: var(--text);
+    font-size: 14px;
+}
+
+.los-package ul {
+    margin: 4px 0 0;
+}
+
+/* the package card's own buy, gift and confirm buttons, in LucadoOS colors */
+.los-shop button.bg-green-600 {
+    border-color: transparent !important;
+    border-radius: 9px !important;
+    background: var(--accent) !important;
+    color: var(--on-accent) !important;
+}
+
+.los-shop button.bg-green-600:hover {
+    background: var(--accent-hover) !important;
+}
+
+.los-shop .text-yellow-500 {
+    color: var(--warn) !important;
+}

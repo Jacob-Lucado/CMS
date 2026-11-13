@@ -92,3 +92,12 @@ test('a theme with its own build folder loads its assets from there', function (
 
     expect($tags)->toContain('/build-vitetest/assets/app-test.css');
 });
+
+test('a player made by staff gets an invite code on their profile', function () {
+    $user = User::factory()->create(['referral_code' => null]);
+
+    $this->actingAs($user)->get(route('me.show'))->assertOk();
+
+    expect($user->fresh()->referral_code)->not->toBeEmpty()
+        ->toStartWith((string) $user->id);
+});

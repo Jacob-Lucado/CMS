@@ -40,4 +40,10 @@ class AdaRoomRepository implements RoomRepository
     {
         return AdaRoom::query()->count();
     }
+
+    /** Ada keeps who is in a room in memory only, so there is nothing to read. */
+    public function busiest(int $limit): Collection
+    {
+        return collect();
+    }
 }

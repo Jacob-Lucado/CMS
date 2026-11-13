@@ -32,3 +32,16 @@ test('arcturus supplies rooms with their native state', function () {
             'locked',
         ));
 });
+
+test('the busiest arcturus rooms come fullest first', function () {
+    $user = User::factory()->create();
+    foreach (['Quiet' => 2, 'Party' => 9, 'Empty' => 0] as $name => $users) {
+        DB::table('rooms')->insert(['owner_id' => $user->id, 'owner_name' => $user->username, 'name' => $name, 'description' => '', 'users' => $users]);
+    }
+
+    $rooms = app(RoomRepository::class)->busiest(5);
+
+    expect($rooms->pluck('name')->all())->toBe(['Party', 'Quiet'])
+        ->and($rooms->first()->ownerName)->toBe($user->username)
+        ->and($rooms->first()->playersInside)->toBe(9);
+});

@@ -9,9 +9,17 @@ use App\Emulator\Contracts\PlayerSettingsRepository;
 use App\Emulator\Data\Feature;
 use App\Emulator\Emulator;
 use App\Enums\CurrencyTypes;
+use App\Exceptions\RconConnectionException;
 use App\Filament\Resources\User\Users\UserResource;
+use App\Filament\Resources\User\Users\Widgets\PlayerOverview;
 use App\Models\User;
+use App\Rules\ValidBadgeCode;
+use App\Support\BadgeCode;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Exceptions\Halt;
@@ -38,10 +46,66 @@ class EditUser extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            ActionGroup::make([
+                Action::make('alertPlayer')
+                    ->label(__('Send an alert'))
+                    ->icon('heroicon-o-megaphone')
+                    ->schema([Textarea::make('message')->label(__('Message'))->required()->maxLength(500)->rows(3)])
+                    ->action(fn (array $data) => $this->live(
+                        fn (Rcon $rcon) => $rcon->alertUser($this->userRecord($this->getRecord()), trim($data['message'])),
+                        __('Alert sent'),
+                    )),
+                Action::make('giveBadge')
+                    ->label(__('Give a badge'))
+                    ->icon('heroicon-o-trophy')
+                    ->schema([
+                        TextInput::make('badge')->label(__('Badge code'))->required()->maxLength(BadgeCode::MAX_LENGTH)->rules([new ValidBadgeCode]),
+                    ])
+                    ->action(fn (array $data) => $this->live(
+                        fn (Rcon $rcon) => $rcon->giveBadge($this->userRecord($this->getRecord()), strtoupper(trim($data['badge']))),
+                        __('Badge given'),
+                    )),
+                Action::make('disconnect')
+                    ->label(__('Kick from the hotel'))
+                    ->icon('heroicon-o-arrow-right-start-on-rectangle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalDescription(__('Signs them out of the game. They can come straight back unless they are banned.'))
+                    ->visible(fn (): bool => (bool) $this->userRecord($this->getRecord())->online)
+                    ->action(fn () => $this->live(
+                        fn (Rcon $rcon) => $rcon->disconnectUser($this->userRecord($this->getRecord())),
+                        __('Kicked from the hotel'),
+                    )),
+            ])
+                ->label(__('Live actions'))
+                ->icon('heroicon-o-bolt')
+                ->button()
+                ->color('primary'),
+
             DeleteAction::make()
                 ->using(fn (User $record): bool => $this->deleteUser($record))
                 ->failureNotificationTitle(__('This user still owns rooms or groups, or has payment records, and cannot be deleted. Transfer or remove those first.')),
         ];
+    }
+
+    protected function getFooterWidgets(): array
+    {
+        return [PlayerOverview::class];
+    }
+
+    /**
+     * Runs something in the hotel through the game server and says how it went.
+     *
+     * @param  \Closure(Rcon): void  $send
+     */
+    private function live(\Closure $send, string $success): void
+    {
+        try {
+            $send(app(Rcon::class));
+            Notification::make()->success()->title($success)->send();
+        } catch (RconConnectionException $exception) {
+            Notification::make()->danger()->title(__('The game server did not take it'))->body($exception->getMessage())->send();
+        }
     }
 
     /**

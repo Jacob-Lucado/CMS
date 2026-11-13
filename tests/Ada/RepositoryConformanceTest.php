@@ -388,3 +388,9 @@ test('ada ignores a grant of nothing', function () {
 
     expect(DB::table('player_furniture_items')->where('player_id', $user->id)->count())->toBe(0);
 });
+
+test('ada lists no busiest rooms, since it keeps who is in a room in memory', function () {
+    makeAdaRoom(User::factory()->create()->id);
+
+    expect(app(RoomRepository::class)->busiest(5))->toBeEmpty();
+});

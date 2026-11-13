@@ -228,3 +228,16 @@ test('queries read native inserts updates and deletes before filtering and count
         ->and(User::query()->where('online', true)->count())->toBe(2)
         ->and(User::query()->find($deleted->id))->toBeNull();
 });
+
+test('the busiest plus rooms come fullest first, with their owner', function () {
+    $owner = User::factory()->create();
+    makePlusRoom($owner->id, ['caption' => 'Quiet', 'users_now' => 2]);
+    makePlusRoom($owner->id, ['caption' => 'Party', 'users_now' => 9]);
+    makePlusRoom($owner->id, ['caption' => 'Empty', 'users_now' => 0]);
+
+    $rooms = app(RoomRepository::class)->busiest(5);
+
+    expect($rooms->pluck('name')->all())->toBe(['Party', 'Quiet'])
+        ->and($rooms->first()->ownerName)->toBe($owner->username)
+        ->and($rooms->first()->playersInside)->toBe(9);
+});

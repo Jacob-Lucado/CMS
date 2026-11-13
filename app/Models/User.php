@@ -317,6 +317,18 @@ class User extends Authenticatable implements FilamentUser, HasName
         return $this->hasMany(WebsiteArticle::class);
     }
 
+    /**
+     * The player's invite code. Accounts made by staff or the installer start without one, so it is made the first time it is needed.
+     */
+    public function ensureReferralCode(): string
+    {
+        if (blank($this->referral_code)) {
+            $this->forceFill(['referral_code' => sprintf('%s%s', $this->getKey(), Str::random(8))])->save();
+        }
+
+        return (string) $this->referral_code;
+    }
+
     /** @return HasOne<WebsiteDiscordAccount, $this> */
     public function discordAccount(): HasOne
     {

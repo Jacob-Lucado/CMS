@@ -66,7 +66,7 @@
                     </header>
                     <div class="los-card-body gap-3">
                         <div class="los-copy">
-                            <input id="referral" type="text" readonly value="{{ sprintf('%s/register/%s', config('habbo.site.site_url'), $user->referral_code) }}">
+                            <input id="referral" type="text" readonly value="{{ sprintf('%s/register/%s', config('habbo.site.site_url'), $user->ensureReferralCode()) }}">
                             <button type="button" class="los-btn gray" onclick="losCopyReferral()">{{ __('Copy') }}</button>
                         </div>
                         <div class="los-progress" role="progressbar" aria-valuenow="{{ min($referralsDone, $referralsNeeded) }}" aria-valuemax="{{ $referralsNeeded }}">
@@ -86,7 +86,7 @@
             </div>
 
             <div class="col-span-12 flex flex-col gap-5 lg:col-span-4">
-                <section class="los-card">
+                <section class="los-card" id="discord">
                     <header class="los-card-head">
                         <span class="los-head-emoji" aria-hidden="true">💬</span>
                         <div>
@@ -102,7 +102,7 @@
                                 @endif
                                 <div>
                                     <strong>{{ $discord->discord_username }}</strong>
-                                    <span>{{ __('Linked :when', ['when' => $discord->created_at?->diffForHumans()]) }}</span>
+                                    <span>{{ $discord->created_at === null || $discord->created_at->diffInSeconds(now()) < 60 ? __('Linked just now') : __('Linked :when', ['when' => $discord->created_at->diffForHumans()]) }}</span>
                                 </div>
                             </div>
                             <form method="POST" action="{{ route('settings.discord.destroy') }}">
