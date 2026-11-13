@@ -30,6 +30,7 @@ use App\Http\Controllers\Shop\ShopController;
 use App\Http\Controllers\Shop\ShopVoucherController;
 use App\Http\Controllers\Social\KudosController;
 use App\Http\Controllers\Social\NotificationController;
+use App\Http\Controllers\Social\OutfitController;
 use App\Http\Controllers\Social\SocialController;
 use App\Http\Controllers\User\AccountSettingsController;
 use App\Http\Controllers\User\BannedController;
@@ -117,6 +118,11 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
             Route::delete('/comments/{comment}', 'destroyComment')->name('comments.destroy');
             Route::post('/profile', 'updateProfile')->middleware('throttle:20,1')->name('profile');
             Route::get('/u/{user:username}', 'show')->name('user');
+        });
+        Route::prefix('outfits')->as('outfits.')->controller(OutfitController::class)->group(function () {
+            Route::get('/', 'show')->name('index');
+            Route::post('/', 'store')->middleware('throttle:10,1')->name('store');
+            Route::post('/{outfit}/vote', 'vote')->middleware('throttle:60,1')->name('vote');
         });
         Route::post('/kudos', KudosController::class)->middleware('throttle:30,1')->name('kudos.store');
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Social;
 use App\Emulator\Contracts\PhotoRepository;
 use App\Emulator\Data\Photo;
 use App\Http\Controllers\Controller;
+use App\Models\Social\Outfit;
 use App\Models\Social\SocialComment;
 use App\Models\Social\SocialLike;
 use App\Models\Social\SocialPost;
@@ -42,6 +43,7 @@ class SocialController extends Controller
                 'users' => route('social.users', absolute: false),
                 'profile' => route('social.profile', absolute: false),
                 'notifications' => route('notifications.index', absolute: false),
+                'outfits' => route('outfits.index', absolute: false),
                 'me' => $this->feed->author($viewer),
                 'owner' => $user ? [...($this->feed->author($user) ?? []), 'background' => $profile?->background, 'motto' => (string) $user->motto] : null,
                 'background' => $viewer->id === $owner->id ? $profile?->background : null,
@@ -84,6 +86,8 @@ class SocialController extends Controller
             'photos' => ['array', 'max:6'],
             'photos.*' => ['regex:/^[0-9a-f-]{1,36}$/i'],
             'video' => ['nullable', 'string', 'max:200'],
+            'outfit_id' => ['nullable', 'integer'],
+            'avatar' => ['nullable', 'string', 'max:200', 'regex:/^[a-z_]+=[A-Za-z0-9_.,-]*(&[a-z_]+=[A-Za-z0-9_.,-]*)*$/'],
             'shared_post_id' => ['nullable', 'integer'],
             'tags' => ['array', 'max:20'],
             'tags.*' => ['string', 'max:25'],
@@ -114,8 +118,15 @@ class SocialController extends Controller
                 $extra['video'] = $video;
                 break;
             case SocialPost::OUTFIT:
-                $extra['look'] = (string) $viewer->look;
-                $extra['gender'] = (string) $viewer->gender;
+                $entry = isset($data['outfit_id']) ? Outfit::query()->where('user_id', $viewer->id)->whereKey((int) $data['outfit_id'])->first() : null;
+                $extra['look'] = $entry->look ?? (string) $viewer->look;
+                $extra['gender'] = $entry->gender ?? (string) $viewer->gender;
+                if ($entry !== null) {
+                    $extra['outfit_id'] = $entry->id;
+                }
+                if (filled($data['avatar'] ?? null)) {
+                    $extra['avatar'] = $this->avatarQuery((string) $data['avatar']);
+                }
                 break;
             case SocialPost::PROFILE:
                 $extra['home'] = route('home.show', $viewer->username, false);
@@ -323,6 +334,15 @@ class SocialController extends Controller
         }
 
         return SocialPost::query()->whereKey((int) $id)->value('type') === SocialPost::OUTFIT ? 'outfit_like' : 'post_like';
+    }
+
+    /** Keeps only the imager options players can change, so a post can't carry another figure. */
+    private function avatarQuery(string $query): string
+    {
+        parse_str($query, $options);
+        $allowed = ['direction', 'head_direction', 'action', 'gesture', 'size', 'headonly', 'img_format'];
+
+        return http_build_query(array_intersect_key($options, array_flip($allowed)));
     }
 
     private function postUrl(int $id): string
