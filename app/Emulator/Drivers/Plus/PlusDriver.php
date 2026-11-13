@@ -16,6 +16,7 @@ use App\Emulator\Contracts\PlayerSettingsRepository;
 use App\Emulator\Contracts\PlayerStatsRepository;
 use App\Emulator\Contracts\RankRepository;
 use App\Emulator\Contracts\RoomRepository;
+use App\Emulator\Contracts\ScoreboardRepository;
 use App\Emulator\Data\Feature;
 use App\Emulator\Data\PlayerConstraints;
 use App\Emulator\Data\PlayerSchema;
@@ -47,6 +48,7 @@ final class PlusDriver implements EmulatorDriver
             PlayerStatsRepository::class => PlusPlayerStatsRepository::class,
             RankRepository::class => PlusRankRepository::class,
             RoomRepository::class => PlusRoomRepository::class,
+            ScoreboardRepository::class => PlusScoreboardRepository::class,
         ];
     }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Social;
 
 use App\Http\Controllers\Controller;
+use App\Models\Social\Gameboard;
 use App\Models\Social\Kudos;
 use App\Models\User;
 use App\Services\Social\Notifier;
@@ -42,7 +43,14 @@ class KudosController extends Controller
             throw ValidationException::withMessages(['user_id' => __('You already gave :name kudos here today.', ['name' => $to->username])]);
         }
 
-        $notifier->send($to, 'kudos', __(':name gave you kudos on the :board board.', ['name' => $from->username, 'board' => str_replace(['_', '-'], ' ', $data['board'])]), route('leaderboard.index', absolute: false), $from);
+        $game = str_starts_with($data['board'], 'game_') ? Gameboard::query()->find((int) substr($data['board'], 5)) : null;
+        $notifier->send(
+            $to,
+            'kudos',
+            __(':name gave you kudos on the :board board.', ['name' => $from->username, 'board' => $game->name ?? str_replace(['_', '-'], ' ', $data['board'])]),
+            $game ? route('gameboards.index', absolute: false) : route('leaderboard.index', absolute: false),
+            $from,
+        );
 
         return response()->json([
             'kudos' => Kudos::query()->where('to_user_id', $to->id)->count(),

@@ -15,6 +15,7 @@ use App\Emulator\Contracts\PlayerSettingsRepository;
 use App\Emulator\Contracts\PlayerStatsRepository;
 use App\Emulator\Contracts\RankRepository;
 use App\Emulator\Contracts\RoomRepository;
+use App\Emulator\Contracts\ScoreboardRepository;
 use App\Emulator\Data\Feature;
 use App\Emulator\Data\SchemaFeature;
 use Illuminate\Contracts\Container\Container;
@@ -35,6 +36,7 @@ final class EmulatorManager
         RoomRepository::class,
         PhotoRepository::class,
         MarketplaceRepository::class,
+        ScoreboardRepository::class,
     ];
 
     private ?EmulatorDriver $active = null;

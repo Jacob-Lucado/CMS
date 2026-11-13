@@ -1,7 +1,10 @@
 <?php
 
 use App\Emulator\Contracts\MarketplaceRepository;
+use App\Filament\Resources\Hotel\Social\Pages\ManagePublicRooms;
 use App\Models\User;
+use App\Models\WebsiteHousekeepingPermission;
+use App\Services\HousekeepingPermissionsService;
 use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {
@@ -21,4 +24,24 @@ test('plus marketplace offers and sales read from the catalog tables', function 
         ->and($market->recentSales(10)->first()?->sold)->toBeTrue()
         ->and($market->topMovers(5)->first())->toMatchArray(['name' => 'Throne', 'itemName' => 'throne', 'sold' => 3, 'averagePrice' => 90])
         ->and($market->listings(10, 'nope'))->toBeEmpty();
+});
+
+test('housekeeping lists a room in the public navigator tab', function () {
+    foreach (['can_access_housekeeping', 'manage_social'] as $permission) {
+        WebsiteHousekeepingPermission::query()->updateOrCreate(['permission' => $permission], ['min_rank' => 1, 'description' => $permission]);
+    }
+    app(HousekeepingPermissionsService::class)->refresh();
+    Filament\Facades\Filament::setCurrentPanel(Filament\Facades\Filament::getPanel('housekeeping'));
+    DB::table('roles')->insert(['id' => 9, 'slug' => 'owner', 'name' => 'Owner', 'description' => '', 'weight' => 90, 'security_level' => 7, 'badge_code' => '', 'is_staff' => true, 'is_hidden' => false, 'created_at' => now(), 'updated_at' => now()]);
+    $owner = User::factory()->create(['rank' => 7]);
+    DB::statement('SET FOREIGN_KEY_CHECKS=0');
+    $room = DB::table('rooms')->insertGetId(['caption' => 'Welcome Lounge', 'owner' => $owner->id, 'description' => 'Say hi', 'model_name' => 'model_a']);
+    DB::statement('SET FOREIGN_KEY_CHECKS=1');
+
+    $this->actingAs($owner)->get('/housekeeping/hotel/public-rooms')->assertOk();
+    Livewire\Livewire::test(ManagePublicRooms::class)
+        ->callAction('create', ['room_id' => $room, 'caption' => 'Welcome Lounge', 'description' => 'Say hi', 'order_num' => 1, 'enabled' => true])
+        ->assertHasNoActionErrors();
+
+    expect(DB::table('navigator_publics')->where('room_id', $room)->value('caption'))->toBe('Welcome Lounge');
 });

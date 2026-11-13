@@ -16,6 +16,7 @@ use App\Emulator\Contracts\PlayerSettingsRepository;
 use App\Emulator\Contracts\PlayerStatsRepository;
 use App\Emulator\Contracts\RankRepository;
 use App\Emulator\Contracts\RoomRepository;
+use App\Emulator\Contracts\ScoreboardRepository;
 use App\Emulator\Data\Feature;
 use App\Emulator\Data\PlayerConstraints;
 use App\Emulator\Data\PlayerSchema;
@@ -52,6 +53,7 @@ final class ArcturusDriver implements EmulatorDriver
             PlayerSettingsRepository::class => ArcturusPlayerSettingsRepository::class,
             RankRepository::class => ArcturusRankRepository::class,
             RoomRepository::class => ArcturusRoomRepository::class,
+            ScoreboardRepository::class => ArcturusScoreboardRepository::class,
         ];
     }
 

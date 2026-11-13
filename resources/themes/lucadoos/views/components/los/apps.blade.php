@@ -36,6 +36,7 @@
             $page('social.user', __('My profile'), asset('assets/images/icons/friends.png'), [$user->username]),
             $page('outfits.index', __('Outfit of the Week'), asset('assets/images/icons/star.gif')),
             $page('marketplace.index', __('Marketplace'), asset('assets/images/icons/catalog.png')),
+            $page('gameboards.index', __('Gameboards'), asset('assets/images/icons/star.gif')),
             $page('notifications.index', __('Notifications'), asset('assets/images/icons/feeds.png')),
         ]];
     }

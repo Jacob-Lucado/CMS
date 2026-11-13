@@ -28,6 +28,7 @@ use App\Http\Controllers\Miscellaneous\MaintenanceController;
 use App\Http\Controllers\RadioController;
 use App\Http\Controllers\Shop\ShopController;
 use App\Http\Controllers\Shop\ShopVoucherController;
+use App\Http\Controllers\Social\GameboardController;
 use App\Http\Controllers\Social\KudosController;
 use App\Http\Controllers\Social\MarketplaceController;
 use App\Http\Controllers\Social\NotificationController;
@@ -130,6 +131,7 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
             Route::get('/search', 'search')->middleware('throttle:60,1')->name('search');
             Route::get('/owners/{rare}', 'owners')->middleware('throttle:60,1')->name('owners');
         });
+        Route::get('/gameboards', GameboardController::class)->name('gameboards.index');
         Route::post('/kudos', KudosController::class)->middleware('throttle:30,1')->name('kudos.store');
 
         Route::prefix('notifications')->as('notifications.')->controller(NotificationController::class)->group(function () {

@@ -16,6 +16,7 @@ use App\Emulator\Contracts\PlayerSettingsRepository;
 use App\Emulator\Contracts\PlayerStatsRepository;
 use App\Emulator\Contracts\RankRepository;
 use App\Emulator\Contracts\RoomRepository;
+use App\Emulator\Contracts\ScoreboardRepository;
 use App\Emulator\Data\Feature;
 use App\Emulator\Data\PlayerConstraints;
 use App\Emulator\Data\PlayerSchema;
@@ -48,6 +49,7 @@ final class AdaDriver implements EmulatorDriver
             PlayerSettingsRepository::class => AdaPlayerSettingsRepository::class,
             RankRepository::class => AdaRankRepository::class,
             RoomRepository::class => AdaRoomRepository::class,
+            ScoreboardRepository::class => AdaScoreboardRepository::class,
         ];
     }
 
