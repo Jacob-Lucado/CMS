@@ -26,6 +26,7 @@ use App\Models\User\Ban;
 use App\Models\User\ClaimedReferralLog;
 use App\Models\User\Referral;
 use App\Models\User\UserReferral;
+use App\Models\User\WebsiteDiscordAccount;
 use App\Services\HousekeepingPermissionsService;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
@@ -314,6 +315,12 @@ class User extends Authenticatable implements FilamentUser, HasName
     public function articles(): HasMany
     {
         return $this->hasMany(WebsiteArticle::class);
+    }
+
+    /** @return HasOne<WebsiteDiscordAccount, $this> */
+    public function discordAccount(): HasOne
+    {
+        return $this->hasOne(WebsiteDiscordAccount::class);
     }
 
     /** @return HasOne<UserReferral, $this> */

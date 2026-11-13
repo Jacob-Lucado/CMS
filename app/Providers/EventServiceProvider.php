@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Emulator\Contracts\RankRepository;
+use App\Listeners\LinkPendingDiscordAccount;
 use App\Listeners\StoreSessionPasswordHash;
 use App\Models\Community\Staff\WebsiteOpenPosition;
 use App\Models\Community\Teams\WebsiteTeam;
@@ -31,6 +32,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         Registered::class => [
             SendEmailVerificationNotification::class,
+            LinkPendingDiscordAccount::class,
         ],
     ];
 

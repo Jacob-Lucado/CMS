@@ -1171,7 +1171,9 @@ function desktop(data) {
     z = Math.max(z, ...[...wins.values()].map((w) => Number(w.node.style.zIndex) || 0));
     focus(main);
 
-    if (!data.user && (window.losOpenSignIn || !store.get(SAVE + "-guest-seen"))) {
+    // Someone who came to sign up or reset a password should see that page, not the sign-in window on top of it.
+    const onAccountPage = /^\/(register|forgot-password|reset-password)(\/|$)/.test(location.pathname);
+    if (!data.user && (window.losOpenSignIn || (!onAccountPage && !store.get(SAVE + "-guest-seen")))) {
         store.set(SAVE + "-guest-seen", "1");
         open("os:signin");
     }

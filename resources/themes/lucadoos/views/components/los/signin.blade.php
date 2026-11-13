@@ -4,9 +4,15 @@
         <span class="los-signin-mark" aria-hidden="true">🔑</span>
         <div>
             <h2>{{ __('Welcome to :hotel', ['hotel' => setting('hotel_name')]) }}</h2>
-            <p>{{ __('There is currently :online users online', ['online' => $onlineUsers->onlineUserCount()]) }}</p>
+            <p>{{ trans_choice(':count player online|:count players online', $onlineUsers->onlineUserCount()) }}</p>
         </div>
     </div>
+
+    <x-los.discord-button :label="__('Sign in with Discord')" />
+    @inject('discordLogin', 'App\Services\Auth\DiscordLogin')
+    @if ($discordLogin->isEnabled())
+        <div class="los-or"><span>{{ __('or use your hotel name') }}</span></div>
+    @endif
 
     <form class="flex flex-col gap-y-3" action="{{ route('login') }}" method="POST">
         @csrf
@@ -29,11 +35,11 @@
             <x-turnstile />
         @endif
 
-        <x-form.primary-button>{{ __('Login') }}</x-form.primary-button>
+        <button type="submit" class="los-btn full">{{ __('Sign in') }}</button>
     </form>
 
     <div class="los-signin-links">
-        <a href="{{ route('forgot.password.get') }}" data-los-open>{{ __('Did you forget your password?') }}</a>
-        <a href="{{ route('register') }}" data-los-open>{{ __('Dont have an account? Join now!') }}</a>
+        <a href="{{ route('forgot.password.get') }}" data-los-open>{{ __('Forgot your password?') }}</a>
+        <a href="{{ route('register') }}" data-los-open>{{ __('New here? Create an account') }}</a>
     </div>
 </div>

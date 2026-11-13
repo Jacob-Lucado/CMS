@@ -29,6 +29,7 @@ use App\Http\Controllers\Shop\ShopController;
 use App\Http\Controllers\Shop\ShopVoucherController;
 use App\Http\Controllers\User\AccountSettingsController;
 use App\Http\Controllers\User\BannedController;
+use App\Http\Controllers\User\DiscordAccountController;
 use App\Http\Controllers\User\ForgotPasswordController;
 use App\Http\Controllers\User\MeController;
 use App\Http\Controllers\User\PasswordSettingsController;
@@ -78,6 +79,12 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
         Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showResetPassword'])->middleware('throttle:6,1')->name('reset.password.get');
     });
 
+    // Discord sign-in, register and link. Signed out it signs in or registers; signed in it links.
+    Route::withoutMiddleware('force.staff.2fa')->middleware('throttle:20,1')->group(function () {
+        Route::get('/auth/discord', [DiscordAccountController::class, 'redirect'])->name('discord.redirect');
+        Route::get('/auth/discord/callback', [DiscordAccountController::class, 'callback'])->name('discord.callback');
+    });
+
     // Can only be accessed if logged in
     Route::middleware('auth')->group(function () {
         Route::prefix('user')->group(function () {
@@ -97,6 +104,8 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
                 Route::get('/session-logs', [AccountSettingsController::class, 'sessionLogs'])->name('settings.session-logs');
 
                 Route::get('/two-factor', [TwoFactorAuthenticationController::class, 'index'])->name('settings.two-factor');
+
+                Route::delete('/discord', [DiscordAccountController::class, 'destroy'])->middleware('throttle:10,1')->name('settings.discord.destroy');
 
             });
         });
