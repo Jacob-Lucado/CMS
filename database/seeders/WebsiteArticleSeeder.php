@@ -15,6 +15,11 @@ class WebsiteArticleSeeder extends Seeder
             User::factory()->create();
         }
 
+        // Only a brand new hotel gets the welcome article, so one that was deleted stays deleted.
+        if (WebsiteArticle::withTrashed()->exists()) {
+            return;
+        }
+
         $title = 'Atom CMS has been installed';
         $slug = Str::slug($title);
 
