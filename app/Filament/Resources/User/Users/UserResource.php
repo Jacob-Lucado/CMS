@@ -180,7 +180,9 @@ class UserResource extends Resource
                                             ->email()
                                             ->unique(column: fn (): string => Emulator::playerSchema()->column('mail'), ignoreRecord: true)
                                             ->maxLength(fn (): int => Emulator::constraints()->emailLength)
-                                            ->required(),
+                                            // Discord sign-ups can have no email, so editing never forces one.
+                                            ->required(fn (string $operation): bool => $operation === 'create')
+                                            ->dehydrated(fn (?string $state, string $operation): bool => $operation === 'create' || filled($state)),
                                     ])->collapsible()->collapsed(),
 
                                 Section::make(__('filament::resources.tabs.Change Password'))

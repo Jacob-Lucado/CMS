@@ -86,7 +86,6 @@
 .fi-modal-window {
     border-radius: var(--hk-radius) !important;
     background: var(--hk-panel) !important;
-    backdrop-filter: blur(8px);
     box-shadow: 0 10px 30px rgba(3, 8, 18, 0.12) !important;
     --tw-ring-color: var(--hk-line);
 }
@@ -264,4 +263,11 @@
 
 .hk-facts dd {
     margin: 0;
+}
+
+/* An open dropdown has to float over the panels and buttons below it. */
+.fi-section:focus-within,
+.fi-fo-field:focus-within {
+    position: relative;
+    z-index: 30;
 }

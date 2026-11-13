@@ -77,3 +77,19 @@ test('the housekeeping user editor still saves privileged fields', function () {
     expect((int) $target->rank)->toBe(5)
         ->and($target->hidden_staff)->toBeTrue();
 });
+
+test('housekeeping can save a player who has no email', function () {
+    WebsiteHousekeepingPermission::query()->create(['permission' => 'edit_user', 'min_rank' => 5, 'description' => 'Edit users']);
+    $target = User::factory()->create(['rank' => 1]);
+    $target->forceFill(['mail' => ''])->save();
+
+    $this->actingAs(User::factory()->create(['rank' => 7]));
+    Filament::setCurrentPanel(Filament::getPanel('housekeeping'));
+
+    Livewire::test(EditUser::class, ['record' => $target->getRouteKey()])
+        ->fillForm(['mail' => '', 'motto' => 'Still here', 'rank' => 4])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect((int) $target->fresh()->rank)->toBe(4);
+});
