@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property string $target_type
- * @property int $target_id
+ * @property string $target_id
  * @property int $user_id
  */
 class SocialLike extends Model

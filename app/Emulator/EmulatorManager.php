@@ -8,6 +8,7 @@ use App\Emulator\Contracts\BanRepository;
 use App\Emulator\Contracts\CurrencyRepository;
 use App\Emulator\Contracts\EmulatorDriver;
 use App\Emulator\Contracts\FurnitureRepository;
+use App\Emulator\Contracts\PhotoRepository;
 use App\Emulator\Contracts\PlayerRepository;
 use App\Emulator\Contracts\PlayerSettingsRepository;
 use App\Emulator\Contracts\PlayerStatsRepository;
@@ -31,6 +32,7 @@ final class EmulatorManager
         PlayerSettingsRepository::class,
         RankRepository::class,
         RoomRepository::class,
+        PhotoRepository::class,
     ];
 
     private ?EmulatorDriver $active = null;

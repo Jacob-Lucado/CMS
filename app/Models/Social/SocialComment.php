@@ -10,7 +10,7 @@ use Illuminate\Support\Carbon;
 /**
  * @property int $id
  * @property string $target_type
- * @property int $target_id
+ * @property string $target_id
  * @property int $user_id
  * @property string $body
  * @property Carbon $created_at

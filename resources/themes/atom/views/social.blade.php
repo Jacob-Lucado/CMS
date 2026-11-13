@@ -489,7 +489,7 @@
                         if (reel.scrollTop + reel.clientHeight * 2 < reel.scrollHeight || this.loadingMore) return;
                         this.loadingMore = true;
                         try {
-                            const data = await this.call(urls.photos + this.q({ before: this.photos[this.photos.length - 1]?.id }));
+                            const data = await this.call(urls.photos + this.q({ offset: this.photos.length }));
                             this.photos.push(...data.photos.map((p) => Object.assign(p, { open: false, thread: null, reply: '' })));
                         } catch { /* stays as is */ }
                         this.loadingMore = false;

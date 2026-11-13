@@ -2,7 +2,7 @@
 
 namespace App\Services\Social;
 
-use App\Models\Miscellaneous\CameraWeb;
+use App\Emulator\Data\Photo;
 use App\Models\Social\SocialComment;
 use App\Models\Social\SocialLike;
 use App\Models\Social\SocialPost;
@@ -77,21 +77,21 @@ class SocialFeed
     }
 
     /**
-     * @param  EloquentCollection<int, CameraWeb>  $photos
+     * @param  Collection<int, Photo>  $photos
      *
      * @return array<int, array<string, mixed>>
      */
-    public function photos(EloquentCollection $photos, User $viewer): array
+    public function photos(Collection $photos, User $viewer): array
     {
-        $photos->loadMissing('user');
-        $ids = array_map(intval(...), $photos->modelKeys());
+        $ids = $photos->map(fn (Photo $photo): string => $photo->id)->values()->all();
+        $users = User::query()->whereIn('id', $photos->map(fn (Photo $photo): int => $photo->userId)->unique()->values()->all())->get()->keyBy('id');
         [$likes, $liked, $comments] = $this->counts(self::PHOTO, $ids, $viewer);
 
-        return $photos->map(fn (CameraWeb $photo): array => [
+        return $photos->map(fn (Photo $photo): array => [
             'id' => $photo->id,
             'url' => $photo->url,
-            'author' => $this->author($photo->user),
-            'ago' => $photo->timestamp?->diffForHumans(),
+            'author' => $this->author($users->get($photo->userId)),
+            'ago' => $photo->takenAt?->diffForHumans(),
             'likes' => (int) ($likes[$photo->id] ?? 0),
             'liked' => isset($liked[$photo->id]),
             'comments' => (int) ($comments[$photo->id] ?? 0),
@@ -140,7 +140,7 @@ class SocialFeed
     }
 
     /**
-     * @param  array<int, int>  $ids
+     * @param  array<int, int|string>  $ids
      *
      * @return array{0: Collection<array-key, mixed>, 1: array<array-key, bool>, 2: Collection<array-key, mixed>}
      */

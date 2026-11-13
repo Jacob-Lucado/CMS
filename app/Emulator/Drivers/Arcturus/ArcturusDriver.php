@@ -9,6 +9,7 @@ use App\Emulator\Contracts\CurrencyRepository;
 use App\Emulator\Contracts\EmulatorDriver;
 use App\Emulator\Contracts\EmulatorInstaller;
 use App\Emulator\Contracts\FurnitureRepository;
+use App\Emulator\Contracts\PhotoRepository;
 use App\Emulator\Contracts\PlayerRepository;
 use App\Emulator\Contracts\PlayerSettingsRepository;
 use App\Emulator\Contracts\PlayerStatsRepository;
@@ -43,6 +44,7 @@ final class ArcturusDriver implements EmulatorDriver
             BanRepository::class => ArcturusBanRepository::class,
             CurrencyRepository::class => ArcturusCurrencyRepository::class,
             FurnitureRepository::class => ArcturusFurnitureRepository::class,
+            PhotoRepository::class => ArcturusPhotoRepository::class,
             PlayerRepository::class => ArcturusPlayerRepository::class,
             PlayerStatsRepository::class => ArcturusPlayerStatsRepository::class,
             PlayerSettingsRepository::class => ArcturusPlayerSettingsRepository::class,

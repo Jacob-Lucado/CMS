@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Social;
 
-use App\Emulator\Data\Feature;
-use App\Emulator\Emulator;
+use App\Emulator\Contracts\PhotoRepository;
+use App\Emulator\Data\Photo;
 use App\Http\Controllers\Controller;
-use App\Models\Miscellaneous\CameraWeb;
 use App\Models\Social\SocialComment;
 use App\Models\Social\SocialLike;
 use App\Models\Social\SocialPost;
@@ -25,7 +24,7 @@ class SocialController extends Controller
 {
     private const PAGE = 15;
 
-    public function __construct(private readonly SocialFeed $feed, private readonly Notifier $notifier, private readonly PermissionsService $permissions) {}
+    public function __construct(private readonly SocialFeed $feed, private readonly Notifier $notifier, private readonly PermissionsService $permissions, private readonly PhotoRepository $cameraPhotos) {}
 
     public function show(Request $request, ?User $user = null): View
     {
@@ -48,7 +47,7 @@ class SocialController extends Controller
                 'background' => $viewer->id === $owner->id ? $profile?->background : null,
                 'staff' => $this->isStaff($viewer),
                 'imager' => (string) setting('avatar_imager'),
-                'camera' => Emulator::supports(Feature::CameraPhotos),
+                'camera' => $this->cameraPhotos->available(),
             ],
         ]);
     }
@@ -83,7 +82,7 @@ class SocialController extends Controller
             'type' => ['required', Rule::in([SocialPost::STATUS, SocialPost::PHOTO, SocialPost::VIDEO, SocialPost::OUTFIT, SocialPost::PROFILE, SocialPost::SHARE])],
             'body' => ['nullable', 'string', 'max:1000'],
             'photos' => ['array', 'max:6'],
-            'photos.*' => ['integer'],
+            'photos.*' => ['regex:/^[0-9a-f-]{1,36}$/i'],
             'video' => ['nullable', 'string', 'max:200'],
             'shared_post_id' => ['nullable', 'integer'],
             'tags' => ['array', 'max:20'],
@@ -101,12 +100,11 @@ class SocialController extends Controller
                 }
                 break;
             case SocialPost::PHOTO:
-                abort_unless(Emulator::supports(Feature::CameraPhotos), 422, __('Photos are not available on this hotel yet.'));
-                $photos = CameraWeb::query()->whereIn('id', $data['photos'] ?? [])->where('visible', 1)->get(['id', 'url', 'user_id']);
+                $photos = $this->cameraPhotos->findMany(array_values(array_map(strval(...), (array) ($data['photos'] ?? []))));
                 if ($photos->isEmpty()) {
                     throw ValidationException::withMessages(['photos' => __('Pick at least one photo.')]);
                 }
-                $extra['photos'] = $photos->map(fn (CameraWeb $photo): array => ['id' => $photo->id, 'url' => $photo->url])->values()->all();
+                $extra['photos'] = $photos->map(fn (Photo $photo): array => ['id' => $photo->id, 'url' => $photo->url, 'user_id' => $photo->userId])->values()->all();
                 break;
             case SocialPost::VIDEO:
                 $video = SocialFeed::youtubeId((string) ($data['video'] ?? ''));
@@ -237,22 +235,16 @@ class SocialController extends Controller
     public function photos(Request $request): JsonResponse
     {
         $viewer = $this->viewer($request);
-        if (! Emulator::supports(Feature::CameraPhotos)) {
-            return response()->json(['photos' => [], 'more' => false]);
+        $filters = $request->validate(['offset' => ['nullable', 'integer', 'min:0'], 'mine' => ['nullable', 'boolean'], 'id' => ['nullable', 'regex:/^[0-9a-f-]{1,36}$/i']]);
+        $photos = $this->cameraPhotos->latest((int) ($filters['offset'] ?? 0), 12, ($filters['mine'] ?? false) ? $viewer->id : null);
+        $more = $photos->count() === 12;
+
+        // A shared photo link opens the viewer on that photo first.
+        if (isset($filters['id']) && ($first = $this->cameraPhotos->find((string) $filters['id'])) !== null) {
+            $photos = $photos->reject(fn (Photo $photo): bool => $photo->id === $first->id)->prepend($first)->values();
         }
 
-        $filters = $request->validate(['before' => ['nullable', 'integer'], 'mine' => ['nullable', 'boolean'], 'id' => ['nullable', 'integer']]);
-
-        $photos = CameraWeb::query()
-            ->where('visible', 1)
-            ->when($filters['before'] ?? null, fn ($query, $before) => $query->where('id', '<', $before))
-            ->when($filters['mine'] ?? false, fn ($query) => $query->where('user_id', $viewer->id))
-            ->when($filters['id'] ?? null, fn ($query, $id) => $query->where('id', '<=', $id))
-            ->latest('id')
-            ->limit(12)
-            ->get();
-
-        return response()->json(['photos' => $this->feed->photos($photos, $viewer), 'more' => $photos->count() === 12])->header('Cache-Control', 'no-store');
+        return response()->json(['photos' => $this->feed->photos($photos, $viewer), 'more' => $more])->header('Cache-Control', 'no-store');
     }
 
     public function users(Request $request): JsonResponse
@@ -296,41 +288,41 @@ class SocialController extends Controller
         }
 
         if ($post->type === SocialPost::PHOTO) {
-            foreach (array_column((array) ($post->data['photos'] ?? []), 'id') as $photoId) {
-                $ownerId = (int) CameraWeb::query()->whereKey($photoId)->value('user_id');
+            foreach (array_unique(array_column((array) ($post->data['photos'] ?? []), 'user_id')) as $ownerId) {
                 $this->notifier->send($ownerId, 'post_share', __(':name shared your photo.', ['name' => $viewer->username]), $url, $viewer);
             }
         }
     }
 
-    /** @return array{0: string, 1: int, 2: int, 3: string} */
+    /** @return array{0: string, 1: string, 2: int, 3: string} */
     private function target(Request $request): array
     {
         $data = $request->validate([
             'target_type' => ['required', Rule::in([SocialFeed::POST, SocialFeed::PHOTO])],
-            'target_id' => ['required', 'integer'],
+            'target_id' => ['required', 'regex:/^[0-9a-f-]{1,36}$/i'],
         ]);
-        $id = (int) $data['target_id'];
+        $id = (string) $data['target_id'];
 
         if ($data['target_type'] === SocialFeed::PHOTO) {
-            abort_unless(Emulator::supports(Feature::CameraPhotos), 404);
-            $photo = CameraWeb::query()->where('visible', 1)->findOrFail($id);
+            $photo = $this->cameraPhotos->find($id);
+            abort_if($photo === null, 404);
 
-            return [SocialFeed::PHOTO, $id, (int) $photo->user_id, route('social.index', ['photo' => $id], false)];
+            return [SocialFeed::PHOTO, $photo->id, $photo->userId, route('social.index', ['photo' => $photo->id], false)];
         }
 
-        $post = SocialPost::query()->findOrFail($id);
+        abort_unless(ctype_digit($id), 404);
+        $post = SocialPost::query()->findOrFail((int) $id);
 
-        return [SocialFeed::POST, $id, $post->user_id, $this->postUrl($id)];
+        return [SocialFeed::POST, $id, $post->user_id, $this->postUrl($post->id)];
     }
 
-    private function likeType(string $type, int $id): string
+    private function likeType(string $type, string $id): string
     {
         if ($type === SocialFeed::PHOTO) {
             return 'photo_like';
         }
 
-        return SocialPost::query()->whereKey($id)->value('type') === SocialPost::OUTFIT ? 'outfit_like' : 'post_like';
+        return SocialPost::query()->whereKey((int) $id)->value('type') === SocialPost::OUTFIT ? 'outfit_like' : 'post_like';
     }
 
     private function postUrl(int $id): string
