@@ -2197,15 +2197,19 @@ img.los-pixel { object-fit: contain; display: block; margin: auto; }
 
 /* The hotel itself on the desktop, the way the hotel view shows it, under a sky of pixel stars. */
 .los-hotel {
+    /* The picture is cropped on its right and bottom, so those edges sit flush with the screen edge and the
+       taskbar, where the cut can't be seen. Its left side fades into the wallpaper. */
     position: absolute;
-    right: max(2vw, 16px);
-    bottom: 44px;
+    right: 0;
+    bottom: 48px;
     z-index: 0;
-    height: min(64vh, 560px);
+    height: min(62vh, 540px);
     aspect-ratio: 487 / 463;
     background: url("/assets/images/hotel.png") right bottom / contain no-repeat;
     image-rendering: pixelated;
-    filter: drop-shadow(0 18px 30px rgba(0, 0, 0, .35));
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 22%);
+    mask-image: linear-gradient(to right, transparent 0, #000 22%);
+    opacity: .92;
     pointer-events: none;
 }
 .los-stars {
@@ -2227,6 +2231,8 @@ body.los-wall-art .los-hotel,
 body.los-wall-art .los-stars,
 body.los-wall-light .los-stars { display: none; }
 .los-desk::after { right: auto; left: 24px; }
+body:not(.los-wall-art) .los-tm { right: auto; left: 28px; bottom: 52px; }
+body:not(.los-wall-art) .los-desk::after { bottom: 68px; }
 @media (max-width: 760px) { .los-hotel { height: 34vh; opacity: .8; } }
 
 /* Notification bell */
