@@ -6,6 +6,8 @@ use App\Models\Shop\WebsiteSquarePayment;
 use App\Models\User;
 use App\Support\StorefrontMoney;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -35,7 +37,7 @@ class SquareCheckout
         $minor = StorefrontMoney::minorAmount($money);
         $reference = (string) Str::uuid();
 
-        $response = $this->client()->post('/v2/online-checkout/payment-links', [
+        $response = $this->send('post', '/v2/online-checkout/payment-links', [
             'idempotency_key' => $reference,
             'quick_pay' => [
                 'name' => __(':hotel shop credit', ['hotel' => setting('hotel_name') ?: config('app.name')]),
@@ -50,7 +52,7 @@ class SquareCheckout
         $orderId = $response->json('payment_link.order_id');
 
         if ($response->failed() || ! is_string($url) || ! is_string($orderId)) {
-            throw new RuntimeException('Square did not create a payment link (HTTP ' . $response->status() . ').');
+            throw new RuntimeException('Square did not create a payment link: ' . self::problem($response));
         }
 
         WebsiteSquarePayment::query()->create([
@@ -78,10 +80,10 @@ class SquareCheckout
             return true;
         }
 
-        $response = $this->client()->get('/v2/orders/' . rawurlencode($orderId));
+        $response = $this->send('get', '/v2/orders/' . rawurlencode($orderId));
 
         if ($response->failed()) {
-            throw new RuntimeException('Square could not be asked about an order (HTTP ' . $response->status() . ').');
+            throw new RuntimeException('Square could not be asked about an order: ' . self::problem($response));
         }
 
         $order = (array) $response->json('order');
@@ -131,9 +133,46 @@ class SquareCheckout
         return (string) (config('habbo.square.webhook_url') ?: route('square.webhook'));
     }
 
-    private function client(): PendingRequest
+    /**
+     * A token only works on the side of Square it was made for. When the configured side turns it away,
+     * the other side is tried, and the one that works is remembered for a day.
+     *
+     * @param  array<string, mixed>  $body
+     */
+    private function send(string $method, string $path, array $body = []): Response
     {
-        $base = config('habbo.square.environment') === 'production' ? 'https://connect.squareup.com' : 'https://connect.squareupsandbox.com';
+        $configured = config('habbo.square.environment') === 'production' ? 'production' : 'sandbox';
+        $first = Cache::get('square.environment', $configured);
+        $response = $this->client($first)->send($method, $path, $body === [] ? [] : ['json' => $body]);
+
+        if ($response->status() !== 401) {
+            return $response;
+        }
+
+        $other = $first === 'production' ? 'sandbox' : 'production';
+        $retry = $this->client($other)->send($method, $path, $body === [] ? [] : ['json' => $body]);
+
+        if ($retry->status() === 401) {
+            return $response;
+        }
+
+        Cache::put('square.environment', $other, now()->addDay());
+
+        return $retry;
+    }
+
+    /** Square's own words for what went wrong, for the log and for staff. */
+    public static function problem(Response $response): string
+    {
+        $error = (array) ($response->json('errors.0') ?? []);
+        $detail = trim(($error['code'] ?? '') . ' ' . ($error['detail'] ?? ''));
+
+        return 'HTTP ' . $response->status() . ($detail === '' ? '' : ' ' . $detail);
+    }
+
+    private function client(string $environment): PendingRequest
+    {
+        $base = $environment === 'production' ? 'https://connect.squareup.com' : 'https://connect.squareupsandbox.com';
 
         return Http::baseUrl($base)
             ->withToken((string) config('habbo.square.access_token'))

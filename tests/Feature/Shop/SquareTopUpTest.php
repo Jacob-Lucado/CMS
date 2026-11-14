@@ -88,3 +88,21 @@ it('shows the card top-up only when Square is set up', function () {
     config(['habbo.square.access_token' => '']);
     $this->actingAs($player)->get(route('shop.index'))->assertOk()->assertSee('Top-ups are not switched on yet.');
 });
+
+it('falls back to the other Square environment when the token is turned away', function () {
+    Http::fake([
+        'connect.squareupsandbox.com/*' => Http::response(['errors' => [['code' => 'UNAUTHORIZED', 'detail' => 'This request could not be authorized.']]], 401),
+        'connect.squareup.com/*' => Http::response(['payment_link' => ['id' => 'LINK1', 'url' => 'https://square.link/u/live', 'order_id' => 'ORDER1']]),
+    ]);
+
+    $this->actingAs(User::factory()->create())->post(route('square.checkout'), ['amount' => 5])->assertRedirect('https://square.link/u/live');
+});
+
+it('tells staff why Square refused, but not players', function () {
+    Http::fake(['*' => Http::response(['errors' => [['code' => 'INVALID_VALUE', 'detail' => 'Location not found.']]], 400)]);
+
+    $this->actingAs(User::factory()->create(['rank' => 7]))->post(route('square.checkout'), ['amount' => 5])
+        ->assertSessionHasErrors(['message' => 'We could not reach the payment page. Please try again in a moment. (Square did not create a payment link: HTTP 400 INVALID_VALUE Location not found.)']);
+    $this->flushSession()->actingAs(User::factory()->create(['rank' => 1]))->post(route('square.checkout'), ['amount' => 5])
+        ->assertSessionHasErrors(['message' => 'We could not reach the payment page. Please try again in a moment.']);
+});

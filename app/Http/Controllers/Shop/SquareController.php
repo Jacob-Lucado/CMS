@@ -23,7 +23,10 @@ class SquareController extends Controller
         } catch (Throwable $exception) {
             Log::warning('Square checkout could not start.', ['user_id' => $user->id, 'error' => $exception->getMessage()]);
 
-            return redirect()->route('shop.index')->withErrors(['message' => __('We could not reach the payment page. Please try again in a moment.')]);
+            // Staff see Square's reason, so a setup mistake can be fixed without digging through logs.
+            $reason = $user->rank >= 6 ? ' (' . $exception->getMessage() . ')' : '';
+
+            return redirect()->route('shop.index')->withErrors(['message' => __('We could not reach the payment page. Please try again in a moment.') . $reason]);
         }
     }
 
