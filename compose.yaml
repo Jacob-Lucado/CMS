@@ -110,7 +110,7 @@ services:
             retries: 3
             timeout: 5s
     mailpit:
-        image: 'axllent/mailpit:latest@sha256:5a49a77c5bdbe7c5474450b4f46348d09949df3695257729c93a30369382d4f6'
+        image: 'axllent/mailpit:latest@sha256:aef2aacc11f075ec0fb6874275ee4a421e688e11a96ebb296134d1735c7761ce'
         ports:
             - '127.0.0.1:${FORWARD_MAILPIT_PORT:-1025}:1025'
             - '127.0.0.1:${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
