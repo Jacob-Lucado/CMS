@@ -29,7 +29,7 @@ services:
             - minio
             - mailpit
     mariadb:
-        image: 'mariadb:11.8.8-noble@sha256:efb4959ef2c835cd735dbc388eb9ad6aab0c78dd64febcd51bc17481111890c4'
+        image: 'mariadb:12.3.3-noble@sha256:4ebbcf100a3ba320766dfa0e1af008df12261301db6ef72798c7650f70794aed'
         ports:
             - '127.0.0.1:${FORWARD_DB_PORT:-3306}:3306'
         environment:
@@ -52,7 +52,7 @@ services:
             retries: 3
             timeout: 5s
     mariadb-ada:
-        image: 'mariadb:11.8.8-noble@sha256:efb4959ef2c835cd735dbc388eb9ad6aab0c78dd64febcd51bc17481111890c4'
+        image: 'mariadb:12.3.3-noble@sha256:4ebbcf100a3ba320766dfa0e1af008df12261301db6ef72798c7650f70794aed'
         ports:
             - '127.0.0.1:${FORWARD_ADA_DB_PORT:-3308}:3306'
         environment:
