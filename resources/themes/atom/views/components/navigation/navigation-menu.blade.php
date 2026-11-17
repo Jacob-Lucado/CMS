@@ -86,6 +86,12 @@
             {{ __('Furni') }}
         </a>
 
+        <a href="{{ route('polls.index') }}"
+           class="nav-item dark:text-gray-200 {{ request()->routeIs('polls.*') ? 'md:border-b-4! md:border-b-[#eeb425]!' : '' }}">
+            <i class="navigation-icon leaderboards mr-1 hidden lg:inline-flex"></i>
+            {{ __('Polls') }}
+        </a>
+
         <a href="{{ route('catalog.index') }}"
            class="nav-item dark:text-gray-200 {{ request()->routeIs('catalog.*') ? 'md:border-b-4! md:border-b-[#eeb425]!' : '' }}">
             <i class="navigation-icon leaderboards mr-1 hidden lg:inline-flex"></i>

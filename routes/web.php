@@ -9,6 +9,7 @@ use App\Http\Controllers\Community\EventsController;
 use App\Http\Controllers\Community\CatalogBrowserController;
 use App\Http\Controllers\Community\DailyRewardController;
 use App\Http\Controllers\Community\FurniBrowserController;
+use App\Http\Controllers\Community\PollsController;
 use App\Http\Controllers\Community\LeaderboardController;
 use App\Http\Controllers\Community\RoomBrowserController;
 use App\Http\Controllers\Community\PhotosController;
@@ -248,6 +249,8 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
         Route::get('/rooms', RoomBrowserController::class)->name('rooms.index');
         Route::get('/events', EventsController::class)->name('events.index');
         Route::get('/furni', FurniBrowserController::class)->name('furni.index');
+        Route::get('/polls', [PollsController::class, 'index'])->name('polls.index');
+        Route::post('/polls/{poll}/vote', [PollsController::class, 'vote'])->middleware(['auth', 'throttle:30,1'])->name('polls.vote');
         Route::get('/catalog', CatalogBrowserController::class)->name('catalog.index');
         Route::get('/daily-reward', [DailyRewardController::class, 'show'])->middleware('auth')->name('daily-reward.show');
         Route::post('/daily-reward', [DailyRewardController::class, 'claim'])->middleware(['auth', 'throttle:10,1'])->name('daily-reward.claim');
