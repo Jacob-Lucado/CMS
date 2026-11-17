@@ -80,6 +80,10 @@
                         {{ __('What is new') }}
                     </x-navigation.dropdown-child>
 
+                    <x-navigation.dropdown-child :route="route('riddle.show')">
+                        {{ __('Riddle') }}
+                    </x-navigation.dropdown-child>
+
                     <x-navigation.dropdown-child :route="route('polls.index')">
                         {{ __('Polls') }}
                     </x-navigation.dropdown-child>

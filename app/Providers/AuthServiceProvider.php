@@ -55,6 +55,7 @@ class AuthServiceProvider extends ServiceProvider
         \App\Models\TradeLog::class => SecurityManagerPolicy::class,
         \App\Models\FeaturedRoom::class => WebsiteEventPolicy::class,
         \App\Models\WebsitePoll::class => WebsiteEventPolicy::class,
+        \App\Models\WebsiteRiddle::class => WebsiteEventPolicy::class,
         \App\Models\ChangelogEntry::class => ContentManagerPolicy::class,
         \App\Models\Shop\WebsiteSquarePayment::class => PaymentRecordPolicy::class,
         \App\Models\Shop\WebsitePaypalTransaction::class => PaymentRecordPolicy::class,

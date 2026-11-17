@@ -66,6 +66,8 @@
 
         $groups[] = ['label' => __('What is new'), 'icon' => '📣', 'pages' => [$page('changelog.index', __('What is new'), '📣')]];
 
+        $groups[] = ['label' => __('Riddle'), 'icon' => '💡', 'pages' => [$page('riddle.show', __('Riddle of the day'), '💡')]];
+
         $groups[] = ['label' => __('Polls'), 'icon' => '📊', 'pages' => [$page('polls.index', __('Polls'), '📊')]];
 
         $groups[] = ['label' => __('Daily reward'), 'icon' => '🎁', 'pages' => [$page('daily-reward.show', __('Daily reward'), '🎁')]];
