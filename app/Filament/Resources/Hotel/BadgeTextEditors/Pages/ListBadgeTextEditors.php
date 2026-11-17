@@ -10,15 +10,38 @@ use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 
 class ListBadgeTextEditors extends ListRecords
 {
     protected static string $resource = BadgeTextEditorResource::class;
 
+    public function mount(): void
+    {
+        parent::mount();
+
+        // The list reads website_badges, which starts empty until the texts are imported once.
+        if (WebsiteBadge::query()->doesntExist()) {
+            Artisan::call('import:badge-data');
+        }
+    }
+
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('import')
+                ->label('Import from ExternalTexts')
+                ->color('gray')
+                ->action(function (): void {
+                    $exit = Artisan::call('import:badge-data');
+
+                    Notification::make()
+                        ->title($exit === 0 ? 'Badges imported' : 'Import failed')
+                        ->body($exit === 0 ? 'Badge names and descriptions were loaded from ExternalTexts.' : 'Check the ExternalTexts path in the website settings.')
+                        ->{$exit === 0 ? 'success' : 'danger'}()
+                        ->send();
+                }),
             CreateAction::make()
                 ->label('Add Badge')
                 ->color('info')

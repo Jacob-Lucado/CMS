@@ -54,6 +54,12 @@ class ImportBadgeData extends Command
         }
     }
 
+    /** Badge texts say "Habbo"; this hotel says "Lucado". */
+    public static function rebrand(string $text): string
+    {
+        return str_replace('Habbo', 'Lucado', $text);
+    }
+
     private function validateJsonFile(?string $jsonPath): bool
     {
         if (empty($jsonPath)) {
@@ -93,8 +99,8 @@ class ImportBadgeData extends Command
         // Combine badge names and descriptions
         $badgeData = $badgeNames->map(fn ($name, $key) => [
             'badge_key' => $key, // Use only the badge name (e.g., 14X12, 14XR1)
-            'badge_name' => $name,
-            'badge_description' => $badgeDescriptions->get($key, 'No description available'),
+            'badge_name' => self::rebrand((string) $name),
+            'badge_description' => self::rebrand((string) $badgeDescriptions->get($key, 'No description available')),
         ])->values();
 
         // A later chunk can fail after earlier definitions were updated.

@@ -136,7 +136,7 @@
         </x-content.content-card>
     </div>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="{{ asset('js/gif/gif.js') }}"></script>
+    <script src="{{ asset('assets/js/gif/gif.js') }}"></script>
 
     <script>
         function badgeDrawer({ cost, currencyType }) {
@@ -496,7 +496,7 @@
                         const gif = new GIF({
                             workers: 2,
                             quality: 10,
-                            workerScript: '{{ asset('js/gif/gif.worker.js') }}', // Local worker script
+                            workerScript: '{{ asset('assets/js/gif/gif.worker.js') }}', // Local worker script
                             width: this.canvas.width,
                             height: this.canvas.height,
                             transparent: transColor // Use the dynamic integer value
