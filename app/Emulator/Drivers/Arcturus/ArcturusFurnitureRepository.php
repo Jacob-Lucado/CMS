@@ -3,9 +3,11 @@
 namespace App\Emulator\Drivers\Arcturus;
 
 use App\Emulator\Contracts\FurnitureRepository;
+use App\Emulator\Data\FurnitureDefinition;
 use App\Emulator\Data\FurnitureHolding;
 use App\Models\Game\Furniture\Item;
 use App\Models\User;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -61,6 +63,27 @@ class ArcturusFurnitureRepository implements FurnitureRepository
             ->map(fn (object $row) => new FurnitureHolding(
                 (int) data_get($row, 'user_id'),
                 (int) data_get($row, 'item_count'),
+            ));
+    }
+
+    public function definitions(string $search, int $perPage = 48): LengthAwarePaginator
+    {
+        $like = '%' . addcslashes($search, '%_\\') . '%';
+
+        return DB::table('items_base')
+            ->where('type', 's')
+            ->when($search !== '', fn ($query) => $query->where(fn ($query) => $query->where('public_name', 'like', $like)->orWhere('item_name', 'like', $like)))
+            ->orderBy('public_name')
+            ->paginate($perPage, ['id', 'item_name', 'public_name', 'type', 'width', 'length', 'allow_trade'])
+            ->withQueryString()
+            ->through(fn (object $row) => new FurnitureDefinition(
+                (int) $row->id,
+                (string) $row->item_name,
+                (string) $row->public_name,
+                (string) $row->type,
+                (int) $row->width,
+                (int) $row->length,
+                (bool) $row->allow_trade,
             ));
     }
 }

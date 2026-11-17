@@ -3,8 +3,10 @@
 namespace App\Emulator\Drivers\Ada;
 
 use App\Emulator\Contracts\FurnitureRepository;
+use App\Emulator\Data\FurnitureDefinition;
 use App\Emulator\Data\FurnitureHolding;
 use App\Models\User;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -62,5 +64,10 @@ class AdaFurnitureRepository implements FurnitureRepository
                 (int) data_get($row, 'user_id'),
                 (int) data_get($row, 'item_count'),
             ));
+    }
+
+    public function definitions(string $search, int $perPage = 48): LengthAwarePaginator
+    {
+        return new LengthAwarePaginator([], 0, $perPage);
     }
 }

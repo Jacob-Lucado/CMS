@@ -6,6 +6,7 @@ use App\Http\Controllers\Badge\BadgeController;
 use App\Http\Controllers\Badge\BadgeGalleryController;
 use App\Http\Controllers\Client\ClientController;
 use App\Http\Controllers\Community\EventsController;
+use App\Http\Controllers\Community\FurniBrowserController;
 use App\Http\Controllers\Community\LeaderboardController;
 use App\Http\Controllers\Community\RoomBrowserController;
 use App\Http\Controllers\Community\PhotosController;
@@ -243,6 +244,7 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
         // Room browser and events
         Route::get('/rooms', RoomBrowserController::class)->name('rooms.index');
         Route::get('/events', EventsController::class)->name('events.index');
+        Route::get('/furni', FurniBrowserController::class)->name('furni.index');
 
         // Shop routes
         Route::prefix('shop')->group(function () {

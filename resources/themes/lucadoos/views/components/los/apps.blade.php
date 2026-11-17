@@ -62,7 +62,7 @@
 
         $groups[] = ['label' => __('Badges'), 'icon' => '🏅', 'pages' => [$page('help-center.badges.index', __('Badge gallery'), '🏅')]];
 
-        $groups[] = ['label' => __('Rooms'), 'icon' => '🏠', 'pages' => [$page('rooms.index', __('Room browser'), '🏠')]];
+        $groups[] = ['label' => __('Rooms'), 'icon' => '🏠', 'pages' => [$page('rooms.index', __('Room browser'), '🏠'), $page('furni.index', __('Furni browser'), '🪑')]];
 
         $groups[] = ['label' => __('Events'), 'icon' => '📅', 'pages' => [$page('events.index', __('Events'), '📅')]];
 

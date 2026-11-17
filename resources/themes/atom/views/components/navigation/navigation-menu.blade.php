@@ -80,6 +80,12 @@
             {{ __('Rooms') }}
         </a>
 
+        <a href="{{ route('furni.index') }}"
+           class="nav-item dark:text-gray-200 {{ request()->routeIs('furni.*') ? 'md:border-b-4! md:border-b-[#eeb425]!' : '' }}">
+            <i class="navigation-icon leaderboards mr-1 hidden lg:inline-flex"></i>
+            {{ __('Furni') }}
+        </a>
+
         <a href="{{ route('events.index') }}"
            class="nav-item dark:text-gray-200 {{ request()->routeIs('events.*') ? 'md:border-b-4! md:border-b-[#eeb425]!' : '' }}">
             <i class="navigation-icon leaderboards mr-1 hidden lg:inline-flex"></i>

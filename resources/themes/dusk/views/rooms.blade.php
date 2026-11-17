@@ -18,7 +18,7 @@
             @if ($rooms->isEmpty())
                 <p class="px-2 text-sm text-gray-500 dark:text-gray-400">{{ __('No rooms match that search.') }}</p>
             @else
-                <div class="grid grid-cols-1 gap-2 px-2 sm:grid-cols-2 lg:grid-cols-3">
+                <div class="px-2" style="display:grid;gap:.5rem;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
                     @foreach ($rooms as $room)
                         <div class="rounded bg-gray-100 p-3 dark:bg-gray-700">
                             <p class="truncate text-sm font-semibold dark:text-gray-100">{{ $room->caption }}</p>

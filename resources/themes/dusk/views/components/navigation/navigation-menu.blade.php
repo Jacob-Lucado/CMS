@@ -72,6 +72,10 @@
                         {{ __('Rooms') }}
                     </x-navigation.dropdown-child>
 
+                    <x-navigation.dropdown-child :route="route('furni.index')">
+                        {{ __('Furni') }}
+                    </x-navigation.dropdown-child>
+
                     <x-navigation.dropdown-child :route="route('events.index')">
                         {{ __('Events') }}
                     </x-navigation.dropdown-child>

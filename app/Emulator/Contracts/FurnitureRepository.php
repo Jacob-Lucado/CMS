@@ -2,8 +2,10 @@
 
 namespace App\Emulator\Contracts;
 
+use App\Emulator\Data\FurnitureDefinition;
 use App\Emulator\Data\FurnitureHolding;
 use App\Models\User;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 /**
@@ -28,4 +30,11 @@ interface FurnitureRepository
      * @return Collection<int, FurnitureHolding>
      */
     public function holdings(int $baseItemId, int $limit = 100): Collection;
+
+    /**
+     * Furniture definitions for the public furni browser, filtered by name.
+     *
+     * @return LengthAwarePaginator<int, FurnitureDefinition>
+     */
+    public function definitions(string $search, int $perPage = 48): LengthAwarePaginator;
 }
