@@ -4,6 +4,8 @@
     <div class="col-span-12 space-y-3 md:col-span-9">
         <x-user.me-backdrop :user="$user" />
 
+        <x-me.today />
+
         <div
             class="flex flex-col gap-3 rounded border bg-white p-1 shadow-sm dark:border-gray-900 dark:bg-gray-800 lg:flex-row lg:items-center lg:justify-between">
             <div

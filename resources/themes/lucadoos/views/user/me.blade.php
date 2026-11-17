@@ -8,6 +8,8 @@
     @endphp
 
     <div class="col-span-12 flex flex-col gap-5">
+        <x-me.today />
+
         <section class="los-profile">
             <img class="los-profile-avatar" alt=""
                  src="{{ setting('avatar_imager') }}{{ $user->look }}&direction=2&head_direction=3&gesture=sml&action=wav&size=l">
