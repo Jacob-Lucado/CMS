@@ -28,6 +28,8 @@
             <h2 class="text-xl font-semibold dark:text-white">{{ __('Home of :u', ['u' => $user->username]) }}</h2>
         @endif
 
+        <x-home.summary :user="$user" />
+
         <template x-if="previewing">
             <div class="w-full max-w-[928px] flex items-center justify-between bg-cyan-50 dark:bg-cyan-900/30 border border-cyan-300 dark:border-cyan-700 rounded-lg px-4 py-2">
                 <span class="text-sm text-cyan-700 dark:text-cyan-200">{{ __('Preview mode - drag items to arrange, then purchase') }}</span>
