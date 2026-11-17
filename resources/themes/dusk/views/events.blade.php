@@ -21,6 +21,17 @@
                             @if ($event->description)
                                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ $event->description }}</p>
                             @endif
+                            <div class="mt-2 flex items-center gap-3">
+                                @auth
+                                    <form method="POST" action="{{ route('events.going', $event) }}">
+                                        @csrf
+                                        <button type="submit" class="rounded border-2 px-3 py-1 text-xs font-semibold {{ in_array($event->id, $going) ? 'border-green-500 bg-green-600 text-white' : 'border-gray-300 bg-white text-gray-800' }}">
+                                            {{ in_array($event->id, $going) ? __('You are going') : __('I am going') }}
+                                        </button>
+                                    </form>
+                                @endauth
+                                <span class="text-[11px] text-gray-500 dark:text-gray-400">{{ trans_choice(':count player going|:count players going', $event->attendees_count) }}</span>
+                            </div>
                         </div>
                     </div>
                 @empty

@@ -54,11 +54,13 @@ class WebsiteEventResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn ($query) => $query->withCount('attendees'))
             ->defaultSort('starts_at', 'desc')
             ->columns([
                 TextColumn::make('title')->label(__('Title'))->searchable()->sortable(),
                 TextColumn::make('location')->label(__('Where'))->searchable()->sortable(),
                 TextColumn::make('starts_at')->label(__('Starts'))->searchable()->sortable()->dateTime(),
+                TextColumn::make('attendees_count')->label(__('Going'))->sortable(),
                 IconColumn::make('published')->label(__('Shown'))->boolean(),
             ])
             ->recordActions([EditAction::make(), DeleteAction::make()])

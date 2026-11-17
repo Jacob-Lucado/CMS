@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Services\Social\DiscordWebhook;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @property int $id
@@ -34,5 +35,11 @@ class WebsiteEvent extends Model
     protected function casts(): array
     {
         return ['starts_at' => 'datetime', 'published' => 'boolean'];
+    }
+
+    /** @return BelongsToMany<User, $this> */
+    public function attendees(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'website_event_attendees', 'website_event_id', 'user_id')->withTimestamps();
     }
 }

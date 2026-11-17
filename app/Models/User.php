@@ -498,4 +498,10 @@ class User extends Authenticatable implements FilamentUser, HasName
             ->where('team_id', $teamId)
             ->exists();
     }
+
+    /** @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<WebsiteEvent, $this> */
+    public function eventsGoing(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(WebsiteEvent::class, 'website_event_attendees', 'user_id', 'website_event_id')->withTimestamps();
+    }
 }

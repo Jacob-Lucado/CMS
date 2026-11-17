@@ -245,6 +245,7 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
         Route::get('/rooms', RoomBrowserController::class)->name('rooms.index');
         Route::get('/events', EventsController::class)->name('events.index');
         Route::get('/furni', FurniBrowserController::class)->name('furni.index');
+        Route::post('/events/{event}/going', [EventsController::class, 'toggle'])->middleware('auth')->name('events.going');
 
         // Shop routes
         Route::prefix('shop')->group(function () {
