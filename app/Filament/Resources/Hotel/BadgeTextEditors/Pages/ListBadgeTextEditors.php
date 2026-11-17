@@ -11,6 +11,7 @@ use Filament\Actions\CreateAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class ListBadgeTextEditors extends ListRecords
@@ -21,10 +22,8 @@ class ListBadgeTextEditors extends ListRecords
     {
         parent::mount();
 
-        // The list reads website_badges, which starts empty until the texts are imported once.
-        if (WebsiteBadge::query()->doesntExist()) {
-            Artisan::call('import:badge-data');
-        }
+        // Pick up new game badges (never overwrites edits), at most once an hour.
+        Cache::remember('badge-text-sync', 3600, fn () => Artisan::call('import:badge-data') === 0 ? true : null);
     }
 
     protected function getHeaderActions(): array
