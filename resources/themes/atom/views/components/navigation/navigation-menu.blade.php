@@ -68,6 +68,12 @@
             {{ __('Rare values') }}
         </a>
 
+        <a href="{{ route('help-center.badges.index') }}"
+           class="nav-item dark:text-gray-200 {{ request()->routeIs('help-center.badges.*') ? 'md:border-b-4! md:border-b-[#eeb425]!' : '' }}">
+            <i class="navigation-icon leaderboards mr-1 hidden lg:inline-flex"></i>
+            {{ __('Badges') }}
+        </a>
+
         <a data-turbolinks="false" href="{{ route('shop.index') }}"
            class="nav-item dark:text-gray-200 {{ request()->routeIs('shop.*') ? 'md:border-b-4! md:border-b-[#eeb425]!' : '' }}">
             <i class="navigation-icon mr-1 hidden lg:inline-flex shop"></i>

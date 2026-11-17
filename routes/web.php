@@ -3,6 +3,7 @@
 use App\Http\Controllers\Articles\ArticleController;
 use App\Http\Controllers\Articles\WebsiteArticleCommentsController;
 use App\Http\Controllers\Badge\BadgeController;
+use App\Http\Controllers\Badge\BadgeGalleryController;
 use App\Http\Controllers\Client\ClientController;
 use App\Http\Controllers\Community\LeaderboardController;
 use App\Http\Controllers\Community\PhotosController;
@@ -267,6 +268,7 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
 
             // Rules
             Route::get('/rules', WebsiteRulesController::class)->name('rules.index')->withoutMiddleware('auth');
+            Route::get('/badges', BadgeGalleryController::class)->name('badges.index')->withoutMiddleware('auth');
         });
 
         // Paypal routes
