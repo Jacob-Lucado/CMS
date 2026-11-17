@@ -2,7 +2,10 @@
 
 namespace App\Filament\Resources\User\Users;
 
+use App\Contracts\Rcon;
 use App\Emulator\Contracts\PlayerSettingsRepository;
+use App\Enums\CurrencyTypes;
+use App\Filament\Forms\BadgePicker;
 use App\Emulator\Contracts\RankRepository;
 use App\Emulator\Data\Feature;
 use App\Emulator\Emulator;
@@ -16,6 +19,10 @@ use App\Models\Community\Teams\WebsiteTeam;
 use App\Models\User;
 use App\Rules\WebsiteWordfilterRule;
 use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
@@ -321,12 +328,57 @@ class UserResource extends Resource
                 ViewAction::make(),
                 EditAction::make(),
             ])
-            ->toolbarActions([]);
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    BulkAction::make('giveBadge')
+                        ->authorize(fn (): bool => (bool) auth()->user()?->can('create', User::class))
+                        ->label(__('Give a badge'))
+                        ->icon('heroicon-o-trophy')
+                        ->schema([BadgePicker::make()])
+                        ->requiresConfirmation()
+                        ->deselectRecordsAfterCompletion()
+                        ->action(function (EloquentCollection $records, array $data): void {
+                            $records->each(fn (User $user) => app(Rcon::class)->giveBadge($user, $data['badge']));
+                            Notification::make()->success()->title(__('Badge given to :count players', ['count' => $records->count()]))->send();
+                        }),
+                    BulkAction::make('giveCurrency')
+                        ->authorize(fn (): bool => (bool) auth()->user()?->can('create', User::class))
+                        ->label(__('Give currency'))
+                        ->icon('heroicon-o-banknotes')
+                        ->schema([
+                            Select::make('currency')->label(__('Currency'))->native(false)->required()->default('Credits')
+                                ->options(['Credits' => __('Credits'), 'Duckets' => __('Duckets'), 'Diamonds' => __('Diamonds')]),
+                            TextInput::make('amount')->label(__('Amount each'))->integer()->minValue(1)->maxValue(100000)->required(),
+                        ])
+                        ->requiresConfirmation()
+                        ->deselectRecordsAfterCompletion()
+                        ->action(function (EloquentCollection $records, array $data): void {
+                            $currency = constant(CurrencyTypes::class . '::' . $data['currency']);
+                            $records->each(fn (User $user) => app(Rcon::class)->giveCurrency($user, $currency, (int) $data['amount']));
+                            Notification::make()->success()->title(__('Currency given to :count players', ['count' => $records->count()]))->send();
+                        }),
+                    BulkAction::make('disconnect')
+                        ->authorize(fn (): bool => (bool) auth()->user()?->can('create', User::class))
+                        ->label(__('Disconnect'))
+                        ->icon('heroicon-o-power')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->deselectRecordsAfterCompletion()
+                        ->action(function (EloquentCollection $records): void {
+                            $records->each(fn (User $user) => app(Rcon::class)->disconnectUser($user));
+                            Notification::make()->success()->title(__(':count players disconnected', ['count' => $records->count()]))->send();
+                        }),
+                ]),
+            ]);
     }
 
     public static function getRelations(): array
     {
-        return Emulator::userRelationManagers();
+        return [
+            ...Emulator::userRelationManagers(),
+            RelationManagers\TicketsRelationManager::class,
+            RelationManagers\PaymentsRelationManager::class,
+        ];
     }
 
     /**

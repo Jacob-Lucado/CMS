@@ -82,6 +82,11 @@
             <!-- Page Content -->
             <main class="main-content">
                 <div class="max-w-7xl w-full grid grid-cols-12 gap-4 relative py-4 lg:py-20 px-4 xl:px-0">
+                    @if (filled(setting('site_announcement')))
+                        <div class="col-span-12 rounded border-2 border-amber-400 bg-amber-100 px-4 py-3 text-sm font-semibold text-amber-900" style="grid-column:1/-1">
+                            {{ setting('site_announcement') }}
+                        </div>
+                    @endif
                     {{ $slot }}
                 </div>
 

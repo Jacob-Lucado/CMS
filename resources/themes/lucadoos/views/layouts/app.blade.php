@@ -49,6 +49,11 @@
 
         <main class="los-content">
             <div class="mx-auto grid max-w-7xl grid-cols-12 gap-x-3 gap-y-8 p-5">
+                @if (filled(setting('site_announcement')))
+                    <div class="col-span-12 rounded border-2 border-amber-400 bg-amber-100 px-4 py-3 text-sm font-semibold text-amber-900" style="grid-column:1/-1">
+                        {{ setting('site_announcement') }}
+                    </div>
+                @endif
                 {{ $slot }}
             </div>
         </main>
@@ -83,6 +88,11 @@
                         <div class="los-scroll">
                             <main class="los-content">
                                 <div class="mx-auto grid max-w-7xl grid-cols-12 gap-x-3 gap-y-8 p-5">
+                                    @if (filled(setting('site_announcement')))
+                                        <div class="col-span-12 rounded border-2 border-amber-400 bg-amber-100 px-4 py-3 text-sm font-semibold text-amber-900" style="grid-column:1/-1">
+                                            {{ setting('site_announcement') }}
+                                        </div>
+                                    @endif
                                     {{ $slot }}
                                 </div>
                             </main>

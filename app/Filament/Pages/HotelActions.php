@@ -3,7 +3,9 @@
 namespace App\Filament\Pages;
 
 use App\Enums\CurrencyTypes;
+use App\Contracts\Rcon;
 use App\Exceptions\RconConnectionException;
+use App\Models\User;
 use App\Filament\Forms\BadgePicker;
 use App\Services\Hotel\HotelControl;
 use Filament\Actions\Action;
@@ -112,6 +114,78 @@ class HotelActions extends Page
                 app(HotelControl::class)->giveEveryoneCurrency(constant(CurrencyTypes::class . '::' . $data['currency']), (int) $data['amount']),
                 __('Currency given'),
             ));
+    }
+
+    private function playerField(): Select
+    {
+        return Select::make('player')
+            ->label(__('Player'))
+            ->searchable()
+            ->required()
+            ->getSearchResultsUsing(fn (string $search): array => User::query()
+                ->where('username', 'like', addcslashes($search, '%_\\') . '%')
+                ->orderBy('username')
+                ->limit(20)
+                ->pluck('username', 'id')
+                ->all());
+    }
+
+    private function playerAction(string $name, string $label, string $icon, array $fields, callable $run, string $done, bool $confirm = false): Action
+    {
+        $action = Action::make($name)
+            ->label($label)
+            ->icon($icon)
+            ->modalHeading($label)
+            ->schema([$this->playerField(), ...$fields])
+            ->action(function (array $data) use ($run, $done): void {
+                $user = User::query()->find($data['player']);
+
+                if ($user === null) {
+                    Notification::make()->danger()->title(__('Player not found'))->send();
+
+                    return;
+                }
+
+                try {
+                    $run($user, $data, app(Rcon::class));
+                    Notification::make()->success()->title($done)->body($user->username)->send();
+                } catch (RconConnectionException $exception) {
+                    Notification::make()->danger()->title(__('The game server did not answer'))->body($exception->getMessage())->send();
+                }
+            });
+
+        return $confirm ? $action->requiresConfirmation() : $action;
+    }
+
+    public function alertPlayerAction(): Action
+    {
+        return $this->playerAction('alertPlayer', __('Alert a player'), 'heroicon-o-bell-alert',
+            [Textarea::make('message')->label(__('Message'))->required()->maxLength(500)->rows(3)],
+            fn (User $user, array $data, Rcon $rcon) => $rcon->alertUser($user, trim($data['message'])), __('Alert sent'));
+    }
+
+    public function giveFurniAction(): Action
+    {
+        return $this->playerAction('giveFurni', __('Give furni'), 'heroicon-o-gift',
+            [
+                TextInput::make('item')->label(__('Furniture ID'))->integer()->minValue(1)->required(),
+                TextInput::make('note')->label(__('Gift note'))->maxLength(120)->default(__('Here is a gift from the team.')),
+            ],
+            fn (User $user, array $data, Rcon $rcon) => $rcon->sendGift($user, (int) $data['item'], (string) $data['note']), __('Gift sent'));
+    }
+
+    public function sendToRoomAction(): Action
+    {
+        return $this->playerAction('sendToRoom', __('Send to a room'), 'heroicon-o-arrow-right-circle',
+            [TextInput::make('room')->label(__('Room ID'))->integer()->minValue(1)->required()],
+            fn (User $user, array $data, Rcon $rcon) => $rcon->forwardUser($user, (int) $data['room']), __('Player sent'));
+    }
+
+    public function disconnectPlayerAction(): Action
+    {
+        return $this->playerAction('disconnectPlayer', __('Disconnect a player'), 'heroicon-o-power', [],
+            fn (User $user, array $data, Rcon $rcon) => $rcon->disconnectUser($user), __('Player disconnected'), confirm: true)
+            ->color('danger');
     }
 
     public function reloadAction(): Action

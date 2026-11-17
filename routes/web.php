@@ -168,6 +168,8 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
                 Route::get('/password', [PasswordSettingsController::class, 'edit'])->name('settings.password.show');
                 Route::put('/password', [PasswordSettingsController::class, 'update'])->name('settings.password.update');
 
+                Route::get('/export', [AccountSettingsController::class, 'export'])->middleware('throttle:5,1')->name('settings.export');
+
                 Route::get('/session-logs', [AccountSettingsController::class, 'sessionLogs'])->name('settings.session-logs');
 
                 Route::get('/two-factor', [TwoFactorAuthenticationController::class, 'index'])->name('settings.two-factor');

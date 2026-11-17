@@ -26,6 +26,15 @@
         </div>
     </x-filament::section>
 
+    <x-filament::section :heading="__('One player')" :description="__('Pick a player by name. Works on whoever is online, and gifts land in their inventory.')" icon="heroicon-o-user">
+        <div class="hk-actions">
+            {{ $this->alertPlayerAction }}
+            {{ $this->giveFurniAction }}
+            {{ $this->sendToRoomAction }}
+            {{ $this->disconnectPlayerAction }}
+        </div>
+    </x-filament::section>
+
     <x-filament::section :heading="__('Reload')" :description="__('Makes the game server pick up changes you made in Housekeeping or the database, without a restart.')" icon="heroicon-o-arrow-path">
         <div class="hk-actions">
             @foreach ($this->reloads() as $key => $label)

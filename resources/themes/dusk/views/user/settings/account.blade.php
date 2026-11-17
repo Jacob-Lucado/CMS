@@ -79,4 +79,14 @@
             </form>
         </x-content.content-card>
     </div>
+    <div class="col-span-12 mt-3">
+        <x-content.content-card icon="hotel-icon" classes="border dark:border-gray-900">
+            <x-slot:title>{{ __('Your data') }}</x-slot:title>
+            <x-slot:under-title>{{ __('Download a copy of what we keep about your account.') }}</x-slot:under-title>
+
+            <div class="px-2">
+                <a href="{{ route('settings.export') }}" class="inline-block rounded border-2 border-gray-300 bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">{{ __('Download my data') }}</a>
+            </div>
+        </x-content.content-card>
+    </div>
 </x-app-layout>
