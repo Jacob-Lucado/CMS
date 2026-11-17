@@ -70,6 +70,8 @@
 
         $groups[] = ['label' => __('Suggestion box'), 'icon' => '💬', 'pages' => [$page('suggestions.index', __('Suggestion box'), '💬')]];
 
+        $groups[] = ['label' => __('Hall of fame'), 'icon' => '🏆', 'pages' => [$page('hall-of-fame.index', __('Hall of fame'), '🏆')]];
+
         $groups[] = ['label' => __('Polls'), 'icon' => '📊', 'pages' => [$page('polls.index', __('Polls'), '📊')]];
 
         $groups[] = ['label' => __('Daily reward'), 'icon' => '🎁', 'pages' => [$page('daily-reward.show', __('Daily reward'), '🎁')]];

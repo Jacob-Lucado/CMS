@@ -104,6 +104,12 @@
             {{ __('Suggestions') }}
         </a>
 
+        <a href="{{ route('hall-of-fame.index') }}"
+           class="nav-item dark:text-gray-200 {{ request()->routeIs('hall-of-fame.*') ? 'md:border-b-4! md:border-b-[#eeb425]!' : '' }}">
+            <i class="navigation-icon leaderboards mr-1 hidden lg:inline-flex"></i>
+            {{ __('Hall of fame') }}
+        </a>
+
         <a href="{{ route('polls.index') }}"
            class="nav-item dark:text-gray-200 {{ request()->routeIs('polls.*') ? 'md:border-b-4! md:border-b-[#eeb425]!' : '' }}">
             <i class="navigation-icon leaderboards mr-1 hidden lg:inline-flex"></i>

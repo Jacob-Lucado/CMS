@@ -10,6 +10,7 @@ use App\Http\Controllers\Community\CatalogBrowserController;
 use App\Http\Controllers\Community\DailyRewardController;
 use App\Http\Controllers\Community\ChangelogController;
 use App\Http\Controllers\Community\FurniBrowserController;
+use App\Http\Controllers\Community\HallOfFameController;
 use App\Http\Controllers\Community\PollsController;
 use App\Http\Controllers\Community\RiddleController;
 use App\Http\Controllers\Community\SuggestionsController;
@@ -260,6 +261,7 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
         Route::get('/suggestions', [SuggestionsController::class, 'index'])->name('suggestions.index');
         Route::post('/suggestions', [SuggestionsController::class, 'store'])->middleware(['auth', 'throttle:5,10'])->name('suggestions.store');
         Route::post('/suggestions/{suggestion}/vote', [SuggestionsController::class, 'vote'])->middleware(['auth', 'throttle:60,1'])->name('suggestions.vote');
+        Route::get('/hall-of-fame', HallOfFameController::class)->name('hall-of-fame.index');
         Route::get('/catalog', CatalogBrowserController::class)->name('catalog.index');
         Route::get('/daily-reward', [DailyRewardController::class, 'show'])->middleware('auth')->name('daily-reward.show');
         Route::post('/daily-reward', [DailyRewardController::class, 'claim'])->middleware(['auth', 'throttle:10,1'])->name('daily-reward.claim');

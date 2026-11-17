@@ -88,6 +88,10 @@
                         {{ __('Suggestions') }}
                     </x-navigation.dropdown-child>
 
+                    <x-navigation.dropdown-child :route="route('hall-of-fame.index')">
+                        {{ __('Hall of fame') }}
+                    </x-navigation.dropdown-child>
+
                     <x-navigation.dropdown-child :route="route('polls.index')">
                         {{ __('Polls') }}
                     </x-navigation.dropdown-child>
