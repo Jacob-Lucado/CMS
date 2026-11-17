@@ -188,6 +188,39 @@ class HotelActions extends Page
             ->color('danger');
     }
 
+    public function giveBadgeToListAction(): Action
+    {
+        return Action::make('giveBadgeToList')
+            ->label(__('Badge a list of players'))
+            ->icon('heroicon-o-clipboard-document-list')
+            ->modalHeading(__('Give a badge to a list of players'))
+            ->modalDescription(__('Handy for event winners. Works whether or not they are online.'))
+            ->schema([
+                Textarea::make('names')->label(__('Usernames'))->helperText(__('One per line, or separated by commas.'))->required()->rows(6),
+                BadgePicker::make(),
+            ])
+            ->requiresConfirmation()
+            ->action(function (array $data): void {
+                $names = collect(preg_split('/[\s,]+/', (string) $data['names'], -1, PREG_SPLIT_NO_EMPTY))->unique()->take(200);
+                $users = User::query()->whereIn('username', $names)->get();
+                $missing = $names->diff($users->pluck('username'))->values();
+
+                try {
+                    $users->each(fn (User $user) => app(Rcon::class)->giveBadge($user, $data['badge']));
+                } catch (RconConnectionException $exception) {
+                    Notification::make()->danger()->title(__('The game server did not answer'))->body($exception->getMessage())->send();
+
+                    return;
+                }
+
+                $note = Notification::make()->title(__('Badge given to :count players', ['count' => $users->count()]));
+                $missing->isEmpty()
+                    ? $note->success()
+                    : $note->warning()->body(__('Not found: :names', ['names' => $missing->implode(', ')]));
+                $note->send();
+            });
+    }
+
     public function reloadAction(): Action
     {
         return Action::make('reload')

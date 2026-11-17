@@ -31,6 +31,7 @@
             {{ $this->alertPlayerAction }}
             {{ $this->giveFurniAction }}
             {{ $this->sendToRoomAction }}
+            {{ $this->giveBadgeToListAction }}
             {{ $this->disconnectPlayerAction }}
         </div>
     </x-filament::section>
