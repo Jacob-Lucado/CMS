@@ -86,6 +86,12 @@
             {{ __('Furni') }}
         </a>
 
+        <a href="{{ route('changelog.index') }}"
+           class="nav-item dark:text-gray-200 {{ request()->routeIs('changelog.*') ? 'md:border-b-4! md:border-b-[#eeb425]!' : '' }}">
+            <i class="navigation-icon leaderboards mr-1 hidden lg:inline-flex"></i>
+            {{ __('What is new') }}
+        </a>
+
         <a href="{{ route('polls.index') }}"
            class="nav-item dark:text-gray-200 {{ request()->routeIs('polls.*') ? 'md:border-b-4! md:border-b-[#eeb425]!' : '' }}">
             <i class="navigation-icon leaderboards mr-1 hidden lg:inline-flex"></i>

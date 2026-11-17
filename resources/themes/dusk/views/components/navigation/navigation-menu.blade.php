@@ -76,6 +76,10 @@
                         {{ __('Furni') }}
                     </x-navigation.dropdown-child>
 
+                    <x-navigation.dropdown-child :route="route('changelog.index')">
+                        {{ __('What is new') }}
+                    </x-navigation.dropdown-child>
+
                     <x-navigation.dropdown-child :route="route('polls.index')">
                         {{ __('Polls') }}
                     </x-navigation.dropdown-child>
