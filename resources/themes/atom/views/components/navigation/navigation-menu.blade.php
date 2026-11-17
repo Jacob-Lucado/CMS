@@ -74,6 +74,18 @@
             {{ __('Badges') }}
         </a>
 
+        <a href="{{ route('rooms.index') }}"
+           class="nav-item dark:text-gray-200 {{ request()->routeIs('rooms.*') ? 'md:border-b-4! md:border-b-[#eeb425]!' : '' }}">
+            <i class="navigation-icon leaderboards mr-1 hidden lg:inline-flex"></i>
+            {{ __('Rooms') }}
+        </a>
+
+        <a href="{{ route('events.index') }}"
+           class="nav-item dark:text-gray-200 {{ request()->routeIs('events.*') ? 'md:border-b-4! md:border-b-[#eeb425]!' : '' }}">
+            <i class="navigation-icon leaderboards mr-1 hidden lg:inline-flex"></i>
+            {{ __('Events') }}
+        </a>
+
         <a data-turbolinks="false" href="{{ route('shop.index') }}"
            class="nav-item dark:text-gray-200 {{ request()->routeIs('shop.*') ? 'md:border-b-4! md:border-b-[#eeb425]!' : '' }}">
             <i class="navigation-icon mr-1 hidden lg:inline-flex shop"></i>

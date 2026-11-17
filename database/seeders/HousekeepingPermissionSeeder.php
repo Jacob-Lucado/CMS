@@ -196,6 +196,16 @@ class HousekeepingPermissionSeeder extends Seeder
                 'min_rank' => 7,
                 'description' => 'The minimum rank required before being able to manage shop packages, items and categories',
             ],
+            [
+                'permission' => 'manage_website_content',
+                'min_rank' => 6,
+                'description' => 'The minimum rank required before being able to edit the site rules and rare values',
+            ],
+            [
+                'permission' => 'manage_security',
+                'min_rank' => 7,
+                'description' => 'The minimum rank required before being able to manage beta codes and the IP blacklist and whitelist',
+            ],
         ];
 
         foreach ($permissions as $permission) {

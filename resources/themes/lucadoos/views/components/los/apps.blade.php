@@ -60,6 +60,12 @@
             $groups[] = ['label' => __('Rare values'), 'icon' => '💎', 'pages' => [$page('values.index', __('Rare values'), asset('assets/images/icons/ltd.png'))]];
         }
 
+        $groups[] = ['label' => __('Badges'), 'icon' => '🏅', 'pages' => [$page('help-center.badges.index', __('Badge gallery'), '🏅')]];
+
+        $groups[] = ['label' => __('Rooms'), 'icon' => '🏠', 'pages' => [$page('rooms.index', __('Room browser'), '🏠')]];
+
+        $groups[] = ['label' => __('Events'), 'icon' => '📅', 'pages' => [$page('events.index', __('Events'), '📅')]];
+
         $groups[] = ['label' => __('Shop'), 'icon' => '🛒', 'pages' => [$page('shop.index', __('Shop'), asset('assets/images/icons/catalog.png'))]];
 
         $groups[] = ['label' => __('Help center'), 'icon' => '🛟', 'pages' => array_values(array_filter([

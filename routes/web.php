@@ -5,7 +5,9 @@ use App\Http\Controllers\Articles\WebsiteArticleCommentsController;
 use App\Http\Controllers\Badge\BadgeController;
 use App\Http\Controllers\Badge\BadgeGalleryController;
 use App\Http\Controllers\Client\ClientController;
+use App\Http\Controllers\Community\EventsController;
 use App\Http\Controllers\Community\LeaderboardController;
+use App\Http\Controllers\Community\RoomBrowserController;
 use App\Http\Controllers\Community\PhotosController;
 use App\Http\Controllers\Community\Staff\StaffApplicationsController;
 use App\Http\Controllers\Community\Staff\StaffController;
@@ -235,6 +237,10 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
 
         // Leaderboard routes
         Route::get('/leaderboard', LeaderboardController::class)->name('leaderboard.index');
+
+        // Room browser and events
+        Route::get('/rooms', RoomBrowserController::class)->name('rooms.index');
+        Route::get('/events', EventsController::class)->name('events.index');
 
         // Shop routes
         Route::prefix('shop')->group(function () {

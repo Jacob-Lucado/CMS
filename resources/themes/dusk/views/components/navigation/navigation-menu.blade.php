@@ -64,6 +64,18 @@
                         {{ __('Rare values') }}
                     </x-navigation.dropdown-child>
 
+                    <x-navigation.dropdown-child :route="route('help-center.badges.index')">
+                        {{ __('Badges') }}
+                    </x-navigation.dropdown-child>
+
+                    <x-navigation.dropdown-child :route="route('rooms.index')">
+                        {{ __('Rooms') }}
+                    </x-navigation.dropdown-child>
+
+                    <x-navigation.dropdown-child :route="route('events.index')">
+                        {{ __('Events') }}
+                    </x-navigation.dropdown-child>
+
                     <x-navigation.dropdown-child :route="route('help-center.index')">
                         {{ __('Help center') }}
                     </x-navigation.dropdown-child>
