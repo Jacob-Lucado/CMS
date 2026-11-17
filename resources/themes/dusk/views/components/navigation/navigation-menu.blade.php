@@ -84,6 +84,10 @@
                         {{ __('Riddle') }}
                     </x-navigation.dropdown-child>
 
+                    <x-navigation.dropdown-child :route="route('suggestions.index')">
+                        {{ __('Suggestions') }}
+                    </x-navigation.dropdown-child>
+
                     <x-navigation.dropdown-child :route="route('polls.index')">
                         {{ __('Polls') }}
                     </x-navigation.dropdown-child>

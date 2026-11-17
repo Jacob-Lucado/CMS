@@ -98,6 +98,12 @@
             {{ __('Riddle') }}
         </a>
 
+        <a href="{{ route('suggestions.index') }}"
+           class="nav-item dark:text-gray-200 {{ request()->routeIs('suggestions.*') ? 'md:border-b-4! md:border-b-[#eeb425]!' : '' }}">
+            <i class="navigation-icon leaderboards mr-1 hidden lg:inline-flex"></i>
+            {{ __('Suggestions') }}
+        </a>
+
         <a href="{{ route('polls.index') }}"
            class="nav-item dark:text-gray-200 {{ request()->routeIs('polls.*') ? 'md:border-b-4! md:border-b-[#eeb425]!' : '' }}">
             <i class="navigation-icon leaderboards mr-1 hidden lg:inline-flex"></i>
