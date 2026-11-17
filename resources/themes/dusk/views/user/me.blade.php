@@ -1,6 +1,9 @@
 <x-app-layout>
     @push('title', __('Welcome to the best hotel on the web!'))
 
+    <div class="col-span-12">
+        <x-me.today />
+    </div>
 
     <div class="col-span-12 md:col-span-8 h-[250px] bg-gray-900/50 rounded-xl flex lg:px-8 py-8 items-center text-white relative overflow-hidden">
         <div class="block lg:hidden w-40">
