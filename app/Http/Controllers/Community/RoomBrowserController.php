@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Community;
 
 use App\Http\Controllers\Controller;
+use App\Models\FeaturedRoom;
 use App\Models\HotelRoom;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -29,6 +30,18 @@ class RoomBrowserController extends Controller
             ->paginate(24)
             ->withQueryString();
 
-        return view('rooms', ['rooms' => $rooms, 'search' => $search, 'sort' => $sort]);
+        $featured = FeaturedRoom::query()
+            ->with('room.ownerUser:id,username')
+            ->whereHas('room', fn ($query) => $query->where('state', 'open'))
+            ->orderByDesc('room_of_the_week')->orderBy('position')->orderByDesc('id')
+            ->limit(7)->get();
+
+        return view('rooms', [
+            'rooms' => $rooms,
+            'search' => $search,
+            'sort' => $sort,
+            'weekly' => $featured->firstWhere('room_of_the_week', true),
+            'picks' => $featured->where('room_of_the_week', false)->values(),
+        ]);
     }
 }

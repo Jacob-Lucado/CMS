@@ -86,6 +86,20 @@
             {{ __('Furni') }}
         </a>
 
+        <a href="{{ route('catalog.index') }}"
+           class="nav-item dark:text-gray-200 {{ request()->routeIs('catalog.*') ? 'md:border-b-4! md:border-b-[#eeb425]!' : '' }}">
+            <i class="navigation-icon leaderboards mr-1 hidden lg:inline-flex"></i>
+            {{ __('Catalog') }}
+        </a>
+
+        @auth
+            <a href="{{ route('daily-reward.show') }}"
+               class="nav-item dark:text-gray-200 {{ request()->routeIs('daily-reward.*') ? 'md:border-b-4! md:border-b-[#eeb425]!' : '' }}">
+                <i class="navigation-icon leaderboards mr-1 hidden lg:inline-flex"></i>
+                {{ __('Daily reward') }}
+            </a>
+        @endauth
+
         <a href="{{ route('events.index') }}"
            class="nav-item dark:text-gray-200 {{ request()->routeIs('events.*') ? 'md:border-b-4! md:border-b-[#eeb425]!' : '' }}">
             <i class="navigation-icon leaderboards mr-1 hidden lg:inline-flex"></i>

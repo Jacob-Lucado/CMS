@@ -5,6 +5,7 @@ namespace App\Emulator;
 use App\Contracts\Rcon;
 use App\Emulator\Contracts\BadgeRepository;
 use App\Emulator\Contracts\BanRepository;
+use App\Emulator\Contracts\CatalogRepository;
 use App\Emulator\Contracts\CurrencyRepository;
 use App\Emulator\Contracts\EmulatorDriver;
 use App\Emulator\Contracts\FurnitureRepository;
@@ -27,6 +28,7 @@ final class EmulatorManager
     public const REPOSITORY_CONTRACTS = [
         BadgeRepository::class,
         BanRepository::class,
+        CatalogRepository::class,
         CurrencyRepository::class,
         FurnitureRepository::class,
         PlayerRepository::class,

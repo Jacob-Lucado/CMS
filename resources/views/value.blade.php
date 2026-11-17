@@ -10,6 +10,8 @@
 
                 {{ __('Go back to values') }}
             </a>
+            <x-rares.price-history :history="$history" />
+
             <x-content.content-card icon="dragon.png">
                 <x-slot:title>
                     {{ $value->name }}

@@ -40,11 +40,31 @@ class WebsiteRareValue extends Model
 {
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
+    protected static function booted(): void
+    {
+        static::saved(function (self $value): void {
+            if ($value->wasRecentlyCreated || $value->wasChanged(['credit_value', 'currency_value', 'currency_type'])) {
+                WebsiteRareValueHistory::query()->create([
+                    'rare_value_id' => $value->id,
+                    'credit_value' => $value->credit_value,
+                    'currency_value' => $value->currency_value,
+                    'currency_type' => $value->currency_type,
+                ]);
+            }
+        });
+    }
+
     protected function casts()
     {
         return [
             'currency_type' => 'integer',
         ];
+    }
+
+    /** @return \Illuminate\Database\Eloquent\Relations\HasMany<WebsiteRareValueHistory, $this> */
+    public function history(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(WebsiteRareValueHistory::class, 'rare_value_id')->oldest('id');
     }
 
     /** @return BelongsTo<WebsiteRareValueCategory, $this> */

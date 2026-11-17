@@ -76,6 +76,16 @@
                         {{ __('Furni') }}
                     </x-navigation.dropdown-child>
 
+                    <x-navigation.dropdown-child :route="route('catalog.index')">
+                        {{ __('Catalog') }}
+                    </x-navigation.dropdown-child>
+
+                    @auth
+                        <x-navigation.dropdown-child :route="route('daily-reward.show')">
+                            {{ __('Daily reward') }}
+                        </x-navigation.dropdown-child>
+                    @endauth
+
                     <x-navigation.dropdown-child :route="route('events.index')">
                         {{ __('Events') }}
                     </x-navigation.dropdown-child>

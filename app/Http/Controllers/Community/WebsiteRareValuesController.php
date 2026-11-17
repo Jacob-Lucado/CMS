@@ -56,6 +56,7 @@ class WebsiteRareValuesController extends Controller
     {
         return view('value', [
             'value' => $value,
+            'history' => $value->history()->reorder('id', 'desc')->limit(30)->get()->reverse()->values(),
             'items' => $this->valueCategoriesService->itemsPerUser($value),
         ]);
     }

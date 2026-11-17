@@ -6,6 +6,32 @@
             <x-slot:title>{{ __('Room browser') }}</x-slot:title>
             <x-slot:under-title>{{ __('Open rooms in the hotel. Search by room name or owner.') }}</x-slot:under-title>
 
+            @if ($weekly || $picks->isNotEmpty())
+                <div class="mb-4 px-2">
+                    @if ($weekly)
+                        <div class="rounded border-2 border-yellow-400 bg-yellow-50 p-3 dark:bg-gray-700">
+                            <p class="text-[11px] font-bold uppercase text-yellow-700 dark:text-yellow-300">{{ __('Room of the week') }}</p>
+                            <p class="text-base font-semibold dark:text-gray-100">{{ $weekly->room->caption }}</p>
+                            <p class="text-xs text-gray-600 dark:text-gray-300">{{ __('by :name', ['name' => $weekly->room->ownerUser?->username ?? '?']) }}</p>
+                            @if ($weekly->note)
+                                <p class="mt-1 text-xs text-gray-600 dark:text-gray-300">{{ $weekly->note }}</p>
+                            @endif
+                        </div>
+                    @endif
+                    @if ($picks->isNotEmpty())
+                        <p class="mb-1 mt-3 text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">{{ __('Staff picks') }}</p>
+                        <div style="display:grid;gap:.5rem;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">
+                            @foreach ($picks as $pick)
+                                <div class="rounded bg-gray-100 p-2 dark:bg-gray-700">
+                                    <p class="truncate text-sm font-semibold dark:text-gray-100">{{ $pick->room->caption }}</p>
+                                    <p class="truncate text-xs text-gray-600 dark:text-gray-300">{{ $pick->note ?: __('by :name', ['name' => $pick->room->ownerUser?->username ?? '?']) }}</p>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+            @endif
+
             <form method="GET" action="{{ route('rooms.index') }}" class="mb-4 flex flex-wrap gap-2 px-2">
                 <input type="search" name="q" value="{{ $search }}" placeholder="{{ __('Search rooms') }}" class="min-w-0 flex-1 rounded border-4 border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 focus:ring-0 focus:border-[#eeb425]">
                 <select name="sort" class="rounded border-4 border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 focus:ring-0">

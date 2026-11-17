@@ -5,6 +5,7 @@ namespace App\Emulator\Drivers\Ada;
 use App\Contracts\Rcon;
 use App\Emulator\Contracts\BadgeRepository;
 use App\Emulator\Contracts\BanRepository;
+use App\Emulator\Contracts\CatalogRepository;
 use App\Emulator\Contracts\CurrencyRepository;
 use App\Emulator\Contracts\EmulatorDriver;
 use App\Emulator\Contracts\EmulatorInstaller;
@@ -40,6 +41,7 @@ final class AdaDriver implements EmulatorDriver
         return [
             BadgeRepository::class => AdaBadgeRepository::class,
             BanRepository::class => AdaBanRepository::class,
+            CatalogRepository::class => AdaCatalogRepository::class,
             CurrencyRepository::class => AdaCurrencyRepository::class,
             FurnitureRepository::class => AdaFurnitureRepository::class,
             MarketplaceRepository::class => AdaMarketplaceRepository::class,

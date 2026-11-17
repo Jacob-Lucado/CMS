@@ -5,6 +5,7 @@ namespace App\Emulator\Drivers\Arcturus;
 use App\Contracts\Rcon;
 use App\Emulator\Contracts\BadgeRepository;
 use App\Emulator\Contracts\BanRepository;
+use App\Emulator\Contracts\CatalogRepository;
 use App\Emulator\Contracts\CurrencyRepository;
 use App\Emulator\Contracts\EmulatorDriver;
 use App\Emulator\Contracts\EmulatorInstaller;
@@ -44,6 +45,7 @@ final class ArcturusDriver implements EmulatorDriver
         return [
             BadgeRepository::class => ArcturusBadgeRepository::class,
             BanRepository::class => ArcturusBanRepository::class,
+            CatalogRepository::class => ArcturusCatalogRepository::class,
             CurrencyRepository::class => ArcturusCurrencyRepository::class,
             FurnitureRepository::class => ArcturusFurnitureRepository::class,
             MarketplaceRepository::class => ArcturusMarketplaceRepository::class,

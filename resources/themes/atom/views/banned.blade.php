@@ -35,6 +35,30 @@
                                 </x-form.primary-button>
                             </a>
                         </div>
+
+                        <div class="mt-6 max-w-[380px]">
+                            <h3 class="mb-2 font-semibold">{{ __('Appeal your ban') }}</h3>
+
+                            @if (session('status'))
+                                <p class="mb-2 rounded bg-green-100 p-2 text-sm text-green-800">{{ session('status') }}</p>
+                            @endif
+
+                            @if ($pending)
+                                <p class="text-sm">{{ __('Your appeal is with the team. We will get back to you.') }}</p>
+                            @else
+                                <form method="POST" action="{{ route('banned.appeal') }}" class="space-y-2">
+                                    @csrf
+                                    @guest
+                                        <input type="text" name="username" value="{{ old('username') }}" maxlength="64" placeholder="{{ __('Your username') }}" required class="w-full rounded border-2 border-gray-300 dark:bg-gray-700">
+                                    @endguest
+                                    <textarea name="message" rows="4" minlength="20" maxlength="2000" required placeholder="{{ __('Tell us what happened and why the ban should be lifted.') }}" class="w-full rounded border-2 border-gray-300 dark:bg-gray-700">{{ old('message') }}</textarea>
+                                    @foreach ($errors->all() as $error)
+                                        <p class="text-sm text-red-600">{{ $error }}</p>
+                                    @endforeach
+                                    <x-form.primary-button>{{ __('Send appeal') }}</x-form.primary-button>
+                                </form>
+                            @endif
+                        </div>
                     </div>
 
                     <div class="mr-8 hidden items-center lg:flex">

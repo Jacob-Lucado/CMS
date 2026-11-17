@@ -6,6 +6,8 @@ use App\Http\Controllers\Badge\BadgeController;
 use App\Http\Controllers\Badge\BadgeGalleryController;
 use App\Http\Controllers\Client\ClientController;
 use App\Http\Controllers\Community\EventsController;
+use App\Http\Controllers\Community\CatalogBrowserController;
+use App\Http\Controllers\Community\DailyRewardController;
 use App\Http\Controllers\Community\FurniBrowserController;
 use App\Http\Controllers\Community\LeaderboardController;
 use App\Http\Controllers\Community\RoomBrowserController;
@@ -74,6 +76,7 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
 
     // Banned route
     Route::get('/banned', BannedController::class)->name('banned.show');
+    Route::post('/banned', [BannedController::class, 'appeal'])->middleware('throttle:3,60')->name('banned.appeal');
 
     // Exceptions to the 2FA check and must only be visited if not logged in.
     // The GET pages are deliberately unthrottled: visitors behind shared NAT
@@ -245,6 +248,9 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
         Route::get('/rooms', RoomBrowserController::class)->name('rooms.index');
         Route::get('/events', EventsController::class)->name('events.index');
         Route::get('/furni', FurniBrowserController::class)->name('furni.index');
+        Route::get('/catalog', CatalogBrowserController::class)->name('catalog.index');
+        Route::get('/daily-reward', [DailyRewardController::class, 'show'])->middleware('auth')->name('daily-reward.show');
+        Route::post('/daily-reward', [DailyRewardController::class, 'claim'])->middleware(['auth', 'throttle:10,1'])->name('daily-reward.claim');
         Route::post('/events/{event}/going', [EventsController::class, 'toggle'])->middleware('auth')->name('events.going');
 
         // Shop routes

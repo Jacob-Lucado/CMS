@@ -5,6 +5,7 @@ namespace App\Emulator\Drivers\Plus;
 use App\Contracts\Rcon;
 use App\Emulator\Contracts\BadgeRepository;
 use App\Emulator\Contracts\BanRepository;
+use App\Emulator\Contracts\CatalogRepository;
 use App\Emulator\Contracts\CurrencyRepository;
 use App\Emulator\Contracts\EmulatorDriver;
 use App\Emulator\Contracts\EmulatorInstaller;
@@ -39,6 +40,7 @@ final class PlusDriver implements EmulatorDriver
         return [
             BadgeRepository::class => PlusBadgeRepository::class,
             BanRepository::class => PlusBanRepository::class,
+            CatalogRepository::class => PlusCatalogRepository::class,
             CurrencyRepository::class => PlusCurrencyRepository::class,
             FurnitureRepository::class => PlusFurnitureRepository::class,
             MarketplaceRepository::class => PlusMarketplaceRepository::class,
