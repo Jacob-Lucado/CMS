@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Community;
 
 use App\Http\Controllers\Controller;
+use App\Models\ChangelogEntry;
 use App\Models\WebsiteEvent;
 use App\Models\WebsitePoll;
 use App\Models\WebsitePollVote;
@@ -14,7 +15,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
- * Feeds the in-game Daily Hub window: the daily reward, the riddle of the day, the open poll and the next event.
+ * Feeds the in-game Daily Hub window: the daily reward, the riddle of the day, the open poll, the next event and the latest news.
  */
 class HubController extends Controller
 {
@@ -22,7 +23,10 @@ class HubController extends Controller
     {
         $event = WebsiteEvent::query()->where('published', true)->where('starts_at', '>=', now())->orderBy('starts_at')->first();
 
+        $news = ChangelogEntry::query()->where('published', true)->latest('published_at')->first();
+
         return response()->json([
+            'news' => $news ? ['title' => $news->title, 'category' => $news->category, 'body' => \Illuminate\Support\Str::limit(strip_tags($news->body), 220), 'published_at' => $news->published_at?->toIso8601String()] : null,
             'daily' => $rewards->status($request->user()),
             'riddle' => $riddles->status($request->user()),
             'poll' => $this->pollStatus($request->user()),
