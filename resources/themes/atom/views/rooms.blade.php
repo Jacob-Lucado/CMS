@@ -9,23 +9,24 @@
             @if ($weekly || $picks->isNotEmpty())
                 <div class="mb-4 px-2">
                     @if ($weekly)
-                        <div class="rounded border-2 border-yellow-400 bg-yellow-50 p-3 dark:bg-gray-700">
+                        <a data-turbolinks="false" href="{{ route('nitro-client', ['room' => $weekly->room->id]) }}" class="block rounded border-2 border-yellow-400 bg-yellow-50 p-3 dark:bg-gray-700 transition hover:ring-2 hover:ring-[#eeb425] focus:outline-none focus:ring-2 focus:ring-[#eeb425]">
                             <p class="text-[11px] font-bold uppercase text-yellow-700 dark:text-yellow-300">{{ __('Room of the week') }}</p>
                             <p class="text-base font-semibold dark:text-gray-100">{{ $weekly->room->caption }}</p>
                             <p class="text-xs text-gray-600 dark:text-gray-300">{{ __('by :name', ['name' => $weekly->room->ownerUser?->username ?? '?']) }}</p>
                             @if ($weekly->note)
                                 <p class="mt-1 text-xs text-gray-600 dark:text-gray-300">{{ $weekly->note }}</p>
                             @endif
-                        </div>
+                            <p class="mt-2 text-[11px] font-semibold text-green-700 dark:text-green-400">{{ __('Enter room') }} &rarr;</p>
+                        </a>
                     @endif
                     @if ($picks->isNotEmpty())
                         <p class="mb-1 mt-3 text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">{{ __('Staff picks') }}</p>
                         <div style="display:grid;gap:.5rem;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">
                             @foreach ($picks as $pick)
-                                <div class="rounded bg-gray-100 p-2 dark:bg-gray-700">
+                                <a data-turbolinks="false" href="{{ route('nitro-client', ['room' => $pick->room->id]) }}" class="block rounded bg-gray-100 p-2 dark:bg-gray-700 transition hover:ring-2 hover:ring-[#eeb425] focus:outline-none focus:ring-2 focus:ring-[#eeb425]">
                                     <p class="truncate text-sm font-semibold dark:text-gray-100">{{ $pick->room->caption }}</p>
                                     <p class="truncate text-xs text-gray-600 dark:text-gray-300">{{ $pick->note ?: __('by :name', ['name' => $pick->room->ownerUser?->username ?? '?']) }}</p>
-                                </div>
+                                </a>
                             @endforeach
                         </div>
                     @endif
@@ -46,7 +47,7 @@
             @else
                 <div class="px-2" style="display:grid;gap:.5rem;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
                     @foreach ($rooms as $room)
-                        <div class="rounded bg-gray-100 p-3 dark:bg-gray-700">
+                        <a data-turbolinks="false" href="{{ route('nitro-client', ['room' => $room->id]) }}" title="{{ __('Enter this room') }}" class="block rounded bg-gray-100 p-3 dark:bg-gray-700 transition hover:ring-2 hover:ring-[#eeb425] focus:outline-none focus:ring-2 focus:ring-[#eeb425]">
                             <p class="truncate text-sm font-semibold dark:text-gray-100">{{ $room->caption }}</p>
                             <p class="truncate text-xs text-gray-600 dark:text-gray-300">{{ __('by :name', ['name' => $room->ownerUser?->username ?? '?']) }}</p>
                             @if ($room->description)
@@ -55,7 +56,8 @@
                             <p class="mt-2 text-[11px] text-gray-500 dark:text-gray-400">
                                 {{ $room->users_now }} / {{ $room->users_max }} {{ __('inside') }} · {{ $room->score }} {{ __('likes') }}
                             </p>
-                        </div>
+                            <p class="mt-2 text-[11px] font-semibold text-green-700 dark:text-green-400">{{ __('Enter room') }} &rarr;</p>
+                        </a>
                     @endforeach
                 </div>
 

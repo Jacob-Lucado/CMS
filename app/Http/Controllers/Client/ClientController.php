@@ -23,8 +23,11 @@ class ClientController extends Controller
             default => 'client.nitro',
         };
 
+        $room = (string) $request->query('room', '');
+
         return view($view, [
             'sso' => app(ClientLaunchService::class)->ticket($user, $request->ip() ?: 'unknown'),
+            'room' => ctype_digit($room) && (int) $room > 0 ? (int) $room : null,
         ]);
     }
 }

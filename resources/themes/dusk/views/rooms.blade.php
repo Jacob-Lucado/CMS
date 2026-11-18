@@ -20,7 +20,7 @@
             @else
                 <div class="px-2" style="display:grid;gap:.5rem;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
                     @foreach ($rooms as $room)
-                        <div class="rounded bg-gray-100 p-3 dark:bg-gray-700">
+                        <a data-turbolinks="false" href="{{ route('nitro-client', ['room' => $room->id]) }}" title="{{ __('Enter this room') }}" class="block rounded bg-gray-100 p-3 dark:bg-gray-700 transition hover:ring-2 hover:ring-[#eeb425] focus:outline-none focus:ring-2 focus:ring-[#eeb425]">
                             <p class="truncate text-sm font-semibold dark:text-gray-100">{{ $room->caption }}</p>
                             <p class="truncate text-xs text-gray-600 dark:text-gray-300">{{ __('by :name', ['name' => $room->ownerUser?->username ?? '?']) }}</p>
                             @if ($room->description)
@@ -29,7 +29,8 @@
                             <p class="mt-2 text-[11px] text-gray-500 dark:text-gray-400">
                                 {{ $room->users_now }} / {{ $room->users_max }} {{ __('inside') }} · {{ $room->score }} {{ __('likes') }}
                             </p>
-                        </div>
+                            <p class="mt-2 text-[11px] font-semibold text-green-700 dark:text-green-400">{{ __('Enter room') }} &rarr;</p>
+                        </a>
                     @endforeach
                 </div>
 
