@@ -4,13 +4,17 @@ namespace App\Http\Controllers\Community;
 
 use App\Http\Controllers\Controller;
 use App\Models\WebsiteEvent;
+use App\Models\WebsitePoll;
+use App\Models\WebsitePollVote;
+use App\Models\User;
 use App\Services\Community\DailyRewardService;
 use App\Services\Community\RiddleService;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
- * Feeds the in-game Daily Hub window: the daily reward, the riddle of the day and the next event.
+ * Feeds the in-game Daily Hub window: the daily reward, the riddle of the day, the open poll and the next event.
  */
 class HubController extends Controller
 {
@@ -21,6 +25,7 @@ class HubController extends Controller
         return response()->json([
             'daily' => $rewards->status($request->user()),
             'riddle' => $riddles->status($request->user()),
+            'poll' => $this->pollStatus($request->user()),
             'event' => $event ? ['title' => $event->title, 'location' => $event->location, 'starts_at' => $event->starts_at->toIso8601String()] : null,
         ]);
     }
@@ -38,5 +43,50 @@ class HubController extends Controller
         $result = $riddles->answer($request->user(), $data['answer']);
 
         return response()->json($result + ['riddle' => $riddles->status($request->user())], $result['ok'] ? 200 : 422);
+    }
+
+    public function vote(Request $request): JsonResponse
+    {
+        $data = $request->validate(['option' => ['required', 'integer', 'min:0']]);
+        $poll = $this->openPoll();
+
+        if (! $poll || ! isset($poll->choices()[$data['option']])) {
+            return response()->json(['ok' => false, 'message' => __('There is no poll to vote in right now.'), 'poll' => $this->pollStatus($request->user())], 422);
+        }
+
+        try {
+            WebsitePollVote::query()->create(['poll_id' => $poll->id, 'user_id' => $request->user()->id, 'option_index' => $data['option']]);
+        } catch (QueryException) {
+            return response()->json(['ok' => false, 'message' => __('You already voted in this poll.'), 'poll' => $this->pollStatus($request->user())], 422);
+        }
+
+        return response()->json(['ok' => true, 'message' => __('Thanks for voting.'), 'poll' => $this->pollStatus($request->user())]);
+    }
+
+    private function openPoll(): ?WebsitePoll
+    {
+        return WebsitePoll::query()->where('published', true)
+            ->where(fn ($q) => $q->whereNull('closes_at')->orWhere('closes_at', '>', now()))
+            ->latest('id')->first();
+    }
+
+    /** @return array<string, mixed>|null */
+    private function pollStatus(User $user): ?array
+    {
+        $poll = $this->openPoll();
+
+        if (! $poll) {
+            return null;
+        }
+
+        $counts = WebsitePollVote::query()->where('poll_id', $poll->id)
+            ->selectRaw('option_index, count(*) as total')->groupBy('option_index')->pluck('total', 'option_index');
+        $mine = WebsitePollVote::query()->where('poll_id', $poll->id)->where('user_id', $user->id)->value('option_index');
+
+        return [
+            'question' => $poll->question,
+            'choices' => array_map(fn (string $label, int $i) => ['label' => $label, 'votes' => (int) ($counts[$i] ?? 0)], $poll->choices(), array_keys($poll->choices())),
+            'voted' => $mine !== null ? (int) $mine : null,
+        ];
     }
 }
