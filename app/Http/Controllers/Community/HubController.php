@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Community;
 
 use App\Http\Controllers\Controller;
 use App\Models\ChangelogEntry;
+use App\Models\FeaturedRoom;
 use App\Models\Community\RareValue\WebsiteRareValue;
 use App\Models\WebsiteEvent;
 use App\Models\WebsitePoll;
@@ -16,7 +17,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
- * Feeds the in-game Daily Hub window: the daily reward, the riddle of the day, the open poll, the next event and the latest news.
+ * Feeds the in-game Daily Hub window: the daily reward, the riddle of the day, the open poll, featured rooms, the next event and the latest news.
  */
 class HubController extends Controller
 {
@@ -28,6 +29,7 @@ class HubController extends Controller
 
         return response()->json([
             'news' => $news ? ['title' => $news->title, 'category' => $news->category, 'body' => \Illuminate\Support\Str::limit(strip_tags($news->body), 220), 'published_at' => $news->published_at?->toIso8601String()] : null,
+            'rooms' => $this->featuredRooms(),
             'daily' => $rewards->status($request->user()),
             'riddle' => $riddles->status($request->user()),
             'poll' => $this->pollStatus($request->user()),
@@ -87,6 +89,23 @@ class HubController extends Controller
             ])->values();
 
         return response()->json(['results' => $results]);
+    }
+
+    /** @return list<array<string, mixed>> */
+    private function featuredRooms(): array
+    {
+        return FeaturedRoom::query()
+            ->with('room.ownerUser:id,username')
+            ->whereHas('room', fn ($query) => $query->where('state', 'open'))
+            ->orderByDesc('room_of_the_week')->orderBy('position')->orderByDesc('id')
+            ->limit(4)->get()
+            ->map(fn (FeaturedRoom $f) => [
+                'id' => $f->room->id,
+                'name' => $f->room->caption,
+                'owner' => $f->room->ownerUser?->username,
+                'users' => (int) $f->room->users_now,
+                'weekly' => $f->room_of_the_week,
+            ])->all();
     }
 
     private function openPoll(): ?WebsitePoll
