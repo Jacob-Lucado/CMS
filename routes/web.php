@@ -267,6 +267,7 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
         Route::post('/client-hub/daily', [HubController::class, 'claim'])->middleware(['auth', 'throttle:10,1'])->name('client-hub.daily');
         Route::post('/client-hub/riddle', [HubController::class, 'answer'])->middleware(['auth', 'throttle:10,1'])->name('client-hub.riddle');
         Route::post('/client-hub/poll', [HubController::class, 'vote'])->middleware(['auth', 'throttle:10,1'])->name('client-hub.poll');
+        Route::get('/client-hub/values', [HubController::class, 'values'])->middleware(['auth', 'throttle:60,1'])->name('client-hub.values');
         Route::get('/catalog', CatalogBrowserController::class)->name('catalog.index');
         Route::get('/daily-reward', [DailyRewardController::class, 'show'])->middleware('auth')->name('daily-reward.show');
         Route::post('/daily-reward', [DailyRewardController::class, 'claim'])->middleware(['auth', 'throttle:10,1'])->name('daily-reward.claim');

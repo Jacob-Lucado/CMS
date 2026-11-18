@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Community;
 
 use App\Http\Controllers\Controller;
 use App\Models\ChangelogEntry;
+use App\Models\Community\RareValue\WebsiteRareValue;
 use App\Models\WebsiteEvent;
 use App\Models\WebsitePoll;
 use App\Models\WebsitePollVote;
@@ -65,6 +66,27 @@ class HubController extends Controller
         }
 
         return response()->json(['ok' => true, 'message' => __('Thanks for voting.'), 'poll' => $this->pollStatus($request->user())]);
+    }
+
+    public function values(Request $request): JsonResponse
+    {
+        $term = trim((string) $request->query('q', ''));
+
+        if (mb_strlen($term) < 2) {
+            return response()->json(['results' => []]);
+        }
+
+        $results = WebsiteRareValue::query()
+            ->where('name', 'like', '%' . \App\Support\Sql::escapeLike($term) . '%')
+            ->orderBy('name')->limit(8)->get()
+            ->map(fn (WebsiteRareValue $v) => [
+                'name' => $v->name,
+                'credits' => $v->credit_value,
+                'other' => $v->currency_value,
+                'other_label' => $v->currency_type === 0 ? 'Duckets' : ($v->currency_type === 5 ? 'Diamonds' : null),
+            ])->values();
+
+        return response()->json(['results' => $results]);
     }
 
     private function openPoll(): ?WebsitePoll
