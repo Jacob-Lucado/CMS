@@ -5,8 +5,8 @@
         </div>
 
         <ol style="list-style:decimal;margin:0;padding:16px 16px 4px 36px;font-size:16px;line-height:1.5">
-            <li>{{ __('Click a spot on the floor to walk there.') }}</li>
-            <li>{{ __('Click the bar at the bottom of the screen and type to chat.') }}</li>
+            <li>{{ __('Tap or click a spot on the floor to walk there.') }}</li>
+            <li>{{ __('Tap or click the bar at the bottom of the screen and type to chat.') }}</li>
             <li>{{ __('Open the rooms icon in the toolbar to find rooms and people.') }}</li>
             <li>{{ __('The shop icon sells furni, clothes and pets.') }}</li>
             <li>{{ __('Open the Me menu and pick Daily Hub for a free reward every day.') }}</li>
