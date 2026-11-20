@@ -12,6 +12,7 @@ class EncryptCookies extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        //
+        // Read before the web middleware runs, and only ever compared with the list of themes.
+        'site_theme',
     ];
 }

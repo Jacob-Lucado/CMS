@@ -43,8 +43,10 @@ class SettingsService
      */
     public function getOrDefault(string $key, mixed $default = null): mixed
     {
-        if ($key === 'theme' && ($pinned = self::pinnedTheme()) !== null) {
-            return $pinned;
+        if ($key === 'theme') {
+            $base = self::pinnedTheme() ?? $this->settings()->get($key, $default);
+
+            return self::visitorTheme($base) ?? $base;
         }
 
         $value = $this->settings()->get($key, $default);
@@ -55,6 +57,34 @@ class SettingsService
         }
 
         return $value;
+    }
+
+    public const THEME_COOKIE = 'site_theme';
+
+    /**
+     * The themes a visitor can switch between.
+     *
+     * @return list<string>
+     */
+    public static function switchableThemes(): array
+    {
+        return array_values(array_filter((array) config('theme.switchable', []), 'is_string'));
+    }
+
+    /**
+     * The theme the visitor picked, when the hotel's own theme is one of the switchable ones.
+     */
+    public static function visitorTheme(mixed $base): ?string
+    {
+        $choices = self::switchableThemes();
+
+        if (! is_string($base) || ! in_array($base, $choices, true) || ! app()->bound('request')) {
+            return null;
+        }
+
+        $picked = request()->cookie(self::THEME_COOKIE);
+
+        return is_string($picked) && in_array($picked, $choices, true) ? $picked : null;
     }
 
     /**

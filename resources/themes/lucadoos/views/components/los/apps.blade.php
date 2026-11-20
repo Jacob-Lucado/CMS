@@ -8,7 +8,7 @@
         'title' => $title,
         'icon' => $icon,
     ];
-    $link = fn (?string $url, string $title, string $icon): ?array => filled($url) ? ['url' => $url, 'title' => $title, 'icon' => $icon] : null;
+    $link = fn (?string $url, string $title, string $icon, bool $sameTab = false): ?array => filled($url) ? ['url' => $url, 'title' => $title, 'icon' => $icon, 'sameTab' => $sameTab] : null;
 
     $groups = [];
 
@@ -99,6 +99,7 @@
 
     $links = array_values(array_filter([
         $link(setting('discord_invitation_link'), __('Discord'), asset('assets/images/icons/discord.png')),
+        in_array('atom', config('theme.switchable', []), true) ? $link(route('theme.switch', 'atom'), __('Classic site'), '🧭', true) : null,
         $user && hasPermission('housekeeping_access') ? $link(setting('housekeeping_url') ?: url('/housekeeping'), __('Housekeeping'), '🛠️') : null,
         $user && hasPermission('generate_logo') ? $link(route('logo-generator.index'), __('Logo generator'), '🖌️') : null,
     ]));

@@ -5,6 +5,7 @@ use App\Http\Controllers\Articles\WebsiteArticleCommentsController;
 use App\Http\Controllers\Badge\BadgeController;
 use App\Http\Controllers\Badge\BadgeGalleryController;
 use App\Http\Controllers\Client\ClientController;
+use App\Http\Controllers\Miscellaneous\ThemeSwitchController;
 use App\Http\Controllers\Community\EventsController;
 use App\Http\Controllers\Community\CatalogBrowserController;
 use App\Http\Controllers\Community\DailyRewardController;
@@ -79,6 +80,9 @@ Route::prefix('installation')->controller(InstallationController::class)->group(
 Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(function () {
     // Maintenance route
     Route::get('/maintenance', MaintenanceController::class)->name('maintenance.show');
+
+    // Visitors can switch between the classic Atom site and LucadoOS.
+    Route::get('/theme/{theme}', ThemeSwitchController::class)->name('theme.switch');
 
     // Banned route
     Route::get('/banned', BannedController::class)->name('banned.show');

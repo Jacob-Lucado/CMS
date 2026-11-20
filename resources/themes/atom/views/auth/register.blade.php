@@ -129,6 +129,8 @@
                             </x-form.primary-button>
                         </div>
                     </form>
+
+                    <x-form.discord-button />
                 </div>
 
                 <div class="hidden md:block relative w-full">

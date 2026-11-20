@@ -38,6 +38,11 @@ return [
     'pinned' => env('CMS_THEME'),
 
     /*
+    | The themes a visitor can switch between with /theme/{name}. The choice is kept in a cookie.
+    */
+    'switchable' => ['atom', 'lucadoos'],
+
+    /*
     |--------------------------------------------------------------------------
     | Base Path
     |--------------------------------------------------------------------------

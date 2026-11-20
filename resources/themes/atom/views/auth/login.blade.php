@@ -53,6 +53,8 @@
                         </x-form.primary-button>
                     </div>
                 </form>
+
+                <x-form.discord-button />
             </x-content.content-card>
         </div>
     </div>

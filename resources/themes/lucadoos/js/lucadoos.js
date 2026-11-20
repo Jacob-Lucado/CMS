@@ -878,14 +878,14 @@ function desktop(data) {
             ...data.groups.filter((g) => g.pages.length).map((g) => ({ label: g.label, icon: g.icon, run: () => open(g.pages[0].path), hint: g.pages.map((p) => p.title).join(", ") })),
             ...(data.user ? [] : [{ label: S.signIn, icon: "🔑", run: () => open("os:signin") }]),
             { label: S.personalize, icon: "🎨", run: () => open("os:personalize") },
-            ...data.links.map((l) => ({ label: l.title, icon: l.icon, href: l.url })),
+            ...data.links.map((l) => ({ label: l.title, icon: l.icon, href: l.url, sameTab: l.sameTab })),
         ];
         iconsBox.replaceChildren();
         for (const entry of entries) {
             const art = paintIcon(el("span", "los-icon-art", { "aria-hidden": "true" }), entry.icon);
             const name = el("span", "los-icon-name", { text: entry.label });
             if (entry.href) {
-                iconsBox.append(el("a", "los-icon", { href: entry.href, target: "_blank", rel: "noopener noreferrer", title: entry.label }, art, name));
+                iconsBox.append(el("a", "los-icon", entry.sameTab ? { href: entry.href, target: "_top", title: entry.label } : { href: entry.href, target: "_blank", rel: "noopener noreferrer", title: entry.label }, art, name));
                 continue;
             }
             const icon = el("button", "los-icon", { type: "button", title: entry.hint || entry.label }, art, name);
@@ -1001,7 +1001,7 @@ function desktop(data) {
             const links = data.links.filter((l) => !query || l.title.toLowerCase().includes(query));
             if (links.length) {
                 results.append(el("div", "los-start-group", { text: S.links }));
-                for (const link of links) results.append(el("a", "los-start-item", { href: link.url, target: "_blank", rel: "noopener noreferrer" }, paintIcon(el("i", "", { "aria-hidden": "true" }), link.icon), el("span", "", { text: link.title })));
+                for (const link of links) results.append(el("a", "los-start-item", link.sameTab ? { href: link.url, target: "_top" } : { href: link.url, target: "_blank", rel: "noopener noreferrer" }, paintIcon(el("i", "", { "aria-hidden": "true" }), link.icon), el("span", "", { text: link.title })));
             }
             if (!results.children.length) results.append(el("p", "los-start-none", { text: S.noMatch }));
         }
