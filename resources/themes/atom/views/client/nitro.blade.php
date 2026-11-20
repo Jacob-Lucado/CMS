@@ -96,6 +96,8 @@
         </script>
     @endif
 
+    <x-client.welcome-guide />
+
     <x-client.radio-mini />
 
     {{-- Show disconnected message on client if the user has been disconnected --}}
