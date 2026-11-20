@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Radio\RadioEntry;
+use App\Models\Radio\RadioShoutout;
 use App\Models\User;
 use App\Services\Radio\RadioAccess;
 use App\Services\Radio\RadioSources;
@@ -33,6 +34,8 @@ class RadioController extends Controller
             'on_air' => $this->access->onAir()?->load('user')->toPlayer($user),
             'entries' => RadioEntry::query()->approved()->with('user')->orderBy('kind')->orderBy('title')->limit(self::MAX_ENTRIES)->get()
                 ->map(fn (RadioEntry $entry) => $entry->toPlayer($user)),
+            'shoutouts' => RadioShoutout::query()->where('created_at', '>=', now()->subMinutes(RadioShoutout::VISIBLE_MINUTES))->with('user')->latest()->limit(10)->get()
+                ->map(fn (RadioShoutout $shoutout) => $shoutout->toPlayer($user)),
             'pending' => $dj ? RadioEntry::query()->pending()->with('user')->oldest()->limit(50)->get()->map(fn (RadioEntry $entry) => $entry->toPlayer($user)) : [],
             'mine' => RadioEntry::query()->where('user_id', $user->id)->where('status', '!=', RadioEntry::APPROVED)->latest()->limit(10)->get()
                 ->map(fn (RadioEntry $entry) => $entry->toPlayer($user)),
@@ -100,6 +103,34 @@ class RadioController extends Controller
         }
 
         $entry->delete();
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function shoutout(Request $request): JsonResponse
+    {
+        $user = $this->user($request);
+        $message = trim(preg_replace('/\s+/u', ' ', $request->validate(['message' => ['required', 'string', 'max:140']])['message']));
+
+        if ($message === '') {
+            throw ValidationException::withMessages(['message' => __('Write something first.')]);
+        }
+
+        if (RadioShoutout::query()->where('user_id', $user->id)->where('created_at', '>=', now()->subMinute())->exists()) {
+            throw ValidationException::withMessages(['message' => __('Easy there. You can send one shout-out a minute.')]);
+        }
+
+        RadioShoutout::query()->create(['user_id' => $user->id, 'message' => $message]);
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function removeShoutout(Request $request, RadioShoutout $shoutout): JsonResponse
+    {
+        $user = $this->user($request);
+        abort_unless($this->access->isDj($user) || $shoutout->user_id === $user->id, 403);
+
+        $shoutout->delete();
 
         return response()->json(['ok' => true]);
     }

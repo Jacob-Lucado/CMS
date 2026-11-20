@@ -3,6 +3,7 @@
 use App\Emulator\Contracts\RankRepository;
 use App\Filament\Resources\Hotel\Radio\Pages\ManageRadioEntries;
 use App\Models\Radio\RadioEntry;
+use App\Models\Radio\RadioShoutout;
 use App\Models\User;
 use App\Models\WebsiteHousekeepingPermission;
 use App\Services\HousekeepingPermissionsService;
@@ -178,4 +179,28 @@ test('housekeeping sets the DJ roles and reviews suggestions', function () {
     expect(app(RadioAccess::class)->djRoles())->toBe([5])
         ->and(app(RadioAccess::class)->submissionsOpen())->toBeFalse()
         ->and($entry->fresh()->status)->toBe(RadioEntry::APPROVED);
+});
+
+test('a player can send a shout-out, one a minute, and only the sender or a DJ can remove it', function () {
+    $player = User::factory()->create(['rank' => 1]);
+    $other = User::factory()->create(['rank' => 1]);
+    $dj = User::factory()->create(['rank' => topRank()]);
+
+    listener($player)->postJson('/radio/shoutouts', ['message' => "  Hello \n   everyone  "])->assertOk();
+    $this->postJson('/radio/shoutouts', ['message' => 'again'])->assertUnprocessable();
+    $shoutout = RadioShoutout::query()->sole();
+
+    expect($shoutout->message)->toBe('Hello everyone');
+    $this->getJson('/radio/feed')->assertJsonPath('shoutouts.0.message', 'Hello everyone')->assertJsonPath('shoutouts.0.mine', true);
+
+    listener($other)->deleteJson("/radio/shoutouts/{$shoutout->id}")->assertForbidden();
+    listener($dj)->deleteJson("/radio/shoutouts/{$shoutout->id}")->assertOk();
+    expect(RadioShoutout::query()->count())->toBe(0);
+});
+
+test('old shout-outs drop off the radio', function () {
+    $player = User::factory()->create(['rank' => 1]);
+    RadioShoutout::query()->create(['user_id' => $player->id, 'message' => 'long ago'])->forceFill(['created_at' => now()->subHours(3)])->save();
+
+    listener($player)->getJson('/radio/feed')->assertJsonPath('shoutouts', []);
 });

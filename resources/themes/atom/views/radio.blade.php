@@ -4,6 +4,7 @@
     <div class="col-span-12 hr" x-data="hotelRadio(@js([
         'feed' => route('radio.feed', absolute: false),
         'store' => route('radio.store', absolute: false),
+        'shout' => route('radio.shoutout', absolute: false),
         'onAir' => route('radio.on-air', absolute: false),
         'base' => rtrim(route('radio.index', absolute: false), '/'),
     ]))" x-init="start()">
@@ -57,6 +58,22 @@
         <aside class="hr-win hr-side">
             <header class="hr-bar"><b>{{ __('Playlist') }}</b></header>
             <div class="hr-pane hr-sidepane">
+            <div class="hr-shout">
+                <b>{{ __('Shout-outs') }}</b>
+                <form class="hr-shoutform" x-on:submit.prevent="sendShout()">
+                    <input class="hr-input" type="text" x-model="shout" maxlength="140" placeholder="{{ __('Say hi to the other listeners') }}" aria-label="{{ __('Shout-out') }}">
+                    <button type="submit" class="hr-btn hr-primary" :disabled="shoutBusy || !shout.trim()">{{ __('Send') }}</button>
+                </form>
+                <small class="hr-msg bad" x-show="shoutError" x-text="shoutError"></small>
+                <ul class="hr-shoutlist" x-show="shouts.length">
+                    <template x-for="item in shouts" :key="item.id">
+                        <li><b x-text="item.by"></b> <span x-text="item.message"></span>
+                            <button type="button" class="hr-x" x-show="dj || item.mine" x-on:click="removeShout(item)" aria-label="{{ __('Remove') }}">✕</button></li>
+                    </template>
+                </ul>
+                <small class="hr-muted" x-show="!shouts.length">{{ __('No shout-outs yet. Be the first!') }}</small>
+            </div>
+
             <form class="hr-add" x-show="dj || submissions" x-on:submit.prevent="submit()">
                 <b x-text="dj ? @js(__('Add to the radio')) : @js(__('Suggest a station or track'))"></b>
                 <input class="hr-input" type="url" x-model="form.link" required maxlength="300" placeholder="{{ __('SoundCloud link or station stream link') }}" aria-label="{{ __('Link') }}">
@@ -152,6 +169,12 @@
             .hr-vol { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 150px; font-size: 11.5px; font-weight: 700; letter-spacing: .1em; color: var(--ink); }
             .hr-vol input { flex: 1; min-width: 0; accent-color: var(--blue); height: 8px; cursor: pointer; }
             .hr-sidepane { display: flex; flex-direction: column; gap: 10px; max-height: 70vh; padding: 10px; }
+            .hr-shout { display: grid; gap: 6px; padding-bottom: 10px; border-bottom: 2px dotted var(--soft); }
+            .hr-shout > b { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+            .hr-shoutform { display: flex; gap: 6px; }
+            .hr-shoutlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; max-height: 110px; overflow-y: auto; font-size: 13px; }
+            .hr-shoutlist li { display: flex; gap: 6px; align-items: baseline; }
+            .hr-shoutlist li > span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
             .hr-add { display: grid; gap: 6px; padding-bottom: 10px; border-bottom: 2px dotted var(--soft); }
             .hr-add > b { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
             .hr-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
@@ -194,7 +217,7 @@
                     standby: @js(__('Standby')), pick: @js(__('Pick something to play')), quiet: @js(__('The radio is quiet')), choose: @js(__('Choose a station or a track from the list.')), live: @js(__('On air')), stationTag: @js(__('Live station')), nowTag: @js(__('Now playing')), onNow: @js(__('On air now')) };
 
                 const radio = (urls) => ({
-                    dj: false, submissions: false, onAir: null, entries: [], pending: [], mine: [],
+                    dj: false, submissions: false, onAir: null, entries: [], pending: [], mine: [], shouts: [], shout: '', shoutBusy: false, shoutError: '',
                     now: null, following: true, heard: false, auto: read().auto !== false,
                     playing: false, volume: read().volume ?? 0.8, audio: null,
                     tab: 'all', search: '', busy: false, message: '', error: false,
@@ -232,7 +255,7 @@
                         let data;
                         try { data = await this.call(urls.feed); } catch { return; }
                         const before = this.onAir?.id ?? null;
-                        Object.assign(this, { dj: data.dj, submissions: data.submissions, onAir: data.on_air, entries: data.entries, pending: data.pending, mine: data.mine });
+                        Object.assign(this, { dj: data.dj, submissions: data.submissions, onAir: data.on_air, entries: data.entries, pending: data.pending, mine: data.mine, shouts: data.shoutouts ?? [] });
                         if (this.heard && this.following && (data.on_air?.id ?? null) !== before) {
                             data.on_air ? this.play(data.on_air) : this.stop();
                         }
@@ -251,6 +274,23 @@
                         if (e.status === 'rejected') parts.push(kinds.rejected);
                         if (e.by) parts.push(`${kinds.by} ${e.by}`);
                         return parts.join(' · ');
+                    },
+                    async sendShout() {
+                        if (this.shoutBusy || !this.shout.trim()) return;
+                        this.shoutBusy = true;
+                        this.shoutError = '';
+                        try {
+                            await this.call(urls.shout, 'POST', { message: this.shout });
+                            this.shout = '';
+                            await this.load();
+                        } catch (e) {
+                            this.shoutError = e.message;
+                        } finally {
+                            this.shoutBusy = false;
+                        }
+                    },
+                    async removeShout(item) {
+                        try { await this.call(`${urls.shout}/${item.id}`, 'DELETE'); await this.load(); } catch (e) { this.shoutError = e.message; }
                     },
                     tuneIn() { this.following = true; this.onAir ? this.play(this.onAir) : this.stop(); },
                     pick(entry) { this.following = !!(this.onAir && this.onAir.id === entry.id); this.play(entry); },

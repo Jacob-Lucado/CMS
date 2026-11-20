@@ -117,6 +117,8 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
             Route::get('/', 'show')->name('radio.index');
             Route::get('/feed', 'feed')->middleware('throttle:60,1')->name('radio.feed');
             Route::post('/', 'store')->middleware('throttle:10,1')->name('radio.store');
+            Route::post('/shoutouts', 'shoutout')->middleware('throttle:20,1')->name('radio.shoutout');
+            Route::delete('/shoutouts/{shoutout}', 'removeShoutout')->name('radio.shoutout.remove');
             Route::post('/on-air', 'onAir')->middleware('throttle:30,1')->name('radio.on-air');
             Route::post('/{entry}/approve', 'approve')->name('radio.approve');
             Route::post('/{entry}/reject', 'reject')->name('radio.reject');

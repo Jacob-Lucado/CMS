@@ -14,6 +14,7 @@
                 </div>
                 <div class="hrm-eq" aria-hidden="true">@for ($i = 0; $i < 8; $i++)<i style="--d: {{ ($i * 5) % 11 }}"></i>@endfor</div>
             </div>
+            <div class="hrm-shout" id="hrm-shout" hidden></div>
             <div class="hrm-ctl">
                 <button type="button" class="hrm-btn" id="hrm-play" aria-label="{{ __('Play') }}">&#9654;</button>
                 <label class="hrm-vol"><span>{{ __('VOL') }}</span><input type="range" id="hrm-vol" min="0" max="1" step="0.05" aria-label="{{ __('Volume') }}"></label>
@@ -63,6 +64,8 @@
     .hrm-stage { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; }
     .hrm button:focus-visible, .hrm input:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
     @media (prefers-reduced-motion: reduce) { .hrm, .hrm-win, .hrm-tab { transition-duration: 0s; } .hrm-lamp i, .hrm-dot, .hrm-lcd.live .hrm-eq i { animation: none; } }
+    .hrm-shout { margin: 6px 2px 0; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,.07); color: #2b3a45; font-size: 12px; line-height: 1.3; overflow-wrap: anywhere; max-height: 3.9em; overflow: hidden; }
+    .hrm-shout[hidden] { display: none; }
 </style>
 
 <script>
@@ -199,6 +202,10 @@
                 if (!res.ok) return;
                 data = await res.json();
             } catch { return; }
+            const latest = (data.shoutouts || [])[0];
+            const shout = document.getElementById('hrm-shout');
+            shout.hidden = !latest;
+            shout.textContent = latest ? `${latest.by}: ${latest.message}` : '';
             const next = data.on_air || null;
             const changed = (next?.id ?? null) !== (onAir?.id ?? null);
             onAir = next;
