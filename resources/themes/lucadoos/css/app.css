@@ -2291,3 +2291,258 @@ body:not(.los-wall-art) .los-desk::after { bottom: 68px; }
 .los-kudos.is-denied {
     border-color: #e5484d;
 }
+
+/* ------------------------------------------------------------ Habbo retro skin */
+/* The LucadoOS desktop, windows and Start menu keep their layout. This layer gives them the hotel's look: cream paper,
+   blue title bars, hard dark edges, stepped shadows and chunky buttons that press in. */
+
+:root {
+    --font-sans: Ubuntu, "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+    --hb-edge: #14202a;
+    --hb-frame: #31495b;
+    --hb-blue: #2f86b8;
+    --hb-blue-d: #1d5f86;
+    --hb-green: #6cc22f;
+    --hb-green-d: #3f8a14;
+    --hb-red: #e0392b;
+    --hb-red-d: #9d2218;
+    --hb-paper: #e9e5d8;
+    --hb-paper-2: #f6f3ea;
+    --hb-shade: #b9b4a3;
+    --radius: 6px;
+    --sb-a: #1d5f86;
+    --sb-b: #2f86b8;
+    --accent: #2f86b8;
+    --accent-2: #4aa3d6;
+    --accent-hover: #3a95c9;
+    --on-accent: #ffffff;
+    --bg: #1b2a36;
+    --bg-glow: #24415a;
+    --nav: #25394a;
+    --panel: #24384a;
+    --panel-2: #2b4458;
+    --line: rgba(0, 0, 0, 0.55);
+    --text: #dbe6ee;
+    --muted: #9fb3c2;
+    --white: #ffffff;
+    --input-bg: #14202a;
+    --hover-row: rgba(74, 163, 214, 0.16);
+}
+
+:root[data-theme="light"] {
+    --accent: #2f86b8;
+    --accent-2: #4aa3d6;
+    --accent-hover: #3a95c9;
+    --on-accent: #ffffff;
+    --bg: #e9e5d8;
+    --bg-glow: #d3e3ec;
+    --glow-2: rgba(108, 194, 47, 0.08);
+    --nav: #31495b;
+    --panel: #f6f3ea;
+    --panel-2: #ece8da;
+    --line: rgba(20, 32, 42, 0.38);
+    --text: #1d2b36;
+    --muted: #5c6b77;
+    --white: #14202a;
+    --input-bg: #ffffff;
+    --good: #2f8a1d;
+    --bad: #c9302c;
+    --hover-row: rgba(47, 134, 184, 0.14);
+    --soft: rgba(20, 32, 42, 0.06);
+    --soft-2: rgba(20, 32, 42, 0.12);
+}
+
+/* square scrollbars */
+* { scrollbar-color: var(--hb-blue) var(--hb-paper); }
+:root:not([data-theme="light"]) * { scrollbar-color: var(--hb-blue) #14202a; }
+::-webkit-scrollbar-track { background: var(--hb-paper); border-left: 2px solid var(--hb-edge); }
+:root:not([data-theme="light"]) ::-webkit-scrollbar-track { background: #14202a; }
+::-webkit-scrollbar-thumb { border: 2px solid var(--hb-edge); border-radius: 2px; background: var(--hb-blue); background-clip: border-box; }
+
+/* a pixel dither over the wallpaper, and softer waves */
+.los-desk::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: repeating-conic-gradient(rgba(20, 32, 42, 0.07) 0 25%, transparent 0 50%) 0 0 / 4px 4px;
+}
+.los-waves { opacity: 0.45; }
+
+/* windows */
+.los-win {
+    border: 2px solid var(--hb-edge);
+    border-radius: 6px;
+    background: var(--hb-paper);
+    box-shadow: inset 0 0 0 2px #4d6a80, 4px 4px 0 rgba(0, 0, 0, 0.3);
+}
+:root:not([data-theme="light"]) .los-win { background: var(--bg); }
+.los-win.focus { border-color: var(--hb-edge); box-shadow: inset 0 0 0 2px #4d6a80, 5px 5px 0 rgba(0, 0, 0, 0.38); }
+.los-win.max, .los-win.snapped { border-radius: 0; box-shadow: none; }
+.los-win-bar {
+    padding: 5px 6px 5px 10px;
+    border-bottom: 2px solid var(--hb-edge);
+    background: #7e97a8;
+    background-image: none;
+    box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.3);
+    color: #fff;
+}
+.los-win.focus .los-win-bar { background: var(--hb-blue); }
+.los-win-title { font-size: 13px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; text-shadow: 0 1px 0 var(--hb-edge); }
+.los-win-btns { gap: 3px; }
+.los-win-btn {
+    width: 24px;
+    height: 22px;
+    border: 2px solid var(--hb-edge);
+    border-radius: 3px;
+    background: var(--hb-paper-2);
+    color: var(--hb-edge);
+    font-weight: 700;
+    box-shadow: inset 0 -2px 0 var(--hb-shade), inset 0 1px 0 #fff;
+}
+.los-win-btn:hover { background: #fff; }
+.los-win-btn:active { transform: translateY(1px); box-shadow: inset 0 1px 0 var(--hb-shade); }
+.los-win-btn.close { background: var(--hb-red); color: #fff; box-shadow: inset 0 -2px 0 var(--hb-red-d), inset 0 1px 0 rgba(255, 255, 255, 0.4); }
+.los-win-btn.close:hover { background: #ec4b3d; color: #fff; }
+
+/* cards and panels */
+.los-card {
+    border: 2px solid var(--hb-edge);
+    border-radius: 6px;
+    background: var(--panel);
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.18);
+    backdrop-filter: none;
+}
+.los-card-head { border-bottom: 2px solid var(--hb-edge); background: var(--panel-2); }
+.los-card-head .icon { border: 2px solid var(--hb-edge); border-radius: 4px; background-color: var(--hb-frame); }
+.los-card-title { font-weight: 700; }
+.los-stat, .los-news, .los-package, .los-hero, .los-profile, .los-setup, .los-signin, .los-linking, .los-friend, .los-list, .los-notice, .los-assist-card {
+    border-radius: 6px;
+}
+.los-stat, .los-news, .los-package, .los-hero, .los-profile, .los-setup, .los-linking {
+    border: 2px solid var(--hb-edge);
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.16);
+}
+.los-pill { border: 2px solid var(--hb-edge); border-radius: 3px; font-weight: 700; }
+.los-progress, .los-progress span { border-radius: 2px; }
+
+/* buttons */
+.los-btn {
+    min-height: 34px;
+    border: 2px solid var(--hb-edge);
+    border-radius: 4px;
+    background: var(--hb-blue);
+    color: #fff;
+    font-weight: 700;
+    text-shadow: 0 1px 0 var(--hb-blue-d);
+    box-shadow: inset 0 -3px 0 var(--hb-blue-d), inset 0 2px 0 rgba(255, 255, 255, 0.35);
+    transition: none;
+}
+.los-btn:hover { background: #3a95c9; }
+.los-btn:active { transform: translateY(1px); border-bottom-width: 2px; box-shadow: inset 0 2px 0 var(--hb-blue-d); }
+.los-btn.gray { background: var(--hb-paper-2); color: var(--hb-edge); text-shadow: none; box-shadow: inset 0 -3px 0 var(--hb-shade), inset 0 2px 0 #fff; }
+.los-btn.gray:hover { background: #fff; }
+.los-btn.gray:active { box-shadow: inset 0 2px 0 var(--hb-shade); }
+.los-shop button.bg-green-600, .los-btn.green { background: var(--hb-green); box-shadow: inset 0 -3px 0 var(--hb-green-d), inset 0 2px 0 rgba(255, 255, 255, 0.4); }
+
+/* tabs look like folder tabs */
+.los-tabs a { border: 2px solid var(--hb-edge); border-bottom: 0; border-radius: 5px 5px 0 0; font-weight: 700; }
+.los-tabs a.is-active { background: var(--hb-paper-2); color: var(--hb-edge); }
+
+/* fields */
+html input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]),
+html textarea,
+html select {
+    border-width: 2px !important;
+    border-color: var(--hb-edge) !important;
+    border-radius: 4px !important;
+    box-shadow: inset 0 2px 0 rgba(0, 0, 0, 0.14);
+}
+
+/* desktop icons */
+.los-icon { border-radius: 4px; }
+.los-icon:hover { background: rgba(255, 255, 255, 0.28); }
+.los-icon.sel, .los-icon:focus-visible { border: 1px dotted var(--hb-edge); background: rgba(47, 134, 184, 0.3); }
+.los-icon-art {
+    border: 2px solid var(--hb-edge);
+    border-radius: 6px;
+    background: var(--hb-blue);
+    box-shadow: inset 0 -4px 0 var(--hb-blue-d), inset 0 2px 0 rgba(255, 255, 255, 0.35), 3px 3px 0 rgba(0, 0, 0, 0.3);
+}
+.los-icon-name { font-weight: 700; text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.7); }
+:root[data-theme="light"] .los-icon-name { color: var(--hb-edge); text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.7); }
+
+/* taskbar: the hotel's dark toolbar, with chunky buttons */
+.los-taskbar {
+    --text: #dbe6ee;
+    --white: #ffffff;
+    --muted: #9fb3c2;
+    --soft: rgba(255, 255, 255, 0.08);
+    --soft-2: rgba(255, 255, 255, 0.16);
+    --line: rgba(0, 0, 0, 0.6);
+    --input-bg: #14202a;
+    --panel: #3b556a;
+    border-top: 2px solid var(--hb-edge);
+    background: var(--hb-frame);
+    backdrop-filter: none;
+    box-shadow: inset 0 2px 0 #4d6a80;
+}
+.los-startbtn {
+    border: 2px solid var(--hb-edge);
+    border-radius: 4px;
+    background: var(--hb-green);
+    color: #fff;
+    font-weight: 700;
+    text-shadow: 0 1px 0 var(--hb-green-d);
+    box-shadow: inset 0 -3px 0 var(--hb-green-d), inset 0 2px 0 rgba(255, 255, 255, 0.4);
+}
+.los-startbtn:hover { background: #7bd13c; border-color: var(--hb-edge); }
+.los-startbtn[aria-expanded="true"] { background: #5aa927; box-shadow: inset 0 2px 0 var(--hb-green-d); }
+.los-winlogo i { border-radius: 0; background: #fff; }
+.los-searchbox { border: 2px solid var(--hb-edge); border-radius: 4px; box-shadow: inset 0 2px 0 rgba(0, 0, 0, 0.5); }
+.los-task {
+    border: 2px solid var(--hb-edge);
+    border-radius: 4px;
+    background: #4a657a;
+    box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.3), inset 0 2px 0 rgba(255, 255, 255, 0.2);
+}
+.los-task:hover { background: #587690; }
+.los-task.on { background: var(--hb-blue); color: #fff; box-shadow: inset 0 2px 0 rgba(0, 0, 0, 0.35); }
+.los-task i { color: #fff; }
+.los-purse { border: 2px solid var(--hb-edge); border-radius: 4px; background: #14202a; box-shadow: inset 0 2px 0 rgba(0, 0, 0, 0.5); }
+.los-who, .los-traybtn { border-radius: 4px; }
+.los-bell .los-badge { border: 1px solid var(--hb-edge); border-radius: 3px; }
+
+/* Start menu */
+.los-start {
+    border: 2px solid var(--hb-edge);
+    border-radius: 6px;
+    background: var(--hb-paper);
+    box-shadow: inset 0 0 0 2px #4d6a80, 4px 4px 0 rgba(0, 0, 0, 0.35);
+    --text: #1d2b36;
+    --white: #14202a;
+    --muted: #5c6b77;
+    --panel: #f6f3ea;
+    --panel-2: #ece8da;
+    --soft: rgba(20, 32, 42, 0.07);
+    --soft-2: rgba(20, 32, 42, 0.14);
+    --hover-row: rgba(47, 134, 184, 0.16);
+    --line: rgba(20, 32, 42, 0.38);
+}
+.los-start-rail { background: var(--hb-frame); border-right: 2px solid var(--hb-edge); }
+.los-start-brand b { text-transform: uppercase; letter-spacing: 0.04em; }
+.los-start-group { font-weight: 700; }
+.los-start-item { border-radius: 4px; }
+.los-start-item i { border: 2px solid var(--hb-edge); border-radius: 4px; }
+.los-tile {
+    border: 2px solid var(--hb-edge);
+    border-radius: 6px;
+    box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.28), inset 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+.los-tile:hover { filter: brightness(1.08); }
+.los-pin-reset, .los-pins-head small { font-weight: 700; }
+
+@media (prefers-reduced-motion: no-preference) {
+    .los-win, .los-start:not([hidden]) { animation-timing-function: steps(3, end); }
+}
