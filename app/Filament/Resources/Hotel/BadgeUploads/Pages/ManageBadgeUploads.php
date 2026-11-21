@@ -41,8 +41,8 @@ class ManageBadgeUploads extends Page implements HasForms
                 ->label('Upload Badge')
                 ->disk('badges')
                 ->acceptedFileTypes(['image/gif'])
-                ->maxSize(64)
-                ->rules(['mimetypes:image/gif', 'dimensions:width=40,height=40', new ValidBadgeUploadName])
+                ->maxSize(1024)
+                ->rules(['mimetypes:image/gif', 'dimensions:min_width=40,min_height=40,max_width=48,max_height=48', new ValidBadgeUploadName])
                 ->saveUploadedFileUsing(function (TemporaryUploadedFile $file): string {
                     $code = strtoupper(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
                     app(BadgeImageStorage::class)->store($code, (string) $file->get());

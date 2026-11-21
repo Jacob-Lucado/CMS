@@ -79,7 +79,7 @@ test('badge storage rejects invalid dimensions and never writes outside its disk
     Storage::fake('badges');
     $storage = app(BadgeImageStorage::class);
 
-    expect(fn () => $storage->store('BADGE', badgeImageBytes(width: 41)))
+    expect(fn () => $storage->store('BADGE', badgeImageBytes(width: 49)))
         ->toThrow(RuntimeException::class);
 
     expect(Storage::disk('badges')->allFiles())->toBeEmpty();
@@ -97,4 +97,59 @@ test('badge storage rejects invalid dimensions and never writes outside its disk
     if (PHP_OS_FAMILY !== 'Windows') {
         expect($mode)->toBe(0644);
     }
+});
+
+function animatedBadgeGif(int $frames = 3): string
+{
+    $first = imagecreate(40, 40);
+    imagecolorallocate($first, 0, 0, 0);
+    ob_start();
+    imagegif($first);
+    $bytes = (string) ob_get_clean();
+    imagedestroy($first);
+
+    $header = substr($bytes, 0, 13 + 6);
+    $frame = substr($bytes, 13 + 6, -1);
+    $loop = "!\xFF\x0BNETSCAPE2.0\x03\x01\x00\x00\x00";
+    $delay = "!\xF9\x04\x00\x0A\x00\x00\x00";
+
+    return $header . $loop . str_repeat($delay . $frame, $frames) . ';';
+}
+
+test('animated gif badges keep every frame', function () {
+    Storage::fake('badges');
+    $gif = animatedBadgeGif(3);
+
+    app(BadgeImageStorage::class)->store('MOVING', $gif);
+
+    $stored = Storage::disk('badges')->get('MOVING.gif');
+
+    expect(substr_count($stored, "!\xF9\x04"))->toBe(3)
+        ->and($stored)->toContain('NETSCAPE2.0')
+        ->and(getimagesizefromstring($stored)[0])->toBe(40);
+});
+
+test('gif badges lose comments and trailing data', function () {
+    $gif = animatedBadgeGif(1);
+    $dirty = substr($gif, 0, -1) . "!\xFE\x04evil\x00;<?php echo 1;";
+
+    $clean = app(BadgeImageNormalizer::class)->toGif($dirty);
+
+    expect($clean)->not->toContain('evil')->not->toContain('<?php')->toEndWith(';');
+});
+
+test('gif badges larger than one megabyte are rejected', function () {
+    $gif = animatedBadgeGif(1);
+    $big = substr($gif, 0, -1) . "!\xFE\xFF" . str_repeat('a', 255) . "\x00" . str_repeat("!\xFE\xFF" . str_repeat('a', 255) . "\x00", 4200) . ';';
+
+    expect(fn () => app(BadgeImageNormalizer::class)->toGif($big))->toThrow(RuntimeException::class);
+});
+
+test('a 48x48 animated gif with many frames is stored as is', function () {
+    Storage::fake('badges');
+    $gif = animatedBadgeGif(80);
+
+    app(BadgeImageStorage::class)->store('BIGCAT', $gif);
+
+    expect(Storage::disk('badges')->get('BIGCAT.gif'))->toBe($gif);
 });

@@ -10,7 +10,7 @@ use Throwable;
 
 class RemoteBadgeImageFetcher
 {
-    private const MAX_BYTES = 262_144;
+    private const MAX_BYTES = BadgeImageNormalizer::MAX_BYTES;
 
     public function __construct(private readonly PublicIpResolver $resolver) {}
 
