@@ -242,7 +242,7 @@ class HotelActions extends Page
             });
     }
 
-    /** @param array{sent: int, failed: int} $result */
+    /** @param array{sent: int, failed: int, reason?: string} $result */
     private function report(array $result, string $title): void
     {
         if ($result['sent'] === 0 && $result['failed'] === 0) {
@@ -255,6 +255,20 @@ class HotelActions extends Page
             ->title($title)
             ->body(trans_choice('Reached :count player.|Reached :count players.', $result['sent']) . ($result['failed'] > 0 ? ' ' . __(':failed could not be reached.', ['failed' => $result['failed']]) : ''));
 
+        if ($result['failed'] > 0 && isset($result['reason'])) {
+            $notification->body($notification->getBody() . ' ' . __('The game server said: :reason', ['reason' => $this->friendlyReason($result['reason'])]));
+        }
+
         ($result['failed'] > 0 ? $notification->warning() : $notification->success())->send();
+    }
+
+    private function friendlyReason(string $reason): string
+    {
+        return match (true) {
+            str_contains($reason, 'unknown_badge') => __('the hotel does not know that badge'),
+            str_contains($reason, 'restricted_badge') => __('that badge is only for players with the right rank'),
+            str_contains($reason, 'user_not_found') => __('the player was not found'),
+            default => $reason,
+        };
     }
 }

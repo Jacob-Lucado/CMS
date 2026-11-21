@@ -53,7 +53,7 @@ test('players the game server cannot reach are counted, not lost', function () {
         }
     });
 
-    expect(app(HotelControl::class)->giveEveryoneBadge('ADM'))->toBe(['sent' => 0, 'failed' => 2]);
+    expect(app(HotelControl::class)->giveEveryoneBadge('ADM'))->toBe(['sent' => 0, 'failed' => 2, 'reason' => 'Player left']);
 });
 
 test('only the reloads this game server knows are offered', function () {

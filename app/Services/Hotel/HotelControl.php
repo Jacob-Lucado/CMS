@@ -44,19 +44,19 @@ class HotelControl
         return $this->players->whereOnline(User::query())->count();
     }
 
-    /** @return array{sent: int, failed: int} */
+    /** @return array{sent: int, failed: int, reason?: string} */
     public function alertEveryone(string $message): array
     {
         return $this->eachOnline(fn (User $user) => $this->rcon->alertUser($user, $message));
     }
 
-    /** @return array{sent: int, failed: int} */
+    /** @return array{sent: int, failed: int, reason?: string} */
     public function giveEveryoneBadge(string $badge): array
     {
         return $this->eachOnline(fn (User $user) => $this->rcon->giveBadge($user, $badge));
     }
 
-    /** @return array{sent: int, failed: int} */
+    /** @return array{sent: int, failed: int, reason?: string} */
     public function giveEveryoneCurrency(CurrencyTypes $currency, int $amount): array
     {
         return $this->eachOnline(fn (User $user) => $this->rcon->giveCurrency($user, $currency, $amount));
@@ -112,7 +112,7 @@ class HotelControl
     /**
      * @param  Closure(User): void  $send
      *
-     * @return array{sent: int, failed: int}
+     * @return array{sent: int, failed: int, reason?: string}
      */
     private function eachOnline(Closure $send): array
     {
@@ -127,6 +127,7 @@ class HotelControl
                     $result['sent']++;
                 } catch (RconConnectionException $exception) {
                     $result['failed']++;
+                    $result['reason'] ??= $exception->getMessage();
                     Log::warning('Hotel-wide action skipped a player', ['user_id' => $user->id, 'reason' => $exception->getMessage()]);
                 }
             });
