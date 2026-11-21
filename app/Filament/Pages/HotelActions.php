@@ -208,7 +208,12 @@ class HotelActions extends Page
                 try {
                     $users->each(fn (User $user) => app(Rcon::class)->giveBadge($user, $data['badge']));
                 } catch (RconConnectionException $exception) {
-                    Notification::make()->danger()->title(__('The game server did not answer'))->body($exception->getMessage())->send();
+                    $unknown = str_contains($exception->getMessage(), 'unknown_badge');
+
+                    Notification::make()->danger()
+                        ->title($unknown ? __('The hotel does not know that badge') : __('The game server did not answer'))
+                        ->body($unknown ? __('Pick a badge from the list. Codes that are not in the hotel badge list cannot be given.') : $exception->getMessage())
+                        ->send();
 
                     return;
                 }
