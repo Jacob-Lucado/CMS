@@ -34,6 +34,11 @@ final class PlusBadgeRepository implements BadgeRepository
             ->map(fn (mixed $code): string => (string) $code)->all());
     }
 
+    public function define(string $badge): void
+    {
+        DB::table('badge_definitions')->insertOrIgnore(['code' => $badge, 'required_right' => '']);
+    }
+
     public function grant(User $user, string $badge): void
     {
         $this->mutex->run($badge, function () use ($badge, $user): void {

@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Enums\CurrencyTypes;
 use App\Contracts\Rcon;
+use App\Emulator\Contracts\BadgeRepository;
 use App\Exceptions\RconConnectionException;
 use App\Models\User;
 use App\Filament\Forms\BadgePicker;
@@ -85,10 +86,11 @@ class HotelActions extends Page
                 BadgePicker::make(),
             ])
             ->requiresConfirmation()
-            ->action(fn (array $data) => $this->report(
-                app(HotelControl::class)->giveEveryoneBadge($data['badge']),
-                __('Badge given'),
-            ));
+            ->action(function (array $data): void {
+                app(BadgeRepository::class)->define($data['badge']);
+
+                $this->report(app(HotelControl::class)->giveEveryoneBadge($data['badge']), __('Badge given'));
+            });
     }
 
     public function giveCurrencyAction(): Action
@@ -204,6 +206,8 @@ class HotelActions extends Page
                 $names = collect(preg_split('/[\s,]+/', (string) $data['names'], -1, PREG_SPLIT_NO_EMPTY))->unique()->take(200);
                 $users = User::query()->whereIn('username', $names)->get();
                 $missing = $names->diff($users->pluck('username'))->values();
+
+                app(BadgeRepository::class)->define($data['badge']);
 
                 try {
                     $users->each(fn (User $user) => app(Rcon::class)->giveBadge($user, $data['badge']));

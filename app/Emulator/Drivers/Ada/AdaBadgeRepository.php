@@ -42,6 +42,8 @@ class AdaBadgeRepository implements BadgeRepository
             ->map(fn (mixed $code): string => (string) $code)->all());
     }
 
+    public function define(string $badge): void {}
+
     public function grant(User $user, string $badge): void
     {
         // The code lock also serializes definitions shared by different

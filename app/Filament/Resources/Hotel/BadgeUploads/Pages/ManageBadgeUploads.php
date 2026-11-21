@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Hotel\BadgeUploads\Pages;
 use App\Filament\Resources\Hotel\BadgeUploads\BadgeUploadResource;
 use App\Rules\ValidBadgeUploadName;
 use App\Services\Badge\BadgeImageStorage;
+use App\Emulator\Contracts\BadgeRepository;
 use App\Support\BadgeCode;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -45,6 +46,7 @@ class ManageBadgeUploads extends Page implements HasForms
                 ->saveUploadedFileUsing(function (TemporaryUploadedFile $file): string {
                     $code = strtoupper(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
                     app(BadgeImageStorage::class)->store($code, (string) $file->get());
+                    app(BadgeRepository::class)->define($code);
 
                     return BadgeCode::filename($code);
                 })

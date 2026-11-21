@@ -37,6 +37,8 @@ class ArcturusBadgeRepository implements BadgeRepository
             ->map(fn (mixed $code): string => (string) $code)->all());
     }
 
+    public function define(string $badge): void {}
+
     public function grant(User $user, string $badge): void
     {
         $this->mutex->run($badge, function () use ($user, $badge): void {

@@ -38,6 +38,11 @@ interface BadgeRepository
      */
     public function search(string $term, int $limit): array;
 
+    /**
+     * Make the game server accept a badge code that was added by hand, such as an uploaded picture.
+     */
+    public function define(string $badge): void;
+
     public function grant(User $user, string $badge): void;
 
     public function revoke(User $user, string $badge): void;

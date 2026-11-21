@@ -15,3 +15,13 @@ test('the badge picker lists matching badges and still takes a code that is not 
         ->and(array_keys(BadgePicker::options('100%')))->toBe([])
         ->and(BadgePicker::label('ADM'))->toContain('ADM.gif');
 });
+
+test('a badge added by hand is made known to the game server once', function () {
+    $badges = app(App\Emulator\Contracts\BadgeRepository::class);
+
+    $badges->define('ZZZ');
+    $badges->define('ZZZ');
+
+    expect(DB::table('badge_definitions')->where('code', 'ZZZ')->count())->toBe(1)
+        ->and(array_keys(BadgePicker::options('ZZZ')))->toBe(['ZZZ']);
+});
