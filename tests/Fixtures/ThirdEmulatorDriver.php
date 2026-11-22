@@ -5,6 +5,7 @@ namespace Tests\Fixtures;
 use App\Contracts\Rcon;
 use App\Emulator\Contracts\BadgeRepository;
 use App\Emulator\Contracts\BanRepository;
+use App\Emulator\Contracts\CatalogRepository;
 use App\Emulator\Contracts\CurrencyRepository;
 use App\Emulator\Contracts\EmulatorDriver;
 use App\Emulator\Contracts\EmulatorInstaller;
@@ -21,6 +22,7 @@ use App\Emulator\Data\PlayerConstraints;
 use App\Emulator\Data\PlayerSchema;
 use App\Emulator\Drivers\Arcturus\ArcturusBadgeRepository;
 use App\Emulator\Drivers\Arcturus\ArcturusBanRepository;
+use App\Emulator\Drivers\Arcturus\ArcturusCatalogRepository;
 use App\Emulator\Drivers\Arcturus\ArcturusCurrencyRepository;
 use App\Emulator\Drivers\Arcturus\ArcturusFurnitureRepository;
 use App\Emulator\Drivers\Arcturus\ArcturusMarketplaceRepository;
@@ -53,6 +55,7 @@ class ThirdEmulatorDriver implements EmulatorDriver
             PhotoRepository::class => ArcturusPhotoRepository::class,
             ScoreboardRepository::class => ArcturusScoreboardRepository::class,
             BanRepository::class => ArcturusBanRepository::class,
+            CatalogRepository::class => ArcturusCatalogRepository::class,
             CurrencyRepository::class => ArcturusCurrencyRepository::class,
             FurnitureRepository::class => ArcturusFurnitureRepository::class,
             PlayerRepository::class => ArcturusPlayerRepository::class,

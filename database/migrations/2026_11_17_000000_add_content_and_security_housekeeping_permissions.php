@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\WebsiteHousekeepingPermission;
+use App\Support\PermissionRanks;
 use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
@@ -27,7 +28,10 @@ return new class extends Migration
     public function up(): void
     {
         foreach ($this->permissions as $permission) {
-            WebsiteHousekeepingPermission::query()->firstOrCreate(['permission' => $permission['permission']], $permission);
+            WebsiteHousekeepingPermission::query()->firstOrCreate(
+                ['permission' => $permission['permission']],
+                [...$permission, 'min_rank' => PermissionRanks::scale($permission['min_rank'])],
+            );
         }
     }
 

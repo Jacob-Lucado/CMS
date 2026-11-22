@@ -6,7 +6,7 @@
         __('Member since') => \Illuminate\Support\Carbon::createFromTimestamp($user->account_created)->format('M j, Y'),
         __('Last seen') => $user->online ? __('Online now') : \Illuminate\Support\Carbon::createFromTimestamp($user->last_online)->diffForHumans(),
         __('Badges') => number_format($user->emulatorBadges()->count()),
-        __('Rooms') => number_format(\App\Models\HotelRoom::query()->where('owner', $user->id)->count()),
+        __('Rooms') => number_format(app(\App\Emulator\Contracts\RoomRepository::class)->forHome($user)->count()),
         __('Best streak') => number_format((int) $streak?->best_streak),
     ];
 @endphp

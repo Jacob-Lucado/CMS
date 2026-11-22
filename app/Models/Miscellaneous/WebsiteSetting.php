@@ -29,6 +29,7 @@ class WebsiteSetting extends Model
         'flash_external_texts_file',
         'seo_description',
         'seo_keywords',
+        'site_announcement',
     ];
 
     protected $fillable = [

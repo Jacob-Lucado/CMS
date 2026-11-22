@@ -36,6 +36,10 @@ test('badge imports update names and descriptions without duplicating definition
 
     $this->artisan('import:badge-data')->assertSuccessful();
 
+    expect(WebsiteBadge::first()->badge_name)->toBe('First name');
+
+    $this->artisan('import:badge-data', ['--refresh' => true])->assertSuccessful();
+
     expect(WebsiteBadge::count())->toBe(1)
         ->and(WebsiteBadge::first()->only(['badge_key', 'badge_name', 'badge_description']))
         ->toBe([
@@ -60,7 +64,7 @@ test('a failure in a later badge import chunk preserves all existing definitions
     $data['badge_name_INVALID'] = str_repeat('x', 256);
     File::put($this->badgeImportPath, json_encode($data, JSON_THROW_ON_ERROR));
 
-    $this->artisan('import:badge-data')->assertFailed();
+    $this->artisan('import:badge-data', ['--refresh' => true])->assertFailed();
 
     expect(WebsiteBadge::count())->toBe(1)
         ->and(WebsiteBadge::first()->badge_name)->toBe('Original');
