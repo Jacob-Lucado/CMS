@@ -44,11 +44,14 @@ class WebsiteRareValue extends Model
     {
         static::saved(function (self $value): void {
             if ($value->wasRecentlyCreated || $value->wasChanged(['credit_value', 'currency_value', 'currency_type'])) {
+                // A new row takes its unset columns from the database defaults, so read them back.
+                $saved = $value->wasRecentlyCreated ? (self::query()->find($value->id) ?? $value) : $value;
+
                 WebsiteRareValueHistory::query()->create([
-                    'rare_value_id' => $value->id,
-                    'credit_value' => $value->credit_value,
-                    'currency_value' => $value->currency_value,
-                    'currency_type' => $value->currency_type,
+                    'rare_value_id' => $saved->id,
+                    'credit_value' => $saved->credit_value,
+                    'currency_value' => $saved->currency_value,
+                    'currency_type' => $saved->currency_type,
                 ]);
             }
         });
