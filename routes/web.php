@@ -329,6 +329,7 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
         Route::prefix('game')->middleware(['findretros.redirect', 'vpn.checker'])->group(function () {
             Route::get('/nitro', ClientController::class)->name('nitro-client')->defaults('client', 'nitro');
             Route::get('/flash', ClientController::class)->name('flash-client')->defaults('client', 'flash');
+            Route::get('/air', ClientController::class)->name('air-client')->defaults('client', 'air');
         });
 
         // Logo generator

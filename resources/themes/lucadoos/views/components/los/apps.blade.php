@@ -22,6 +22,7 @@
         $groups[] = ['label' => setting('hotel_name', __('Hotel')), 'icon' => '🏨', 'hotel' => true, 'pages' => array_values(array_filter([
             $page('nitro-client', __('Nitro client'), asset('assets/images/icons/lighthouse.png')),
             config('habbo.client.flash_enabled') ? $page('flash-client', __('Flash client'), '⚡') : null,
+            config('habbo.client.air_enabled') ? $page('air-client', __('AIR client'), '🕹️') : null,
         ]))];
     } else {
         $groups[] = ['label' => __('Welcome'), 'icon' => '🏠', 'pages' => [
