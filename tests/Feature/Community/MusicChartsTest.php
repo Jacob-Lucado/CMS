@@ -50,3 +50,26 @@ test('song text is escaped', function () {
         ->assertDontSee('<b>Eve</b>', false)
         ->assertDontSee('<script>x</script>', false);
 });
+
+test('the API lists the charts', function () {
+    play('Alice', 'https://example.com/a');
+    play('Alice', 'https://example.com/a');
+    play('Bob', 'https://example.com/b');
+
+    $this->actingAs(User::factory()->create())
+        ->getJson('/api/v1/music')
+        ->assertOk()
+        ->assertJsonPath('data.days', 7)
+        ->assertJsonPath('data.songs.0.url', 'https://example.com/a')
+        ->assertJsonPath('data.songs.0.plays', 2)
+        ->assertJsonPath('data.djs.0.name', 'Alice')
+        ->assertJsonCount(3, 'data.recent');
+});
+
+test('the API charts are empty without plays', function () {
+    $this->actingAs(User::factory()->create())
+        ->getJson('/api/v1/music')
+        ->assertOk()
+        ->assertJsonPath('data.songs', [])
+        ->assertJsonPath('data.recent', []);
+});

@@ -76,7 +76,7 @@ class BootstrapController extends Controller
             'payments' => ['paypal_configured' => PaypalConfiguration::isConfigured()],
             'registration' => ['enabled' => ! (bool) setting('disable_registration'), 'requires_beta_code' => (bool) setting('requires_beta_code')],
             'reactions' => config('habbo.reactions'),
-            'operations' => ['articles', 'accounts', 'directory', 'staff', 'teams', 'leaderboards', 'applications', 'shop', 'paypal', 'vouchers', 'referrals', 'support', 'homes', 'badges', 'logo', 'nitro'],
+            'operations' => ['articles', 'accounts', 'directory', 'staff', 'teams', 'leaderboards', 'music', 'applications', 'shop', 'paypal', 'vouchers', 'referrals', 'support', 'homes', 'badges', 'logo', 'nitro'],
             'currency' => StorefrontMoney::currencyCode(),
         ]]);
     }
