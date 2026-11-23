@@ -8,6 +8,7 @@ use App\Exceptions\BadgePurchaseException;
 use App\Models\User;
 use App\Models\WebsiteDrawBadge;
 use App\Rules\ValidGifBadge;
+use App\Services\Badge\BadgeImageNormalizer;
 use App\Services\SettingsService;
 use ErrorException;
 use GdImage;
@@ -21,6 +22,7 @@ class CreateDrawnBadge
     public function __construct(
         private readonly CurrencyRepository $currencies,
         private readonly SettingsService $settings,
+        private readonly BadgeImageNormalizer $normalizer,
     ) {}
 
     /**
@@ -60,15 +62,14 @@ class CreateDrawnBadge
             throw BadgePurchaseException::pathNotConfigured();
         }
 
-        $image = $this->decodeImage($bytes);
         $path = rtrim($directory, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $user->id . '_' . Str::ulid() . '.gif';
 
         try {
-            $saved = imagegif($image, $path);
+            $saved = count(ValidGifBadge::delays($bytes) ?? []) > 1
+                ? $this->saveAnimated($bytes, $path)
+                : $this->saveStill($bytes, $path);
         } catch (Throwable) {
             $saved = false;
-        } finally {
-            imagedestroy($image);
         }
 
         if (! $saved) {
@@ -78,6 +79,29 @@ class CreateDrawnBadge
         }
 
         return $path;
+    }
+
+    /** Keeps every frame, and drops comments and anything after the end of the image. */
+    private function saveAnimated(string $bytes, string $path): bool
+    {
+        $delays = ValidGifBadge::delays($bytes) ?? [];
+
+        if (strlen($bytes) > ValidGifBadge::MAX_ANIMATED_BYTES || count($delays) > ValidGifBadge::MAX_FRAMES || min($delays) < ValidGifBadge::MIN_DELAY) {
+            return false;
+        }
+
+        return file_put_contents($path, $this->normalizer->toGif($bytes)) !== false;
+    }
+
+    private function saveStill(string $bytes, string $path): bool
+    {
+        $image = $this->decodeImage($bytes);
+
+        try {
+            return imagegif($image, $path);
+        } finally {
+            imagedestroy($image);
+        }
     }
 
     private function decodeImage(string $bytes): GdImage

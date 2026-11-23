@@ -65,6 +65,57 @@ class BadgeImageNormalizer
     }
 
     /**
+     * The delay of every frame in a GIF, in hundredths of a second. A frame with no delay block gets 0.
+     *
+     * @return list<int>
+     */
+    public function frameDelays(string $bytes): array
+    {
+        $length = strlen($bytes);
+
+        if ($length < 14 || ! in_array(substr($bytes, 0, 6), ['GIF87a', 'GIF89a'], true)) {
+            throw new RuntimeException('The badge image could not be decoded.');
+        }
+
+        $flags = ord($bytes[10]);
+        $position = 13 + (($flags & 0x80) ? 3 * (2 ** (($flags & 0x07) + 1)) : 0);
+        $delays = [];
+        $pending = 0;
+
+        while ($position < $length) {
+            $marker = $bytes[$position];
+
+            if ($marker === ';') {
+                return $delays;
+            }
+
+            if ($marker === '!') {
+                $label = ord($bytes[$position + 1] ?? "\0");
+
+                if ($label === 0xF9 && $position + 6 < $length) {
+                    $pending = ord($bytes[$position + 4]) | (ord($bytes[$position + 5]) << 8);
+                }
+
+                $position = $this->skipSubBlocks($bytes, $position + 2);
+
+                continue;
+            }
+
+            if ($marker !== ',' || $position + 10 > $length) {
+                break;
+            }
+
+            $local = ord($bytes[$position + 9]);
+            $position += 10 + (($local & 0x80) ? 3 * (2 ** (($local & 0x07) + 1)) : 0) + 1;
+            $position = $this->skipSubBlocks($bytes, $position);
+            $delays[] = $pending;
+            $pending = 0;
+        }
+
+        throw new RuntimeException('The badge image could not be decoded.');
+    }
+
+    /**
      * Keeps every frame of an animated GIF. Only the parts the client needs are copied, so
      * comments and any data after the end of the image are dropped.
      */
