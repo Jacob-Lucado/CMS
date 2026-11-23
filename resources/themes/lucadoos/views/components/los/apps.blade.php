@@ -65,6 +65,8 @@
 
         $groups[] = ['label' => __('Rooms'), 'icon' => '🏠', 'pages' => [$page('rooms.index', __('Room browser'), '🏠'), $page('furni.index', __('Furni browser'), '🪑'), $page('catalog.index', __('Catalog browser'), '📖')]];
 
+        $groups[] = ['label' => __('Music'), 'icon' => '🎵', 'pages' => [$page('music.index', __('Music charts'), '🎵')]];
+
         $groups[] = ['label' => __('What is new'), 'icon' => '📣', 'pages' => [$page('changelog.index', __('What is new'), '📣')]];
 
         $groups[] = ['label' => __('Riddle'), 'icon' => '💡', 'pages' => [$page('riddle.show', __('Riddle of the day'), '💡')]];

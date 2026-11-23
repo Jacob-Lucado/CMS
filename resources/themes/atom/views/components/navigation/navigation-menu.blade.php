@@ -72,6 +72,9 @@
                 <x-navigation.dropdown-child :route="route('furni.index')">
                     {{ __('Furni') }}
                 </x-navigation.dropdown-child>
+                <x-navigation.dropdown-child :route="route('music.index')">
+                    {{ __('Music charts') }}
+                </x-navigation.dropdown-child>
                 <x-navigation.dropdown-child :route="route('catalog.index')">
                     {{ __('Catalog') }}
                 </x-navigation.dropdown-child>

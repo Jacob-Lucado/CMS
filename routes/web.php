@@ -5,24 +5,24 @@ use App\Http\Controllers\Articles\WebsiteArticleCommentsController;
 use App\Http\Controllers\Badge\BadgeController;
 use App\Http\Controllers\Badge\BadgeGalleryController;
 use App\Http\Controllers\Client\ClientController;
-use App\Http\Controllers\Miscellaneous\ThemeSwitchController;
-use App\Http\Controllers\Community\EventsController;
 use App\Http\Controllers\Community\CatalogBrowserController;
-use App\Http\Controllers\Community\DailyRewardController;
 use App\Http\Controllers\Community\ChangelogController;
+use App\Http\Controllers\Community\DailyRewardController;
+use App\Http\Controllers\Community\EventsController;
 use App\Http\Controllers\Community\FurniBrowserController;
 use App\Http\Controllers\Community\HallOfFameController;
 use App\Http\Controllers\Community\HubController;
+use App\Http\Controllers\Community\LeaderboardController;
+use App\Http\Controllers\Community\MusicChartsController;
+use App\Http\Controllers\Community\PhotosController;
 use App\Http\Controllers\Community\PollsController;
 use App\Http\Controllers\Community\RiddleController;
-use App\Http\Controllers\Community\SuggestionsController;
-use App\Http\Controllers\Community\LeaderboardController;
 use App\Http\Controllers\Community\RoomBrowserController;
-use App\Http\Controllers\Community\PhotosController;
 use App\Http\Controllers\Community\Staff\StaffApplicationsController;
 use App\Http\Controllers\Community\Staff\StaffController;
 use App\Http\Controllers\Community\Staff\WebsiteTeamApplicationsController;
 use App\Http\Controllers\Community\Staff\WebsiteTeamsController;
+use App\Http\Controllers\Community\SuggestionsController;
 use App\Http\Controllers\Community\WebsiteRareValuesController;
 use App\Http\Controllers\Help\HelpCenterController;
 use App\Http\Controllers\Help\TicketController;
@@ -38,6 +38,7 @@ use App\Http\Controllers\Miscellaneous\InstallationController;
 use App\Http\Controllers\Miscellaneous\LocaleController;
 use App\Http\Controllers\Miscellaneous\LogoGeneratorController;
 use App\Http\Controllers\Miscellaneous\MaintenanceController;
+use App\Http\Controllers\Miscellaneous\ThemeSwitchController;
 use App\Http\Controllers\RadioController;
 use App\Http\Controllers\Shop\ShopController;
 use App\Http\Controllers\Shop\ShopVoucherController;
@@ -255,6 +256,7 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
 
         // Leaderboard routes
         Route::get('/leaderboard', LeaderboardController::class)->name('leaderboard.index');
+        Route::get('/music', MusicChartsController::class)->name('music.index');
 
         // Room browser and events
         Route::get('/rooms', RoomBrowserController::class)->name('rooms.index');
