@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\Hotel\BadgeUploads\Pages;
 
+use App\Emulator\Contracts\BadgeRepository;
 use App\Filament\Resources\Hotel\BadgeUploads\BadgeUploadResource;
 use App\Rules\ValidBadgeUploadName;
 use App\Services\Badge\BadgeImageStorage;
-use App\Emulator\Contracts\BadgeRepository;
 use App\Support\BadgeCode;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Concerns\InteractsWithForms;

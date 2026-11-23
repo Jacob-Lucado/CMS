@@ -6,7 +6,6 @@ use App\Filament\Resources\Shop\PaypalTransactions\Pages\ListPaypalTransactions;
 use App\Models\Shop\WebsitePaypalTransaction;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class PaypalTransactionResource extends Resource

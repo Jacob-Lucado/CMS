@@ -2,10 +2,10 @@
 
 namespace App\Filament\Pages;
 
+use App\Emulator\Contracts\BadgeRepository;
 use App\Filament\Concerns\TranslatableResource;
 use App\Rules\ValidBadgeCode;
 use App\Services\Badge\BadgeImageStorage;
-use App\Emulator\Contracts\BadgeRepository;
 use App\Services\Parsers\ExternalTextsParser;
 use App\Support\BadgeCode;
 use Filament\Actions\Action;

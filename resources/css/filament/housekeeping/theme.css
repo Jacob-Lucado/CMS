@@ -271,3 +271,71 @@
     position: relative;
     z-index: 30;
 }
+
+.hk-welcome {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px;
+    border: 1px solid var(--hk-line);
+    border-radius: var(--hk-radius);
+    background:
+        radial-gradient(500px 200px at 100% 0, var(--hk-glow-a), transparent 70%),
+        radial-gradient(400px 200px at 0 100%, var(--hk-glow-b), transparent 70%),
+        var(--hk-panel);
+}
+
+.hk-welcome-text h2 {
+    margin: 0;
+    color: var(--gray-950);
+    font-size: 1.35rem;
+    font-weight: 700;
+}
+
+.dark .hk-welcome-text h2 {
+    color: #fff;
+}
+
+.hk-welcome-text p {
+    margin: 4px 0 0;
+    color: var(--gray-500);
+    font-size: 0.9rem;
+}
+
+.hk-welcome-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.hk-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: 1px solid var(--hk-line);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--primary-500) 8%, transparent);
+    color: var(--gray-700);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.dark .hk-chip {
+    color: var(--gray-200);
+}
+
+.hk-chip:hover {
+    background: color-mix(in srgb, var(--primary-500) 18%, transparent);
+    transform: translateY(-1px);
+}
+
+.hk-chip-icon {
+    width: 1rem;
+    height: 1rem;
+    color: var(--primary-500);
+}

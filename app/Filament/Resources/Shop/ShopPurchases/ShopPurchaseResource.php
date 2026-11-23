@@ -6,7 +6,6 @@ use App\Filament\Resources\Shop\ShopPurchases\Pages\ListShopPurchases;
 use App\Models\Shop\WebsiteShopPurchase;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class ShopPurchaseResource extends Resource
