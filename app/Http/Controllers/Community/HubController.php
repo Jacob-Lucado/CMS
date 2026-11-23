@@ -4,17 +4,19 @@ namespace App\Http\Controllers\Community;
 
 use App\Http\Controllers\Controller;
 use App\Models\ChangelogEntry;
-use App\Models\FeaturedRoom;
 use App\Models\Community\RareValue\WebsiteRareValue;
+use App\Models\FeaturedRoom;
+use App\Models\User;
 use App\Models\WebsiteEvent;
 use App\Models\WebsitePoll;
 use App\Models\WebsitePollVote;
-use App\Models\User;
 use App\Services\Community\DailyRewardService;
 use App\Services\Community\RiddleService;
+use App\Support\Sql;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 /**
  * Feeds the in-game Daily Hub window: the daily reward, the riddle of the day, the open poll, featured rooms, the next event and the latest news.
@@ -28,7 +30,7 @@ class HubController extends Controller
         $news = ChangelogEntry::query()->where('published', true)->latest('published_at')->first();
 
         return response()->json([
-            'news' => $news ? ['title' => $news->title, 'category' => $news->category, 'body' => \Illuminate\Support\Str::limit(strip_tags($news->body), 220), 'published_at' => $news->published_at?->toIso8601String()] : null,
+            'news' => $news ? ['title' => $news->title, 'category' => $news->category, 'body' => Str::limit(strip_tags($news->body), 220), 'published_at' => $news->published_at?->toIso8601String()] : null,
             'rooms' => $this->featuredRooms(),
             'daily' => $rewards->status($request->user()),
             'riddle' => $riddles->status($request->user()),
@@ -79,7 +81,7 @@ class HubController extends Controller
         }
 
         $results = WebsiteRareValue::query()
-            ->where('name', 'like', '%' . \App\Support\Sql::escapeLike($term) . '%')
+            ->where('name', 'like', '%' . Sql::escapeLike($term) . '%')
             ->orderBy('name')->limit(8)->get()
             ->map(fn (WebsiteRareValue $v) => [
                 'name' => $v->name,

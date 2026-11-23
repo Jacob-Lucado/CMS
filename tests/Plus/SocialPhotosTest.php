@@ -47,3 +47,27 @@ test('players share, like and comment on PlusEMU photos', function () {
     expect(SocialPost::query()->count())->toBe(1)
         ->and(WebsiteNotification::query()->where('user_id', $photographer->id)->pluck('type')->sort()->values()->all())->toBe(['photo_comment', 'photo_like', 'post_share']);
 });
+
+test('the photos page lists published photos on plusemu and pages through them', function () {
+    setSetting('theme', 'atom');
+    $viewer = User::factory()->create(['username' => 'Photographer']);
+    $ids = collect(range(1, 10))->map(fn (int $n): string => sprintf('%08d-1111-4111-8111-111111111111', $n));
+
+    foreach ($ids as $index => $id) {
+        DB::table('camera_media')->insert(['id' => $id, 'user_id' => $viewer->id, 'room_id' => 1, 'created_at' => now()->subMinutes(20 - $index)]);
+        DB::table('camera_publications')->insert(['media_id' => $id, 'user_id' => $viewer->id, 'room_id' => 1, 'created_at' => now()->subMinutes(20 - $index)]);
+    }
+
+    DB::table('camera_media')->insert(['id' => '99999999-1111-4111-8111-111111111111', 'user_id' => $viewer->id, 'room_id' => 1, 'created_at' => now()]);
+
+    $first = $this->actingAs($viewer)->get(route('photos.index'))->assertOk();
+    $first->assertSee('/camera/' . $ids[9] . '.png', false)
+        ->assertDontSee('99999999-1111', false)
+        ->assertSee('Photographer')
+        ->assertDontSee('/camera/' . $ids[1] . '.png', false);
+
+    $this->actingAs($viewer)->get(route('photos.index', ['page' => 2]))
+        ->assertOk()
+        ->assertSee('/camera/' . $ids[1] . '.png', false)
+        ->assertDontSee('/camera/' . $ids[9] . '.png', false);
+});

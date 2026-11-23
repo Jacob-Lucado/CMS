@@ -10,8 +10,8 @@ use App\Services\User\SessionService;
 use App\Support\AuthenticatedUser;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\Response;
 
 class AccountSettingsController extends Controller
 {
