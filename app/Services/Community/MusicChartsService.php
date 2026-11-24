@@ -5,6 +5,7 @@ namespace App\Services\Community;
 use App\Emulator\Emulator;
 use App\Models\HotelRoom;
 use App\Models\RoomStreamPlay;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Schema;
 
 class MusicChartsService
@@ -12,7 +13,7 @@ class MusicChartsService
     public const DAYS = 7;
 
     /**
-     * @return array{available: bool, songs: array, djs: array, recent: array}
+     * @return array{available: bool, songs: list<RoomStreamPlay>, djs: list<RoomStreamPlay>, recent: list<RoomStreamPlay>}
      */
     public function charts(): array
     {
@@ -55,5 +56,27 @@ class MusicChartsService
             'djs' => $djs->all(),
             'recent' => $recent->all(),
         ];
+    }
+
+    public function hasPlays(int $roomId): bool
+    {
+        return Schema::hasTable('room_stream_plays') && RoomStreamPlay::query()->where('room_id', $roomId)->exists();
+    }
+
+    public function roomName(int $roomId): ?string
+    {
+        return Emulator::driver() === 'plus' ? HotelRoom::query()->whereKey($roomId)->value('caption') : null;
+    }
+
+    /**
+     * @return LengthAwarePaginator<int, RoomStreamPlay>
+     */
+    public function roomHistory(int $roomId): LengthAwarePaginator
+    {
+        return RoomStreamPlay::query()
+            ->where('room_id', $roomId)
+            ->orderByDesc('played_at')
+            ->orderByDesc('id')
+            ->paginate(25);
     }
 }

@@ -18,6 +18,7 @@ use App\Http\Controllers\Community\PhotosController;
 use App\Http\Controllers\Community\PollsController;
 use App\Http\Controllers\Community\RiddleController;
 use App\Http\Controllers\Community\RoomBrowserController;
+use App\Http\Controllers\Community\RoomMusicHistoryController;
 use App\Http\Controllers\Community\Staff\StaffApplicationsController;
 use App\Http\Controllers\Community\Staff\StaffController;
 use App\Http\Controllers\Community\Staff\WebsiteTeamApplicationsController;
@@ -255,6 +256,7 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
         // Leaderboard routes
         Route::get('/leaderboard', LeaderboardController::class)->name('leaderboard.index');
         Route::get('/music', MusicChartsController::class)->name('music.index');
+        Route::get('/music/rooms/{roomId}', RoomMusicHistoryController::class)->whereNumber('roomId')->name('music.room');
 
         // Room browser and events
         Route::get('/rooms', RoomBrowserController::class)->name('rooms.index');
