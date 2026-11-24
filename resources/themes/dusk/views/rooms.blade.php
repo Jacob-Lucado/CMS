@@ -6,6 +6,29 @@
             <x-slot:title>{{ __('Room browser') }}</x-slot:title>
             <x-slot:under-title>{{ __('Open rooms in the hotel. Search by room name or owner.') }}</x-slot:under-title>
 
+            @if ($publicRooms->isNotEmpty())
+                <div class="mb-4 px-2">
+                    <p class="mb-1 text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">{{ __('Public rooms') }}</p>
+                    <div style="display:grid;gap:.5rem;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
+                        @foreach ($publicRooms as $public)
+                            <a data-turbolinks="false" href="{{ route('nitro-client', ['room' => $public['id']]) }}" title="{{ __('Enter this room') }}" class="block overflow-hidden rounded bg-gray-100 dark:bg-gray-700 transition hover:ring-2 hover:ring-[#eeb425] focus:outline-none focus:ring-2 focus:ring-[#eeb425]">
+                                @if ($public['image'] !== '')
+                                    <img src="{{ $public['image'] }}" alt="" loading="lazy" class="h-24 w-full object-cover">
+                                @endif
+                                <div class="p-3">
+                                    <p class="truncate text-sm font-semibold dark:text-gray-100">{{ $public['name'] }}</p>
+                                    @if ($public['description'] !== '')
+                                        <p class="mt-1 line-clamp-2 text-xs text-gray-500 dark:text-gray-400">{{ $public['description'] }}</p>
+                                    @endif
+                                    <p class="mt-2 text-[11px] text-gray-500 dark:text-gray-400">{{ $public['users'] }} / {{ $public['max'] }} {{ __('inside') }}</p>
+                                    <p class="mt-2 text-[11px] font-semibold text-green-700 dark:text-green-400">{{ __('Enter room') }} &rarr;</p>
+                                </div>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             <form method="GET" action="{{ route('rooms.index') }}" class="mb-4 flex flex-wrap gap-2 px-2">
                 <input type="search" name="q" value="{{ $search }}" placeholder="{{ __('Search rooms') }}" class="min-w-0 flex-1 rounded border-4 border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 focus:ring-0 focus:border-[#eeb425]">
                 <select name="sort" class="rounded border-4 border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 focus:ring-0">

@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Services\Community\CameraService;
 use App\Services\Community\CommunityReadService;
 use App\Services\Community\MusicChartsService;
+use App\Services\Community\PublicRoomsService;
 use App\Services\Community\StaffService;
 use App\Services\Community\TeamService;
 use App\Services\User\UserApiService;
@@ -66,6 +67,11 @@ class CommunityController extends Controller
             'djs' => collect($data['djs'])->map(fn ($dj): array => ['name' => $dj->set_by, 'plays' => (int) $dj->plays])->values(),
             'recent' => collect($data['recent'])->map(fn ($play): array => ['url' => $play->url, 'kind' => $play->kind, 'set_by' => $play->set_by, 'played_at' => $play->played_at->toIso8601String()])->values(),
         ]]);
+    }
+
+    public function publicRooms(PublicRoomsService $publicRooms): JsonResponse
+    {
+        return response()->json(['data' => $publicRooms->rooms()]);
     }
 
     public function leaderboards(CommunityReadService $community): JsonResponse

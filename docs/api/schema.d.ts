@@ -1145,6 +1145,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/music": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** getMusicCharts */
+        get: operations["getMusicCharts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/public-rooms": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** getPublicRooms */
+        get: operations["getPublicRooms"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1650,6 +1684,34 @@ export interface components {
             online: boolean;
             last_online: number;
         };
+        MusicCharts: {
+            days: number;
+            songs: {
+                url: string;
+                kind: string;
+                plays: number;
+            }[];
+            djs: {
+                name: string;
+                plays: number;
+            }[];
+            recent: {
+                url: string;
+                kind: string;
+                set_by: string;
+                /** Format: date-time */
+                played_at: string;
+            }[];
+        };
+        PublicRoom: {
+            id: number;
+            name: string;
+            description: string;
+            image: string;
+            users: number;
+            max: number;
+        };
+        PublicRoomList: components["schemas"]["PublicRoom"][];
     };
     responses: never;
     parameters: never;
@@ -4282,6 +4344,68 @@ export interface operations {
                 content: {
                     "application/json": {
                         data: components["schemas"]["BanInfo"] | null;
+                    };
+                };
+            };
+            /** @description Request rejected. Inspect code when present; validation details are keyed by field. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getMusicCharts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["MusicCharts"];
+                    };
+                };
+            };
+            /** @description Request rejected. Inspect code when present; validation details are keyed by field. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getPublicRooms: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["PublicRoomList"];
                     };
                 };
             };

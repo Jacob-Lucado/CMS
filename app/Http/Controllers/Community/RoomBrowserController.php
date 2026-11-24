@@ -5,12 +5,13 @@ namespace App\Http\Controllers\Community;
 use App\Http\Controllers\Controller;
 use App\Models\FeaturedRoom;
 use App\Models\HotelRoom;
+use App\Services\Community\PublicRoomsService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class RoomBrowserController extends Controller
 {
-    public function __invoke(Request $request): View
+    public function __invoke(Request $request, PublicRoomsService $publicRooms): View
     {
         $search = trim((string) $request->query('q', ''));
         $sort = $request->query('sort') === 'likes' ? 'score' : 'users_now';
@@ -37,6 +38,7 @@ class RoomBrowserController extends Controller
             ->limit(7)->get();
 
         return view('rooms', [
+            'publicRooms' => $publicRooms->rooms(),
             'rooms' => $rooms,
             'search' => $search,
             'sort' => $sort,

@@ -4335,6 +4335,90 @@
           }
         }
       }
+    },
+    "/api/v1/music": {
+      "get": {
+        "operationId": "getMusicCharts",
+        "summary": "getMusicCharts",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/MusicCharts"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Request rejected. Inspect code when present; validation details are keyed by field.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/public-rooms": {
+      "get": {
+        "operationId": "getPublicRooms",
+        "summary": "getPublicRooms",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/PublicRoomList"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Request rejected. Inspect code when present; validation details are keyed by field.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -7032,6 +7116,129 @@
           "last_online"
         ],
         "additionalProperties": false
+      },
+      "MusicCharts": {
+        "type": "object",
+        "properties": {
+          "days": {
+            "type": "integer"
+          },
+          "songs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                },
+                "kind": {
+                  "type": "string"
+                },
+                "plays": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "url",
+                "kind",
+                "plays"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "djs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "plays": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "name",
+                "plays"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "recent": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                },
+                "kind": {
+                  "type": "string"
+                },
+                "set_by": {
+                  "type": "string"
+                },
+                "played_at": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "url",
+                "kind",
+                "set_by",
+                "played_at"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "days",
+          "songs",
+          "djs",
+          "recent"
+        ],
+        "additionalProperties": false
+      },
+      "PublicRoom": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string"
+          },
+          "users": {
+            "type": "integer"
+          },
+          "max": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "image",
+          "users",
+          "max"
+        ],
+        "additionalProperties": false
+      },
+      "PublicRoomList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/PublicRoom"
+        }
       }
     }
   }
