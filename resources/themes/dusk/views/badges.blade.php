@@ -11,6 +11,24 @@
                 <button type="submit" class="rounded border-2 border-green-500 bg-green-600 px-4 font-semibold text-white hover:bg-green-700">{{ __('Search') }}</button>
             </form>
 
+            @if ($drawnBadges->isNotEmpty())
+                <p class="mb-2 px-2 text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">{{ __('Drawn by players') }}</p>
+                <div class="mb-4 grid grid-cols-1 gap-2 px-2 sm:grid-cols-2 lg:grid-cols-3">
+                    @foreach ($drawnBadges as $drawn)
+                        <div class="flex items-center gap-3 rounded bg-gray-100 p-3 dark:bg-gray-700">
+                            <div class="flex h-12 w-12 flex-none items-center justify-center rounded bg-white dark:bg-gray-800">
+                                <img src="{{ $drawn->badge_url }}" alt="" loading="lazy" class="max-h-11 max-w-11" style="image-rendering: pixelated" onerror="this.style.visibility='hidden'">
+                            </div>
+                            <div class="min-w-0">
+                                <p class="truncate text-sm font-semibold dark:text-gray-100">{{ $drawn->badge_name }}</p>
+                                <p class="line-clamp-2 text-xs text-gray-600 dark:text-gray-300">{{ $drawn->badge_desc }}</p>
+                                <p class="text-[11px] text-gray-400">{{ __('by :name', ['name' => $drawn->user?->username ?? __('a player')]) }}</p>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+
             @if ($badges->isEmpty())
                 <p class="px-2 text-sm text-gray-500 dark:text-gray-400">{{ __('No badges match that search.') }}</p>
             @else

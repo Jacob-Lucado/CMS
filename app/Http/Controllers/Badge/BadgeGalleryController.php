@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Badge;
 
 use App\Http\Controllers\Controller;
 use App\Models\WebsiteBadge;
+use App\Models\WebsiteDrawBadge;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -27,6 +28,10 @@ class BadgeGalleryController extends Controller
             ->paginate(60)
             ->withQueryString();
 
-        return view('badges', ['badges' => $badges, 'search' => $search]);
+        $drawn = $search === '' && $badges->currentPage() === 1
+            ? WebsiteDrawBadge::query()->with('user:id,username')->where('published', true)->latest('id')->limit(12)->get()
+            : collect();
+
+        return view('badges', ['badges' => $badges, 'search' => $search, 'drawnBadges' => $drawn]);
     }
 }

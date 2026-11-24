@@ -41,3 +41,15 @@ test('the menu counts drawn badges that wait for approval', function () {
 
     expect(WebsiteDrawBadgeResource::getNavigationBadge())->toBe('2');
 });
+
+test('the badge gallery shows approved drawings with their artist', function () {
+    $artist = User::factory()->create(['username' => 'Picasso']);
+    $make = fn (string $name, bool $published) => WebsiteDrawBadge::query()->create(['user_id' => $artist->id, 'badge_path' => '/tmp/x.gif', 'badge_url' => '/badges/x.gif', 'badge_name' => $name, 'badge_desc' => 'Drawn', 'published' => $published]);
+    $make('Approved Cat', true);
+    $make('Hidden Dog', false);
+
+    $this->actingAs($artist)->get(route('help-center.badges.index'))->assertOk()
+        ->assertSee('Drawn by players')->assertSee('Approved Cat')->assertSee('by Picasso')->assertDontSee('Hidden Dog');
+
+    $this->actingAs($artist)->get(route('help-center.badges.index', ['q' => 'zzz']))->assertOk()->assertDontSee('Drawn by players');
+});
