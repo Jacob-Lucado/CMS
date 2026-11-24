@@ -28,8 +28,11 @@ class WebsiteSetting extends Model
         'discord_webhook_url',
         'flash_external_texts_file',
         'seo_description',
+        'seo_image',
         'seo_keywords',
         'site_announcement',
+        'weekly_kudos_badge',
+        'weekly_music_badge',
     ];
 
     protected $fillable = [
