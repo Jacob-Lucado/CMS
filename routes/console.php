@@ -20,3 +20,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('events:remind')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('leaderboard:award')->weeklyOn(1, '0:05')->withoutOverlapping();
