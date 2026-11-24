@@ -5,13 +5,15 @@ namespace App\Http\Controllers\Community;
 use App\Http\Controllers\Controller;
 use App\Models\FeaturedRoom;
 use App\Models\HotelRoom;
+use App\Models\User;
 use App\Services\Community\PublicRoomsService;
+use App\Services\Community\RecentRoomsService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class RoomBrowserController extends Controller
 {
-    public function __invoke(Request $request, PublicRoomsService $publicRooms): View
+    public function __invoke(Request $request, PublicRoomsService $publicRooms, RecentRoomsService $recentRooms): View
     {
         $search = trim((string) $request->query('q', ''));
         $sort = $request->query('sort') === 'likes' ? 'score' : 'users_now';
@@ -37,7 +39,10 @@ class RoomBrowserController extends Controller
             ->orderByDesc('room_of_the_week')->orderBy('position')->orderByDesc('id')
             ->limit(7)->get();
 
+        $viewer = $request->user();
+
         return view('rooms', [
+            'recentRooms' => $viewer instanceof User ? $recentRooms->forUser($viewer) : collect(),
             'publicRooms' => $publicRooms->rooms(),
             'rooms' => $rooms,
             'search' => $search,

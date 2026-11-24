@@ -3,6 +3,7 @@
 use App\Models\Game\PlusNavigatorPublic;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 beforeEach(function () {
     installHotel();
@@ -49,4 +50,30 @@ test('the API lists the public rooms', function () {
 
 test('the API returns no public rooms when none are featured', function () {
     $this->actingAs(User::factory()->create())->getJson('/api/v1/public-rooms')->assertOk()->assertJsonPath('data', []);
+});
+
+test('the room browser lists the open rooms a player visited most recently', function () {
+    Schema::dropIfExists('user_roomvisits');
+    Schema::create('user_roomvisits', function ($table) {
+        $table->increments('id');
+        $table->unsignedInteger('room_id');
+        $table->integer('user_id');
+        $table->double('entry_timestamp')->nullable();
+        $table->double('exit_timestamp')->nullable();
+    });
+
+    $user = User::factory()->create();
+    $owner = User::factory()->create();
+    $older = makePlusRoom($owner->id, ['caption' => 'Older Room', 'state' => 'open']);
+    $newer = makePlusRoom($owner->id, ['caption' => 'Newer Room', 'state' => 'open']);
+    $locked = makePlusRoom($owner->id, ['caption' => 'Locked Room', 'state' => 'locked']);
+    foreach ([[$older, 100], [$newer, 300], [$locked, 400], [$newer, 200]] as [$room, $at]) {
+        DB::table('user_roomvisits')->insert(['room_id' => $room, 'user_id' => $user->id, 'entry_timestamp' => $at]);
+    }
+
+    $this->actingAs($user)->get(route('rooms.index'))->assertOk()
+        ->assertSeeInOrder(['Jump back in', 'Newer Room', 'Older Room'])
+        ->assertDontSee('Locked Room');
+
+    Schema::drop('user_roomvisits');
 });

@@ -6,6 +6,21 @@
             <x-slot:title>{{ __('Room browser') }}</x-slot:title>
             <x-slot:under-title>{{ __('Open rooms in the hotel. Search by room name or owner.') }}</x-slot:under-title>
 
+            @if ($recentRooms->isNotEmpty())
+                <div class="mb-4 px-2">
+                    <p class="mb-1 text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">{{ __('Jump back in') }}</p>
+                    <div style="display:grid;gap:.5rem;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
+                        @foreach ($recentRooms as $recent)
+                            <a data-turbolinks="false" href="{{ route('nitro-client', ['room' => $recent['id']]) }}" title="{{ __('Enter this room') }}" class="block rounded bg-gray-100 p-3 dark:bg-gray-700 transition hover:ring-2 hover:ring-[#eeb425] focus:outline-none focus:ring-2 focus:ring-[#eeb425]">
+                                <p class="truncate text-sm font-semibold dark:text-gray-100">{{ $recent['name'] }}</p>
+                                <p class="truncate text-xs text-gray-500 dark:text-gray-400">{{ __('by :owner', ['owner' => $recent['owner'] ?: __('nobody')]) }}</p>
+                                <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">{{ trans_choice(':count player inside|:count players inside', $recent['users']) }}</p>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             @if ($publicRooms->isNotEmpty())
                 <div class="mb-4 px-2">
                     <p class="mb-1 text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">{{ __('Public rooms') }}</p>
