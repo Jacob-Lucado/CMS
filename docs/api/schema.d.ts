@@ -1718,6 +1718,7 @@ export interface components {
                 set_by: string;
                 /** Format: date-time */
                 played_at: string;
+                room: string | null;
             }[];
         };
         PublicRoom: {
