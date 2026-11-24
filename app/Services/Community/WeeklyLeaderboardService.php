@@ -71,6 +71,21 @@ class WeeklyLeaderboardService
     }
 
     /**
+     * Weekly wins from the last few weeks, shown as small crowns on a profile.
+     *
+     * @return Collection<int, WeeklyWinner>
+     */
+    public function recentWins(User $user, int $weeks = 4): Collection
+    {
+        return WeeklyWinner::query()
+            ->where('user_id', $user->id)
+            ->where('week_start', '>=', $this->weekStart()->subWeeks($weeks)->toDateString())
+            ->orderByDesc('week_start')
+            ->orderBy('board')
+            ->get();
+    }
+
+    /**
      * @param  array<int, int>  $staffIds
      *
      * @return array<int, int>

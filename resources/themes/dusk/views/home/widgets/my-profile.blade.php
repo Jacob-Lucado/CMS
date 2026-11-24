@@ -25,5 +25,16 @@
         >
     </div>
 
+    @php($wins = app(\App\Services\Community\WeeklyLeaderboardService::class)->recentWins($user))
+    @if ($wins->isNotEmpty())
+        <div class="flex flex-wrap gap-1">
+            @foreach ($wins as $win)
+                <span class="rounded-full bg-yellow-100 px-2 py-0.5 text-[11px] font-semibold text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200" title="{{ __('Week of :date', ['date' => $win->week_start->format('M j')]) }}">
+                    &#9812; {{ $win->board === 'music' ? __('Top DJ') : __('Most kudos') }}
+                </span>
+            @endforeach
+        </div>
+    @endif
+
     <p class="text-xs italic text-gray-300">{{ $user->motto }}</p>
 </div>

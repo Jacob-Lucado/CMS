@@ -1,13 +1,16 @@
 <?php
 
 use App\Contracts\Rcon;
+use App\Filament\Widgets\WeeklyWinners;
 use App\Models\Community\WeeklyWinner;
 use App\Models\RoomStreamPlay;
 use App\Models\Social\Kudos;
 use App\Models\User;
 use App\Services\Community\WeeklyLeaderboardService;
 use App\Services\FakeRcon;
+use Filament\Facades\Filament;
 use Illuminate\Support\Facades\DB;
+use Livewire\Livewire;
 
 beforeEach(function () {
     installHotel();
@@ -95,4 +98,27 @@ test('the API lists the weekly boards and last week\'s winners', function () {
         ->assertJsonPath('data.kudos', [])
         ->assertJsonPath('data.last_winners.0.board', 'kudos')
         ->assertJsonPath('data.last_winners.0.score', 6);
+});
+
+test('recent wins show on the profile widget and old ones do not', function () {
+    $alice = User::factory()->create(['username' => 'Alice']);
+    WeeklyWinner::query()->create(['week_start' => $this->lastWeek->toDateString(), 'board' => 'music', 'user_id' => $alice->id, 'score' => 4]);
+    WeeklyWinner::query()->create(['week_start' => now()->subWeeks(12)->startOfWeek()->toDateString(), 'board' => 'kudos', 'user_id' => $alice->id, 'score' => 9]);
+
+    $wins = app(WeeklyLeaderboardService::class)->recentWins($alice);
+
+    expect($wins->pluck('board')->all())->toBe(['music']);
+
+    $html = view('home.widgets.my-profile', ['user' => $alice])->render();
+
+    expect($html)->toContain('Top DJ')->not->toContain('Most kudos');
+});
+
+test('the housekeeping widget lists the latest winners', function () {
+    $alice = User::factory()->create(['username' => 'Alice']);
+    WeeklyWinner::query()->create(['week_start' => $this->lastWeek->toDateString(), 'board' => 'music', 'user_id' => $alice->id, 'score' => 4, 'badge' => 'ADM']);
+
+    Filament::setCurrentPanel(Filament::getPanel('housekeeping'));
+
+    Livewire::test(WeeklyWinners::class)->assertSee('Alice')->assertSee('Top DJ')->assertSee('ADM');
 });
