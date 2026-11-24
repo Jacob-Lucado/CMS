@@ -100,6 +100,18 @@ class WebsiteDrawBadgeResource extends Resource
             ]);
     }
 
+    public static function getNavigationBadge(): ?string
+    {
+        $pending = WebsiteDrawBadge::query()->where('published', false)->count();
+
+        return $pending > 0 ? (string) $pending : null;
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return __('Drawn badges waiting for approval');
+    }
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->with('user');
