@@ -66,7 +66,7 @@ class CommunityController extends Controller
             'days' => MusicChartsService::DAYS,
             'songs' => collect($data['songs'])->map(fn ($song): array => ['url' => $song->url, 'kind' => $song->kind, 'plays' => (int) $song->plays])->values(),
             'djs' => collect($data['djs'])->map(fn ($dj): array => ['name' => $dj->set_by, 'plays' => (int) $dj->plays])->values(),
-            'recent' => collect($data['recent'])->map(fn ($play): array => ['url' => $play->url, 'kind' => $play->kind, 'set_by' => $play->set_by, 'played_at' => $play->played_at->toIso8601String()])->values(),
+            'recent' => collect($data['recent'])->map(fn ($play): array => ['url' => $play->url, 'kind' => $play->kind, 'set_by' => $play->set_by, 'room' => $play->getAttribute('room_name'), 'played_at' => $play->played_at->toIso8601String()])->values(),
         ]]);
     }
 

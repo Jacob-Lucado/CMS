@@ -63,7 +63,7 @@
                         @foreach ($recent as $play)
                             <div class="rounded bg-gray-100 p-3 dark:bg-gray-800">
                                 <p class="truncate font-bold text-gray-700 dark:text-gray-100">{{ \Illuminate\Support\Str::limit(preg_replace('#^https?://(www\.)?#', '', $play->url), 48) }}</p>
-                                <p class="text-sm text-gray-600 dark:text-gray-300">{{ $play->set_by }} - {{ $play->played_at->diffForHumans() }}</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">{{ $play->set_by }}@if ($play->room_name) {{ __('in :room', ['room' => $play->room_name]) }}@endif - {{ $play->played_at->diffForHumans() }}</p>
                             </div>
                         @endforeach
                     </div>

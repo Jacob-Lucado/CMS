@@ -7224,12 +7224,23 @@
                 "played_at": {
                   "type": "string",
                   "format": "date-time"
+                },
+                "room": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
                 }
               },
               "required": [
                 "url",
                 "kind",
                 "set_by",
+                "room",
                 "played_at"
               ],
               "additionalProperties": false

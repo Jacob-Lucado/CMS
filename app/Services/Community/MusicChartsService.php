@@ -2,6 +2,8 @@
 
 namespace App\Services\Community;
 
+use App\Emulator\Emulator;
+use App\Models\HotelRoom;
 use App\Models\RoomStreamPlay;
 use Illuminate\Support\Facades\Schema;
 
@@ -43,6 +45,9 @@ class MusicChartsService
             ->orderByDesc('id')
             ->limit(15)
             ->get();
+
+        $captions = Emulator::driver() === 'plus' ? HotelRoom::query()->whereIn('id', $recent->pluck('room_id'))->pluck('caption', 'id') : collect();
+        $recent->each(fn (RoomStreamPlay $play) => $play->setAttribute('room_name', $captions->get($play->room_id)));
 
         return [
             'available' => true,
