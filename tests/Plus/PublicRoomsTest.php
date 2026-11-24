@@ -77,3 +77,24 @@ test('the room browser lists the open rooms a player visited most recently', fun
 
     Schema::drop('user_roomvisits');
 });
+
+test('the API lists the signed-in player recent rooms', function () {
+    Schema::dropIfExists('user_roomvisits');
+    Schema::create('user_roomvisits', function ($table) {
+        $table->increments('id');
+        $table->unsignedInteger('room_id');
+        $table->integer('user_id');
+        $table->double('entry_timestamp')->nullable();
+        $table->double('exit_timestamp')->nullable();
+    });
+
+    $user = User::factory()->create();
+    $room = makePlusRoom(User::factory()->create()->id, ['caption' => 'Chill Room', 'state' => 'open']);
+    DB::table('user_roomvisits')->insert(['room_id' => $room, 'user_id' => $user->id, 'entry_timestamp' => 100]);
+
+    $this->actingAs($user)->getJson('/api/v1/me/recent-rooms')->assertOk()
+        ->assertJsonPath('data.0.id', $room)
+        ->assertJsonPath('data.0.name', 'Chill Room');
+
+    Schema::drop('user_roomvisits');
+});

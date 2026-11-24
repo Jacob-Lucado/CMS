@@ -1179,6 +1179,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/me/recent-rooms": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** getRecentRooms */
+        get: operations["getRecentRooms"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/leaderboards/weekly": {
         parameters: {
             query?: never;
@@ -1749,6 +1766,13 @@ export interface components {
                 user: components["schemas"]["PublicUser"];
             }[];
         };
+        RecentRoom: {
+            id: number;
+            name: string;
+            owner: string;
+            users: number;
+        };
+        RecentRoomList: components["schemas"]["RecentRoom"][];
     };
     responses: never;
     parameters: never;
@@ -4443,6 +4467,37 @@ export interface operations {
                 content: {
                     "application/json": {
                         data: components["schemas"]["PublicRoomList"];
+                    };
+                };
+            };
+            /** @description Request rejected. Inspect code when present; validation details are keyed by field. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getRecentRooms: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["RecentRoomList"];
                     };
                 };
             };

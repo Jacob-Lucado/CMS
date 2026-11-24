@@ -12,6 +12,7 @@ use Illuminate\Support\Carbon;
  * @property string $kind
  * @property string $url
  * @property Carbon $played_at
+ * @property int $plays
  */
 class RoomStreamPlay extends Model
 {

@@ -4420,6 +4420,48 @@
         }
       }
     },
+    "/api/v1/me/recent-rooms": {
+      "get": {
+        "operationId": "getRecentRooms",
+        "summary": "getRecentRooms",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/RecentRoomList"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Request rejected. Inspect code when present; validation details are keyed by field.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/leaderboards/weekly": {
       "get": {
         "operationId": "getWeeklyLeaderboards",
@@ -7374,6 +7416,36 @@
           "last_winners"
         ],
         "additionalProperties": false
+      },
+      "RecentRoom": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "users": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "owner",
+          "users"
+        ],
+        "additionalProperties": false
+      },
+      "RecentRoomList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/RecentRoom"
+        }
       }
     }
   }

@@ -14,6 +14,7 @@ use App\Services\Community\CameraService;
 use App\Services\Community\CommunityReadService;
 use App\Services\Community\MusicChartsService;
 use App\Services\Community\PublicRoomsService;
+use App\Services\Community\RecentRoomsService;
 use App\Services\Community\StaffService;
 use App\Services\Community\TeamService;
 use App\Services\Community\WeeklyLeaderboardService;
@@ -73,6 +74,13 @@ class CommunityController extends Controller
     public function publicRooms(PublicRoomsService $publicRooms): JsonResponse
     {
         return response()->json(['data' => $publicRooms->rooms()]);
+    }
+
+    public function recentRooms(Request $request, RecentRoomsService $recent): JsonResponse
+    {
+        $user = $request->user();
+
+        return response()->json(['data' => $user instanceof User ? $recent->forUser($user) : []]);
     }
 
     public function leaderboards(CommunityReadService $community): JsonResponse

@@ -42,6 +42,7 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
         Route::get('leaderboards', [CommunityController::class, 'leaderboards'])->name('leaderboards');
         Route::get('leaderboards/weekly', [CommunityController::class, 'weeklyLeaderboards'])->name('leaderboards.weekly');
         Route::get('music', [CommunityController::class, 'music'])->name('music');
+        Route::get('me/recent-rooms', [CommunityController::class, 'recentRooms'])->name('me.recent-rooms');
         Route::get('public-rooms', [CommunityController::class, 'publicRooms'])->name('public-rooms');
         Route::get('photos', [CommunityController::class, 'photos'])->middleware('emulator.feature:camera-photos')->name('photos');
         Route::get('applications', [CommunityController::class, 'applications'])->name('applications.index');
