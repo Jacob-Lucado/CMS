@@ -13,7 +13,7 @@ class MusicChartsService
     public const DAYS = 7;
 
     /**
-     * @return array{available: bool, songs: list<RoomStreamPlay>, djs: list<RoomStreamPlay>, recent: list<RoomStreamPlay>}
+     * @return array{available: bool, songs: array<int, RoomStreamPlay>, djs: array<int, RoomStreamPlay>, recent: array<int, RoomStreamPlay>}
      */
     public function charts(): array
     {
