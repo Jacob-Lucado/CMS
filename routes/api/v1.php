@@ -40,6 +40,7 @@ Route::middleware(['maintenance', 'check.ban', 'force.staff.2fa'])->group(functi
         Route::get('staff', [CommunityController::class, 'staff'])->name('staff');
         Route::get('teams', [CommunityController::class, 'teams'])->name('teams');
         Route::get('leaderboards', [CommunityController::class, 'leaderboards'])->name('leaderboards');
+        Route::get('leaderboards/weekly', [CommunityController::class, 'weeklyLeaderboards'])->name('leaderboards.weekly');
         Route::get('music', [CommunityController::class, 'music'])->name('music');
         Route::get('public-rooms', [CommunityController::class, 'publicRooms'])->name('public-rooms');
         Route::get('photos', [CommunityController::class, 'photos'])->middleware('emulator.feature:camera-photos')->name('photos');

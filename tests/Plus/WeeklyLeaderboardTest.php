@@ -82,3 +82,17 @@ test('the leaderboard page shows this week and last week\'s winners', function (
         ->assertSee('Last week&#039;s winners', false)
         ->assertSeeInOrder(['Alice', 'Most kudos', '6']);
 });
+
+test('the API lists the weekly boards and last week\'s winners', function () {
+    $alice = User::factory()->create(['username' => 'Alice']);
+    weeklyPlays('Alice', 2, now()->startOfWeek());
+    WeeklyWinner::query()->create(['week_start' => $this->lastWeek->toDateString(), 'board' => 'kudos', 'user_id' => $alice->id, 'score' => 6]);
+
+    $this->actingAs(User::factory()->create())->getJson('/api/v1/leaderboards/weekly')->assertOk()
+        ->assertJsonPath('data.week_start', now()->startOfWeek()->toDateString())
+        ->assertJsonPath('data.music.0.value', 2)
+        ->assertJsonPath('data.music.0.user.username', 'Alice')
+        ->assertJsonPath('data.kudos', [])
+        ->assertJsonPath('data.last_winners.0.board', 'kudos')
+        ->assertJsonPath('data.last_winners.0.score', 6);
+});

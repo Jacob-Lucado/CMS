@@ -16,6 +16,7 @@ use App\Services\Community\MusicChartsService;
 use App\Services\Community\PublicRoomsService;
 use App\Services\Community\StaffService;
 use App\Services\Community\TeamService;
+use App\Services\Community\WeeklyLeaderboardService;
 use App\Services\User\UserApiService;
 use App\Support\AuthenticatedUser;
 use Illuminate\Http\JsonResponse;
@@ -77,6 +78,24 @@ class CommunityController extends Controller
     public function leaderboards(CommunityReadService $community): JsonResponse
     {
         return response()->json(['data' => collect($community->leaderboards())->map(fn ($entries) => $entries?->map(fn ($entry): array => ['user' => new PublicUserResource(PublicUserData::from($entry->user)), 'value' => $entry->value]))]);
+    }
+
+    public function weeklyLeaderboards(WeeklyLeaderboardService $weekly): JsonResponse
+    {
+        $board = $weekly->current();
+        $entries = fn ($rows) => $rows->map(fn ($entry): array => ['user' => new PublicUserResource(PublicUserData::from($entry->user)), 'value' => $entry->value])->values();
+
+        return response()->json(['data' => [
+            'week_start' => $weekly->weekStart()->toDateString(),
+            'music' => $entries($board['weeklyMusic']),
+            'kudos' => $entries($board['weeklyKudos']),
+            'last_winners' => $board['lastWinners']->flatMap(fn ($winner): array => $winner->user === null ? [] : [[
+                'board' => $winner->board,
+                'week_start' => $winner->week_start->toDateString(),
+                'score' => $winner->score,
+                'user' => new PublicUserResource(PublicUserData::from($winner->user)),
+            ]])->values(),
+        ]]);
     }
 
     public function photos(CameraService $camera): AnonymousResourceCollection

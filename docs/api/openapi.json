@@ -4419,6 +4419,48 @@
           }
         }
       }
+    },
+    "/api/v1/leaderboards/weekly": {
+      "get": {
+        "operationId": "getWeeklyLeaderboards",
+        "summary": "getWeeklyLeaderboards",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/WeeklyLeaderboards"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Request rejected. Inspect code when present; validation details are keyed by field.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -7239,6 +7281,88 @@
         "items": {
           "$ref": "#/components/schemas/PublicRoom"
         }
+      },
+      "WeeklyLeaderboards": {
+        "type": "object",
+        "properties": {
+          "week_start": {
+            "type": "string",
+            "format": "date"
+          },
+          "music": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "$ref": "#/components/schemas/PublicUser"
+                },
+                "value": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "user",
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "kudos": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "$ref": "#/components/schemas/PublicUser"
+                },
+                "value": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "user",
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "last_winners": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "board": {
+                  "type": "string"
+                },
+                "week_start": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "score": {
+                  "type": "integer"
+                },
+                "user": {
+                  "$ref": "#/components/schemas/PublicUser"
+                }
+              },
+              "required": [
+                "board",
+                "week_start",
+                "score",
+                "user"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "week_start",
+          "music",
+          "kudos",
+          "last_winners"
+        ],
+        "additionalProperties": false
       }
     }
   }

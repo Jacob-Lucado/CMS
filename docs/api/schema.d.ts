@@ -1179,6 +1179,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/leaderboards/weekly": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** getWeeklyLeaderboards */
+        get: operations["getWeeklyLeaderboards"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1712,6 +1729,25 @@ export interface components {
             max: number;
         };
         PublicRoomList: components["schemas"]["PublicRoom"][];
+        WeeklyLeaderboards: {
+            /** Format: date */
+            week_start: string;
+            music: {
+                user: components["schemas"]["PublicUser"];
+                value: number;
+            }[];
+            kudos: {
+                user: components["schemas"]["PublicUser"];
+                value: number;
+            }[];
+            last_winners: {
+                board: string;
+                /** Format: date */
+                week_start: string;
+                score: number;
+                user: components["schemas"]["PublicUser"];
+            }[];
+        };
     };
     responses: never;
     parameters: never;
@@ -4406,6 +4442,37 @@ export interface operations {
                 content: {
                     "application/json": {
                         data: components["schemas"]["PublicRoomList"];
+                    };
+                };
+            };
+            /** @description Request rejected. Inspect code when present; validation details are keyed by field. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getWeeklyLeaderboards: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["WeeklyLeaderboards"];
                     };
                 };
             };
