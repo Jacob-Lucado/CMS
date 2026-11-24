@@ -58,6 +58,31 @@ class WeeklyLeaderboardService
         ];
     }
 
+    /**
+     * Where a player stands on each weekly board, or null when they have no score yet this week.
+     *
+     * @return array{music: array{rank: int, value: int}|null, kudos: array{rank: int, value: int}|null}
+     */
+    public function standingFor(User $user): array
+    {
+        $start = $this->weekStart();
+        $standing = [];
+
+        foreach (self::BOARDS as $board) {
+            $standing[$board] = null;
+
+            foreach ($this->standings($board, $start, 500)->values() as $index => $entry) {
+                if ($entry->user->id === $user->id) {
+                    $standing[$board] = ['rank' => $index + 1, 'value' => $entry->value];
+
+                    break;
+                }
+            }
+        }
+
+        return ['music' => $standing['music'], 'kudos' => $standing['kudos']];
+    }
+
     /** @return Collection<int, WeeklyWinner> */
     public function lastWinners(): Collection
     {

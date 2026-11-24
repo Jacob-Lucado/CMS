@@ -122,3 +122,23 @@ test('the housekeeping widget lists the latest winners', function () {
 
     Livewire::test(WeeklyWinners::class)->assertSee('Alice')->assertSee('Top DJ')->assertSee('ADM');
 });
+
+test('a player sees where they stand on the weekly boards', function () {
+    $alice = User::factory()->create(['username' => 'Alice']);
+    $bob = User::factory()->create(['username' => 'Bob']);
+    weeklyPlays('Alice', 2, now()->startOfWeek());
+    weeklyPlays('Bob', 4, now()->startOfWeek());
+
+    $standing = app(WeeklyLeaderboardService::class)->standingFor($alice);
+
+    expect($standing)->toBe(['music' => ['rank' => 2, 'value' => 2], 'kudos' => null]);
+
+    $this->actingAs($alice)->get(route('leaderboard.index'))->assertOk()->assertSee('Your standing');
+});
+
+test('a player with no weekly score is told how to climb in', function () {
+    User::factory()->create(['username' => 'Alice']);
+    weeklyPlays('Alice', 2, now()->startOfWeek());
+
+    $this->actingAs(User::factory()->create())->get(route('leaderboard.index'))->assertOk()->assertSee('not on a weekly board yet');
+});

@@ -15,6 +15,21 @@
 
         @if ($weeklyMusic->isNotEmpty() || $weeklyKudos->isNotEmpty())
             <p class="mt-6 mb-2 text-sm font-semibold uppercase text-gray-500 dark:text-gray-400">{{ __('This week') }}</p>
+            @if ($myStanding !== null)
+                <p class="mb-2 text-sm text-gray-700 dark:text-gray-300">
+                    @if ($myStanding['music'] === null && $myStanding['kudos'] === null)
+                        {{ __('You are not on a weekly board yet. Play a song in a room or get a kudos to climb in.') }}
+                    @else
+                        {{ __('Your standing') }}:
+                        @if ($myStanding['music'] !== null)
+                            <strong>#{{ $myStanding['music']['rank'] }}</strong> {{ __('DJ') }} ({{ $myStanding['music']['value'] }})
+                        @endif
+                        @if ($myStanding['kudos'] !== null)
+                            <strong>#{{ $myStanding['kudos']['rank'] }}</strong> {{ __('kudos') }} ({{ $myStanding['kudos']['value'] }})
+                        @endif
+                    @endif
+                </p>
+            @endif
             <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
                 @if ($weeklyMusic->isNotEmpty())
                     <x-leaderboard-card title="{{ __('Top DJs this week') }}" icon="chat.png" :data="$weeklyMusic" valueType="Songs played" />
