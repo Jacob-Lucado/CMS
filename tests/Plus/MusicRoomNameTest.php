@@ -1,8 +1,11 @@
 <?php
 
+use App\Filament\Widgets\TopMusicRooms;
 use App\Models\RoomStreamPlay;
 use App\Models\User;
+use Filament\Facades\Filament;
 use Illuminate\Support\Facades\DB;
+use Livewire\Livewire;
 
 beforeEach(function () {
     installHotel();
@@ -32,4 +35,18 @@ test('a room music history page lists its plays and 404s for rooms with none', f
     $this->actingAs($owner)->get(route('music.room', $room))->assertOk()
         ->assertSee('Music played in Game Hub')->assertSee('Alice');
     $this->actingAs($owner)->get(route('music.room', 424242))->assertNotFound();
+});
+
+test('the housekeeping widget ranks rooms by songs this week', function () {
+    $owner = User::factory()->create();
+    $quiet = makePlusRoom($owner->id, ['caption' => 'Quiet Room']);
+    $busy = makePlusRoom($owner->id, ['caption' => 'Busy Room']);
+    foreach ([[$quiet, 'a'], [$busy, 'b'], [$busy, 'c']] as [$room, $who]) {
+        RoomStreamPlay::query()->create(['room_id' => $room, 'set_by' => $who, 'kind' => 'youtube', 'url' => 'https://www.youtube.com/watch?v=' . $who, 'played_at' => now()]);
+    }
+    RoomStreamPlay::query()->create(['room_id' => $quiet, 'set_by' => 'old', 'kind' => 'youtube', 'url' => 'https://www.youtube.com/watch?v=old', 'played_at' => now()->subDays(30)]);
+
+    Filament::setCurrentPanel(Filament::getPanel('housekeeping'));
+
+    Livewire::test(TopMusicRooms::class)->assertCanSeeTableRecords([$busy, $quiet], inOrder: true);
 });
