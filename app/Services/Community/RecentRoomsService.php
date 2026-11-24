@@ -48,10 +48,12 @@ class RecentRoomsService
                 continue;
             }
 
+            $owner = $room->getRelation('ownerUser');
+
             $recent[] = [
                 'id' => (int) $room->id,
                 'name' => (string) $room->caption,
-                'owner' => (string) ($room->ownerUser?->username ?? ''),
+                'owner' => $owner instanceof User ? (string) $owner->username : '',
                 'users' => (int) $room->users_now,
             ];
         }
