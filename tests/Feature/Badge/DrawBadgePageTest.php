@@ -52,3 +52,8 @@ test('the drawer script on the page is valid javascript', function (string $them
 
     File::deleteDirectory($directory);
 })->with(['atom', 'dusk']);
+
+test('the drawer links to the badge gallery', function () {
+    $this->actingAs(User::factory()->create())->get(route('draw-badge'))->assertOk()
+        ->assertSee(route('help-center.badges.index'));
+});

@@ -49,7 +49,7 @@ test('the badge gallery shows approved drawings with their artist', function () 
     $make('Hidden Dog', false);
 
     $this->actingAs($artist)->get(route('help-center.badges.index'))->assertOk()
-        ->assertSee('Drawn by players')->assertSee('Approved Cat')->assertSee('by Picasso')->assertDontSee('Hidden Dog');
+        ->assertSee('Drawn by players')->assertSee(route('draw-badge'))->assertSee('Approved Cat')->assertSee('by Picasso')->assertDontSee('Hidden Dog');
 
     $this->actingAs($artist)->get(route('help-center.badges.index', ['q' => 'zzz']))->assertOk()->assertDontSee('Drawn by players');
 });

@@ -23,6 +23,8 @@
                 {{ __('Draw your very own badge') }}
             </x-slot:under-title>
 
+            <p class="mb-3 px-2 text-sm dark:text-gray-200"><a href="{{ route('help-center.badges.index') }}" class="font-semibold underline">{{ __('See badges other players drew') }}</a></p>
+
             <div class="px-2 text-sm dark:text-gray-200">
                 @if ($folderError)
                     <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">

@@ -12,7 +12,10 @@
             </form>
 
             @if ($drawnBadges->isNotEmpty())
-                <p class="mb-2 px-2 text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">{{ __('Drawn by players') }}</p>
+                <div class="mb-2 flex items-center justify-between px-2">
+                    <p class="text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">{{ __('Drawn by players') }}</p>
+                    <a href="{{ route('draw-badge') }}" class="text-xs font-semibold underline dark:text-gray-200">{{ __('Draw your own') }}</a>
+                </div>
                 <div class="mb-4 grid grid-cols-1 gap-2 px-2 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($drawnBadges as $drawn)
                         <div class="flex items-center gap-3 rounded bg-gray-100 p-3 dark:bg-gray-700">
