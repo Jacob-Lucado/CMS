@@ -25,6 +25,15 @@
         >
     </div>
 
+    @php($drawnBadges = \App\Models\WebsiteDrawBadge::query()->where('user_id', $user->id)->where('published', true)->count())
+    @if ($drawnBadges > 0)
+        <div class="flex flex-wrap gap-1">
+            <a href="{{ route('help-center.badges.index') }}" class="rounded-full bg-purple-100 px-2 py-0.5 text-[11px] font-semibold text-purple-800 dark:bg-purple-900 dark:text-purple-200">
+                {{ trans_choice('Badge artist - :count badge|Badge artist - :count badges', $drawnBadges) }}
+            </a>
+        </div>
+    @endif
+
     @php($wins = app(\App\Services\Community\WeeklyLeaderboardService::class)->recentWins($user))
     @if ($wins->isNotEmpty())
         <div class="flex flex-wrap gap-1">

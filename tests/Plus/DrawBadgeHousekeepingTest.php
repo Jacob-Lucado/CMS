@@ -53,3 +53,14 @@ test('the badge gallery shows approved drawings with their artist', function () 
 
     $this->actingAs($artist)->get(route('help-center.badges.index', ['q' => 'zzz']))->assertOk()->assertDontSee('Drawn by players');
 });
+
+test('the profile card marks players who have approved badge drawings', function () {
+    $artist = User::factory()->create(['username' => 'Picasso']);
+    $other = User::factory()->create(['username' => 'Viewer']);
+    foreach ([true, true, false] as $published) {
+        WebsiteDrawBadge::query()->create(['user_id' => $artist->id, 'badge_path' => '/tmp/x.gif', 'badge_url' => '/badges/x.gif', 'badge_name' => 'Cat', 'badge_desc' => 'Drawn', 'published' => $published]);
+    }
+
+    expect(view('home.widgets.my-profile', ['user' => $artist])->render())->toContain('Badge artist - 2 badges')
+        ->and(view('home.widgets.my-profile', ['user' => $other])->render())->not->toContain('Badge artist');
+});
