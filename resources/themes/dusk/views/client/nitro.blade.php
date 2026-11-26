@@ -3,8 +3,14 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="{{ setting('hotel_name') }}">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="/hotel.webmanifest">
+    <link rel="apple-touch-icon" href="/client/pwa-icon-192.png">
 
     <title>{{ setting('hotel_name') }} - Nitro</title>
 
@@ -29,7 +35,7 @@
         </x-client.client-button>
     </div>
 
-    <div onclick="toggleFullscreen()">
+    <div onclick="toggleFullscreen()" id="fullscreen-button">
         <x-client.client-button>
             <x-icons.fullscreen />
         </x-client.client-button>
