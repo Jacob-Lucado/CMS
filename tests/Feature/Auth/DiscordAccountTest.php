@@ -109,7 +109,7 @@ test('a signed in player can link and unlink Discord', function () {
     $user = User::factory()->create();
     $this->actingAs($user);
 
-    returnFromDiscord()->assertRedirect(route('me.show'))->assertSessionHas('success');
+    returnFromDiscord()->assertRedirect(route('settings.account.show'))->assertSessionHas('success');
     expect($user->discordAccount()->value('discord_id'))->toBe('111122223333444455');
 
     $this->delete(route('settings.discord.destroy'))->assertSessionHas('success');
@@ -122,7 +122,7 @@ test('a Discord linked to someone else cannot be linked again', function () {
     $user = User::factory()->create();
     $this->actingAs($user);
 
-    returnFromDiscord()->assertRedirect(route('me.show'))->assertSessionHas('message');
+    returnFromDiscord()->assertRedirect(route('settings.account.show'))->assertSessionHas('message');
 
     expect($user->discordAccount()->exists())->toBeFalse();
 });

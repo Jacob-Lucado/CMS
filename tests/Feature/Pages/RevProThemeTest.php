@@ -67,3 +67,20 @@ test('the header uses the Lucado logo by default', function () {
 
     expect(setting('cms_logo'))->toBe('/assets/images/lucado-logo.png');
 });
+
+test('the account settings let a player pick a theme and link Discord', function () {
+    $this->actingAs(User::factory()->create())->get(route('settings.account.show'))
+        ->assertOk()
+        ->assertSee(route('theme.switch', 'mercury'), false)
+        ->assertSee('Connected accounts');
+});
+
+test('switching theme returns to the page it came from', function () {
+    $this->withHeader('referer', url('/user/settings/account'))
+        ->get(route('theme.switch', 'mercury'))
+        ->assertRedirect('/user/settings/account');
+
+    $this->withHeader('referer', 'https://elsewhere.test/page')
+        ->get(route('theme.switch', 'mercury'))
+        ->assertRedirect('/');
+});

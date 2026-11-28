@@ -22,9 +22,13 @@ class ThemeSwitchController extends Controller
      */
     private function returnPath(Request $request): string
     {
-        $previous = parse_url((string) url()->previous(), PHP_URL_PATH) ?: '/';
+        // The Referer is the page the visitor clicked from; the session's previous URL can be a background request.
+        $referer = (string) $request->headers->get('referer');
+        $previous = $referer !== '' && parse_url($referer, PHP_URL_HOST) === $request->getHost()
+            ? (parse_url($referer, PHP_URL_PATH) ?: '/')
+            : '/';
 
-        if (! str_starts_with($previous, '/') || str_starts_with($previous, '//') || str_starts_with($previous, '/theme/')) {
+        if (! str_starts_with($previous, '/') || str_starts_with($previous, '//') || str_starts_with($previous, '/theme/') || str_starts_with($previous, '/radio/')) {
             return '/';
         }
 

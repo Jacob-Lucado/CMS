@@ -89,4 +89,5 @@
             </div>
         </x-content.content-card>
     </div>
+    <x-user.settings.preferences />
 </x-app-layout>

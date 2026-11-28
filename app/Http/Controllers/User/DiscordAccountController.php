@@ -106,7 +106,7 @@ class DiscordAccountController extends Controller
         $user = AuthenticatedUser::current();
 
         if ($account !== null && $account->user_id !== $user->getKey()) {
-            return redirect()->route('me.show')->with('message', __('That Discord account is already linked to another player.'));
+            return redirect()->route('settings.account.show')->with('message', __('That Discord account is already linked to another player.'));
         }
 
         WebsiteDiscordAccount::query()->updateOrCreate(
@@ -114,7 +114,7 @@ class DiscordAccountController extends Controller
             ['discord_id' => $profile['id'], 'discord_username' => $profile['username'], 'discord_avatar' => $profile['avatar']],
         );
 
-        return redirect()->route('me.show')->with('success', __('Your Discord account is linked.'));
+        return redirect()->route('settings.account.show')->with('success', __('Your Discord account is linked.'));
     }
 
     private function leave(string $message): RedirectResponse
