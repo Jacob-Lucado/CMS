@@ -2,9 +2,19 @@
 
 /* Lucado: the LucadoOS look as a normal website. The desktop, windows and taskbar are left out; the menu bar and footer take their place. */
 
+html.los-site {
+    min-height: 100%;
+}
+
+html.los-site body.los-site-body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+}
+
 html.los-site,
 html.los-site body.los-site-body {
-    min-height: 100%;
     background:
         radial-gradient(900px 420px at 85% -80px, var(--bg-glow), transparent 70%),
         radial-gradient(700px 360px at -10% 0, var(--glow-2), transparent 70%),
@@ -91,8 +101,8 @@ html.los-site body.los-site-body {
     --accent: #75b8ff;
     flex-shrink: 0;
     align-self: center;
-    width: min(340px, 100%);
-    margin: 18px 0;
+    width: 100%;
+    margin: 0;
     padding: 20px;
     border: 1px solid rgba(148, 176, 214, 0.28);
     border-radius: var(--radius);
@@ -134,5 +144,250 @@ html.los-site body.los-site-body {
 
     #app > nav.relative [x-data] > button {
         gap: 0.35rem;
+    }
+}
+
+/* Keep the footer at the very bottom, however short the page is. */
+html.los-site body.los-site-body > #app {
+    flex: 1 0 auto;
+}
+
+.lucado-footer {
+    margin-top: auto;
+}
+
+/* Welcome area */
+.lc-hero {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    align-items: center;
+    gap: 32px;
+    min-height: 380px;
+    overflow: hidden;
+    padding: 40px;
+    border: 1px solid var(--line);
+    border-radius: calc(var(--radius) + 4px);
+    background:
+        linear-gradient(90deg, rgba(10, 16, 25, 0.86) 0%, rgba(10, 16, 25, 0.6) 50%, rgba(10, 16, 25, 0.2) 100%),
+        var(--los-backdrop, none) center / cover no-repeat,
+        var(--panel);
+    box-shadow: 0 18px 48px rgba(3, 8, 18, 0.35);
+    image-rendering: pixelated;
+    --white: #f4f8fd;
+    --text: #dbe5f2;
+    --muted: #b4c3d6;
+}
+
+.lc-hero-back {
+    grid-template-columns: minmax(0, 1fr) auto;
+    min-height: 260px;
+}
+
+.lc-hero-copy {
+    display: flex;
+    max-width: 560px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.lc-hero h1 {
+    margin: 0;
+    color: var(--white);
+    font-size: clamp(30px, 4.4vw, 48px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+}
+
+.lc-hero p {
+    margin: 0;
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.55;
+}
+
+.lc-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.lc-hero-avatar {
+    align-self: end;
+    max-height: 220px;
+    width: auto;
+}
+
+.lucado-signin h2 {
+    margin: 0 0 14px;
+    color: var(--white);
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.lc-features {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.lc-feature {
+    padding: 22px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+}
+
+.lc-feature span {
+    font-size: 28px;
+}
+
+.lc-feature h3 {
+    margin: 10px 0 4px;
+    color: var(--white);
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.lc-feature p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* News */
+.lc-news {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+    padding: 22px;
+}
+
+.lc-news-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.lc-news-head h2 {
+    margin: 0;
+    color: var(--white);
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.lc-news-head p {
+    margin: 2px 0 0;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.lc-news-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 18px;
+}
+
+.lc-news-main {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel-2);
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.lc-news-main:hover,
+.lc-news-row:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+}
+
+.lc-news-cover {
+    display: block;
+    height: 220px;
+    background: linear-gradient(135deg, var(--accent-2), var(--accent)) center / cover no-repeat;
+    image-rendering: pixelated;
+}
+
+.lc-news-body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px 18px 18px;
+}
+
+.lc-news-body strong {
+    color: var(--white);
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.lc-news-body small,
+.lc-news-row small {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.lc-news-body > span {
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.lc-news-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.lc-news-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel-2);
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.lc-news-row strong {
+    display: block;
+    color: var(--white);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.lc-news-thumb {
+    flex-shrink: 0;
+    width: 84px;
+    height: 64px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent-2), var(--accent)) center / cover no-repeat;
+    image-rendering: pixelated;
+}
+
+@media (max-width: 64rem) {
+    .lc-hero,
+    .lc-hero-back {
+        grid-template-columns: 1fr;
+        padding: 28px 22px;
+    }
+
+    .lc-hero-avatar {
+        display: none;
+    }
+
+    .lc-features,
+    .lc-news-grid {
+        grid-template-columns: 1fr;
     }
 }

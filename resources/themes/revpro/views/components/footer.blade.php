@@ -10,4 +10,9 @@
     </span>
 
     &copy; {{ date('Y') }} {{ setting('hotel_name') }} - {{ __('All rights reserved.') }}
+    <br>
+    <span class="text-[12px]">
+        {{ __('A re-edit of the open source Atom CMS, made for :hotel.', ['hotel' => setting('hotel_name')]) }}
+        <a href="https://github.com/atom-projects/atom-cms" target="_blank" rel="noopener">Atom CMS</a>
+    </span>
 </footer>

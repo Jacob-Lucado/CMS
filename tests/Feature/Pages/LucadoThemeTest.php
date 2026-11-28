@@ -13,7 +13,7 @@ beforeEach(function () {
 test('a visitor gets the welcome area with the login card', function () {
     $this->get(route('welcome'))
         ->assertOk()
-        ->assertSee('los-hero', false)
+        ->assertSee('lc-hero', false)
         ->assertSee('lucado-signin', false)
         ->assertSee(route('login'), false)
         ->assertSee(route('register'), false);
@@ -38,7 +38,7 @@ test('visitors can switch to the theme', function () {
     $this->withUnencryptedCookie(SettingsService::THEME_COOKIE, 'lucado')
         ->get(route('welcome'))
         ->assertOk()
-        ->assertSee('los-hero', false);
+        ->assertSee('lc-hero', false);
 });
 
 test('every public page renders in the theme', function (string $route) {

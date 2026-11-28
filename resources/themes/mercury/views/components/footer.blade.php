@@ -13,5 +13,9 @@
         <p class="text-[13px] font-semibold">
             &copy; {{ date('Y') }} {{ setting('hotel_name') }} - {{ __('All rights reserved.') }}
         </p>
+        <p class="mt-1 text-[12px] opacity-80">
+            {{ __('A re-edit of the open source Atom CMS, made for :hotel.', ['hotel' => setting('hotel_name')]) }}
+            <a href="https://github.com/atom-projects/atom-cms" target="_blank" rel="noopener">Atom CMS</a>
+        </p>
     </div>
 </footer>
