@@ -13,7 +13,7 @@ class WebsiteSettingsSeeder extends Seeder
             [
                 'key' => 'theme',
                 'value' => 'lucadoos',
-                'comment' => 'Specifies the active CMS theme (lucadoos, dusk, atom, mercury)',
+                'comment' => 'Specifies the active CMS theme (lucadoos, dusk, atom, mercury, revpro)',
             ],
             [
                 'key' => 'hotel_name',

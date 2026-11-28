@@ -105,7 +105,8 @@ class AppServiceProvider extends ServiceProvider
             ->in(resource_path('themes/atom/views/components'))
             ->in(resource_path('themes/dusk/views/components'))
             ->in(resource_path('themes/lucadoos/views/components'))
-            ->in(resource_path('themes/mercury/views/components'));
+            ->in(resource_path('themes/mercury/views/components'))
+            ->in(resource_path('themes/revpro/views/components'));
 
         if (config('habbo.site.force_https')) {
             URL::forceScheme('https');

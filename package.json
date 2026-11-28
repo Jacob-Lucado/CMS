@@ -8,6 +8,8 @@
         "build:dusk": "vite build --config resources/themes/dusk/vite.config.js && npm run build:housekeeping",
         "dev:mercury": "vite --config resources/themes/mercury/vite.config.js",
         "build:mercury": "vite build --config resources/themes/mercury/vite.config.js && npm run build:housekeeping",
+        "dev:revpro": "vite --config resources/themes/revpro/vite.config.js",
+        "build:revpro": "vite build --config resources/themes/revpro/vite.config.js && npm run build:housekeeping",
         "dev:lucadoos": "vite --config resources/themes/lucadoos/vite.config.js",
         "build:lucadoos": "vite build --config resources/themes/lucadoos/vite.config.js && npm run build:housekeeping",
         "format": "prettier \"resources/**/*.{js,ts,vue,blade}\" --write",

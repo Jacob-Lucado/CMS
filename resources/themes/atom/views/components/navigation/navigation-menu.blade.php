@@ -189,13 +189,22 @@
     </a>
 
     @php
-        $themeNames = ['atom' => __('Classic site'), 'lucadoos' => 'LucadoOS', 'mercury' => 'Mercury'];
+        $themeNames = ['atom' => __('Classic site'), 'lucadoos' => 'LucadoOS', 'mercury' => 'Mercury', 'revpro' => 'RevPro'];
+        $otherThemes = array_values(array_diff(config('theme.switchable', []), [setting('theme')]));
     @endphp
-    @foreach (array_diff(config('theme.switchable', []), [setting('theme')]) as $switchTheme)
-        <a href="{{ route('theme.switch', $switchTheme) }}" data-turbolinks="false" class="nav-item dark:text-gray-200">
-            {{ __('Switch to :theme', ['theme' => $themeNames[$switchTheme] ?? ucfirst($switchTheme)]) }}
-        </a>
-    @endforeach
+    @if ($otherThemes !== [])
+        <x-navigation.dropdown icon="community" route-group="theme*">
+            {{ __('Themes') }}
+
+            <x-slot:children>
+                @foreach ($otherThemes as $switchTheme)
+                    <x-navigation.dropdown-child :route="route('theme.switch', $switchTheme)" :turbolink="false">
+                        {{ $themeNames[$switchTheme] ?? ucfirst($switchTheme) }}
+                    </x-navigation.dropdown-child>
+                @endforeach
+            </x-slot:children>
+        </x-navigation.dropdown>
+    @endif
 
     <div class="w-full flex md:hidden gap-x-1 justify-center">
         <x-navigation.language-selector>

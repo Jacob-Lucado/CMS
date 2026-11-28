@@ -1,0 +1,368 @@
+@import "../../atom/css/app.css";
+
+/* RevPro: a light grey page with a blue login card, a dark menu bar and boxed content, in the spirit of the classic RevCMS skin. */
+
+:root {
+    --revpro-blue: #3f65b7;
+    --revpro-blue-light: #437dd6;
+    --revpro-blue-dark: #3960a6;
+    --revpro-blue-edge: #172b4e;
+    --revpro-green: #00a502;
+    --revpro-green-dark: #008200;
+    --revpro-page: #f4f4f4;
+}
+
+body.site-bg,
+main.site-bg,
+.site-bg {
+    background-color: var(--revpro-page);
+    background-image: none;
+}
+
+body.site-bg {
+    background-image: url(/assets/images/revpro/hotelbg.png);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
+
+main.site-bg,
+#app {
+    background-color: transparent;
+}
+
+.dark body.site-bg {
+    background-color: #1a1a1f;
+    background-image: none;
+}
+
+.dark #app,
+.dark main.site-bg {
+    background-color: #1a1a1f;
+}
+
+/* Banner */
+.revpro-banner {
+    margin: 0 auto;
+    max-width: 80rem;
+    padding: 1.5rem 1rem 1rem;
+}
+
+.revpro-banner-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.revpro-banner-logo {
+    max-height: 90px;
+    width: auto;
+    filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.25));
+}
+
+.revpro-online {
+    border-radius: 4px;
+    border: 1px solid #c8d3e8;
+    background: #fff;
+    padding: 0.35rem 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #294779;
+}
+
+.revpro-btn {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #284473;
+    border-bottom-color: #223b66;
+    border-radius: 4px;
+    background-image: linear-gradient(to bottom, #d0e1fe, #96b8ed);
+    padding: 0.45rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #294779;
+    text-shadow: 0 1px rgb(255 255 255 / 0.3);
+    box-shadow: inset 0 1px rgb(255 255 255 / 0.5), 0 1px 1px rgb(0 0 0 / 0.15);
+}
+
+.revpro-btn:hover {
+    filter: brightness(1.04);
+}
+
+.revpro-btn-green {
+    border-color: #005600;
+    border-bottom-color: #003f00;
+    background-image: linear-gradient(to bottom, #2bc72d, var(--revpro-green-dark));
+    color: #fff;
+    text-shadow: 0 -1px rgb(0 0 0 / 0.3);
+}
+
+/* Menu bar: the dark inverse bar of the old skin */
+#app > nav.relative {
+    margin: 0 auto;
+    max-width: 80rem;
+    border: 1px solid #000;
+    border-radius: 4px;
+    background-color: #1b1b1b;
+    background-image: linear-gradient(to bottom, #222, #111);
+    box-shadow: inset 0 1px rgb(255 255 255 / 0.1), 0 1px 3px rgb(0 0 0 / 0.4);
+}
+
+#app > nav.relative .nav-item,
+#app > nav.relative [x-data] > button {
+    color: #d9d9d9;
+    text-transform: none;
+    font-weight: 600;
+}
+
+#app > nav.relative .nav-item:hover,
+#app > nav.relative [x-data] > button:hover {
+    color: #fff;
+}
+
+#app > nav.relative .nav-item[class*="border-b-[#eeb425]"],
+#app > nav.relative [class*="border-b-[#eeb425]"] > button {
+    color: #fff;
+}
+
+#app > nav.relative [class*="md:hover:border-b-[#eeb425]"]:hover,
+#app > nav.relative .nav-item:hover {
+    border-bottom-color: var(--revpro-blue-light) !important;
+}
+
+#app > nav.relative .md\:border-b-\[\#eeb425\]\! {
+    border-bottom-color: var(--revpro-blue-light) !important;
+}
+
+/* Boxes: white wells with a blue title bar */
+main .rounded.border.bg-white,
+main .rounded-md.border.bg-white {
+    border-color: #e3e3e3;
+    background-color: #f5f5f5;
+    box-shadow: inset 0 1px 1px rgb(0 0 0 / 0.05);
+}
+
+.dark main .rounded.border.bg-white,
+.dark main .rounded-md.border.bg-white {
+    background-color: #25252b;
+    border-color: #111;
+}
+
+main [class*="bg-[#eeb425]"],
+main [class*="bg-[#e9b124]"] {
+    background-image: linear-gradient(to bottom, #5a8fd9, var(--revpro-blue-dark));
+    background-color: var(--revpro-blue);
+}
+
+main [class*="border-[#eeb425]"] {
+    border-color: var(--revpro-blue-light);
+}
+
+/* Welcome area */
+.revpro-feature {
+    position: relative;
+    min-height: 408px;
+    overflow: hidden;
+    border: 1px solid var(--revpro-blue-edge);
+    border-bottom-color: #142647;
+    border-radius: 5px;
+    background: url(/assets/images/revpro/banzai.png) center center / cover;
+    box-shadow: inset 0 1px rgb(255 255 255 / 0.3), 0 2px 10px rgb(0 0 0 / 0.5);
+}
+
+.revpro-feature-text {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    max-width: calc(100% - 40px);
+    border-radius: 5px;
+    background: rgb(0 0 0 / 0.9);
+    padding: 20px;
+    color: #fff;
+}
+
+.revpro-feature-text img {
+    max-height: 70px;
+    width: auto;
+    margin-bottom: 0.75rem;
+}
+
+.revpro-feature-text strong {
+    display: block;
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+}
+
+.revpro-card,
+.revpro-register {
+    border: 1px solid var(--revpro-blue-edge);
+    border-bottom-color: #142647;
+    border-radius: 5px;
+    padding: 18px 20px;
+    box-shadow: inset 0 1px rgb(255 255 255 / 0.3), inset 0 0 1px 1px rgb(255 255 255 / 0.1), 0 2px 10px rgb(0 0 0 / 0.5);
+}
+
+.revpro-card {
+    background: radial-gradient(circle at center, var(--revpro-blue-light), var(--revpro-blue-dark));
+}
+
+.revpro-card label {
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-shadow: 0 -1px rgb(0 0 0 / 0.4);
+}
+
+.revpro-card input[type="text"],
+.revpro-card input[type="password"] {
+    padding: 0.7rem;
+    font-size: 0.85rem;
+}
+
+.revpro-card .revpro-submit {
+    display: block;
+    width: 100%;
+    height: 37px;
+    margin-top: 1rem;
+    border: 1px solid #284473;
+    border-bottom-color: #223b66;
+    border-radius: 4px;
+    background-image: linear-gradient(to bottom, #d0e1fe, #96b8ed);
+    font-size: 14px;
+    font-weight: 700;
+    color: #294779;
+    text-shadow: 0 1px rgb(255 255 255 / 0.3);
+    box-shadow: inset 0 1px rgb(255 255 255 / 0.5), inset 0 0 7px rgb(255 255 255 / 0.4), 0 1px 1px rgb(0 0 0 / 0.15);
+}
+
+.revpro-card .revpro-submit:active {
+    background: #a4c2f3;
+    box-shadow: inset 0 1px 5px rgb(0 0 0 / 0.4);
+}
+
+.revpro-card a.revpro-forgot {
+    display: block;
+    margin-top: 0.75rem;
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #e6eeff;
+}
+
+.revpro-register {
+    margin-top: 1.5rem;
+    background: radial-gradient(circle at center, var(--revpro-green), var(--revpro-green-dark));
+    text-align: center;
+}
+
+.revpro-register h2 {
+    margin-bottom: 1rem;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 -1px rgb(0 0 0 / 0.4);
+}
+
+.revpro-register a {
+    display: block;
+    padding: 8px;
+    border: 1px solid #005600;
+    border-bottom-color: #003f00;
+    border-radius: 4px;
+    background-image: linear-gradient(to bottom, #eaeaea, #ccc);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--revpro-green-dark);
+    text-shadow: 0 1px rgb(255 255 255 / 0.3);
+    box-shadow: inset 0 1px rgb(255 255 255 / 0.5), 0 1px 1px rgb(0 0 0 / 0.15);
+}
+
+/* News tiles */
+.revpro-news {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+@media (min-width: 40rem) {
+    .revpro-news {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 64rem) {
+    .revpro-news {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+.revpro-news-card {
+    position: relative;
+    display: block;
+    height: 140px;
+    overflow: hidden;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+    background-color: #f5f5f5;
+    background-size: cover;
+    background-position: center;
+    box-shadow: inset 0 1px 1px rgb(0 0 0 / 0.05);
+}
+
+.revpro-news-card .caption {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgb(0 0 0 / 0.75);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    color: #fff;
+}
+
+.revpro-news-card .caption strong {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.revpro-title {
+    display: block;
+    margin-bottom: 0.75rem;
+    border-radius: 4px;
+    background-image: linear-gradient(to bottom, #5a8fd9, var(--revpro-blue-dark));
+    padding: 0.5rem 0.9rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 -1px rgb(0 0 0 / 0.3);
+}
+
+/* Footer */
+.revpro-footer {
+    margin: 1.5rem auto 2rem;
+    width: calc(100% - 2rem);
+    max-width: 80rem;
+    border: 1px solid #e3e3e3;
+    border-radius: 5px;
+    background: #fff;
+    padding: 1.25rem;
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+.revpro-footer a {
+    color: #3f65b7;
+}
+
+.revpro-footer .sep {
+    margin: 0 0.5rem;
+    color: #c4c4c4;
+}
+
+.dark .revpro-footer {
+    background: #25252b;
+    border-color: #111;
+    color: #9ca3af;
+}

@@ -103,6 +103,7 @@
     $links = array_values(array_filter([
         $link(setting('discord_invitation_link'), __('Discord'), asset('assets/images/icons/discord.png')),
         in_array('atom', config('theme.switchable', []), true) ? $link(route('theme.switch', 'atom'), __('Classic site'), '🧭', true) : null,
+        in_array('revpro', config('theme.switchable', []), true) ? $link(route('theme.switch', 'revpro'), __('RevPro site'), '🏨', true) : null,
         in_array('mercury', config('theme.switchable', []), true) ? $link(route('theme.switch', 'mercury'), __('Mercury site'), '🚀', true) : null,
         $user && hasPermission('housekeeping_access') ? $link(setting('housekeeping_url') ?: url('/housekeeping'), __('Housekeeping'), '🛠️') : null,
         $user && hasPermission('generate_logo') ? $link(route('logo-generator.index'), __('Logo generator'), '🖌️') : null,

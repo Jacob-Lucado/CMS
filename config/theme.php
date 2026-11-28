@@ -40,7 +40,7 @@ return [
     /*
     | The themes a visitor can switch between with /theme/{name}. The choice is kept in a cookie.
     */
-    'switchable' => ['atom', 'lucadoos', 'mercury'],
+    'switchable' => ['atom', 'lucadoos', 'mercury', 'revpro'],
 
     /*
     |--------------------------------------------------------------------------
