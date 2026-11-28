@@ -55,6 +55,8 @@
                 </a>
             </div>
         </form>
+
+        <x-form.discord-button />
     </div>
 
     {{-- Articles --}}

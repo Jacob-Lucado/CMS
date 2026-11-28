@@ -48,4 +48,6 @@
             {{ __('Dont have an account? Join now!') }}
         </a>
     </div>
+
+    <x-form.discord-button />
 </form>

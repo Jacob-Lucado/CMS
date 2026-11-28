@@ -3,7 +3,7 @@
     @inject('onlineUsers', 'App\Services\User\UserApiService')
 
     <div class="col-span-12 flex flex-col gap-5">
-        <section class="los-hero">
+        <section class="los-hero" @if (filled(setting('cms_me_backdrop'))) style="--los-backdrop: url('{{ setting('cms_me_backdrop') }}')" @endif>
             <div class="los-hero-text">
                 <span class="los-pill"><i class="los-dot"></i>{{ trans_choice(':count player online|:count players online', $onlineUsers->onlineUserCount()) }}</span>
                 <h1>{{ setting('hotel_name') }}</h1>
@@ -47,7 +47,7 @@
                 </div>
             @endguest
 
-            <img class="los-hero-avatar" alt=""
+            <img class="los-hero-avatar los-avatar-live" alt=""
                  src="{{ setting('avatar_imager') }}{{ setting('start_look') ?: 'hr-100-61.hd-180-1.ch-210-66.lg-270-110.sh-305-62' }}&direction=4&head_direction=3&gesture=sml&action=wav&size=l">
         </section>
 
@@ -92,3 +92,26 @@
         @endif
     </div>
 </x-app-layout>
+
+@push('javascript')
+    <script>
+        document.querySelectorAll('img.los-avatar-live').forEach((img) => {
+            const base = img.getAttribute('src');
+            const frames = [0, 1].map((n) => base + '&frame_num=' + n);
+            let ready = 0;
+            const loaded = frames.map((src) => {
+                const probe = new Image();
+                probe.onload = () => { ready++; };
+                probe.src = src;
+                return probe;
+            });
+            let at = 0;
+            setInterval(() => {
+                if (ready === frames.length) {
+                    at = 1 - at;
+                    img.src = frames[at];
+                }
+            }, 450);
+        });
+    </script>
+@endpush

@@ -2577,3 +2577,28 @@ html select {
 @media (prefers-reduced-motion: no-preference) {
     .los-win, .los-start:not([hidden]) { animation-timing-function: steps(3, end); }
 }
+
+/* A hotel room behind the profile and the welcome area, with a shade so the text stays readable in both color modes. */
+.los-profile[style*="--los-backdrop"],
+.los-hero[style*="--los-backdrop"] {
+    --white: #f4f8fd;
+    --text: #dbe5f2;
+    --muted: #b4c3d6;
+    background:
+        linear-gradient(90deg, rgba(10, 16, 25, 0.82) 0%, rgba(10, 16, 25, 0.55) 45%, rgba(10, 16, 25, 0.15) 100%),
+        var(--los-backdrop) center / cover no-repeat,
+        var(--panel);
+    image-rendering: pixelated;
+}
+
+/* The avatar waves and bobs a little, like the animated character on the Mercury welcome strip. */
+@keyframes los-avatar-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .los-avatar-live {
+        animation: los-avatar-bob 2.4s ease-in-out infinite;
+    }
+}

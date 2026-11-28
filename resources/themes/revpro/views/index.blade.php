@@ -36,6 +36,8 @@
                     <button class="revpro-submit" type="submit">{{ __('Login') }}</button>
 
                     <a class="revpro-forgot" href="{{ route('forgot.password.get') }}">{{ __('Did you forget your password?') }}</a>
+
+                    <x-form.discord-button />
                 </form>
 
                 <div class="revpro-register">

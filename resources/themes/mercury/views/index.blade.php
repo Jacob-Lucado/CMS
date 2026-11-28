@@ -45,6 +45,7 @@
                             <div class="text-center text-sm font-semibold text-gray-500">
                                 <a href="{{ route('forgot.password.get') }}" class="hover:underline">{{ __('Did you forget your password?') }}</a>
                             </div>
+                            <x-form.discord-button />
                         </form>
 
                         <div class="mercury-login-divider">{{ __('Dont have an account?') }}</div>

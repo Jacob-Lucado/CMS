@@ -10,8 +10,8 @@
     <div class="col-span-12 flex flex-col gap-5">
         <x-me.today />
 
-        <section class="los-profile">
-            <img class="los-profile-avatar" alt=""
+        <section class="los-profile" @if (filled(setting('cms_me_backdrop'))) style="--los-backdrop: url('{{ setting('cms_me_backdrop') }}')" @endif>
+            <img class="los-profile-avatar los-avatar-live" alt=""
                  src="{{ setting('avatar_imager') }}{{ $user->look }}&direction=2&head_direction=3&gesture=sml&action=wav&size=l">
 
             <div class="los-profile-text">
@@ -162,3 +162,26 @@
         </script>
     @endpush
 </x-app-layout>
+
+@push('javascript')
+    <script>
+        document.querySelectorAll('img.los-avatar-live').forEach((img) => {
+            const base = img.getAttribute('src');
+            const frames = [0, 1].map((n) => base + '&frame_num=' + n);
+            let ready = 0;
+            const loaded = frames.map((src) => {
+                const probe = new Image();
+                probe.onload = () => { ready++; };
+                probe.src = src;
+                return probe;
+            });
+            let at = 0;
+            setInterval(() => {
+                if (ready === frames.length) {
+                    at = 1 - at;
+                    img.src = frames[at];
+                }
+            }, 450);
+        });
+    </script>
+@endpush
