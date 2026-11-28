@@ -387,7 +387,7 @@ class AtomInstallCommand extends Command
             $selectedTheme = $this->choice(
                 'Which theme do you want to use?',
                 self::THEMES,
-                in_array($seeded, self::THEMES, true) ? $seeded : 'lucadoos',
+                in_array($seeded, self::THEMES, true) ? $seeded : 'lucado',
             );
 
             if (is_string($selectedTheme)) {
@@ -395,7 +395,7 @@ class AtomInstallCommand extends Command
             }
         }
 
-        $theme ??= in_array($seeded, self::THEMES, true) ? $seeded : 'lucadoos';
+        $theme ??= in_array($seeded, self::THEMES, true) ? $seeded : 'lucado';
 
         if ($theme !== $seeded) {
             DB::table('website_settings')->where('key', 'theme')->update(['value' => $theme]);

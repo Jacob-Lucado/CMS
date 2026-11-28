@@ -12,7 +12,7 @@ class WebsiteSettingsSeeder extends Seeder
         $settings = [
             [
                 'key' => 'theme',
-                'value' => 'lucadoos',
+                'value' => 'lucado',
                 'comment' => 'Specifies the active CMS theme (lucadoos, dusk, atom, mercury, revpro, lucado)',
             ],
             [
