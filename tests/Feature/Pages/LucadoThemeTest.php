@@ -1,0 +1,78 @@
+<?php
+
+use App\Models\User;
+use App\Services\SettingsService;
+use Database\Seeders\WebsiteSettingsSeeder;
+
+beforeEach(function () {
+    installHotel();
+    setSetting('theme', 'lucado');
+    setSetting('enable_caching', '0');
+});
+
+test('a visitor gets the welcome area with the login card', function () {
+    $this->get(route('welcome'))
+        ->assertOk()
+        ->assertSee('los-hero', false)
+        ->assertSee('lucado-signin', false)
+        ->assertSee(route('login'), false)
+        ->assertSee(route('register'), false);
+});
+
+test('a signed in player gets the banner and the news', function () {
+    $this->actingAs(User::factory()->create())->get(route('article.index'))
+        ->assertOk()
+        ->assertSee('lucado-bar', false)
+        ->assertDontSee('lucado-signin', false);
+});
+
+test('pages the theme does not change still render', function () {
+    $this->get(route('article.index'))->assertOk();
+});
+
+test('visitors can switch to the theme', function () {
+    setSetting('theme', 'atom');
+
+    $this->get(route('theme.switch', 'lucado'))->assertRedirect();
+
+    $this->withUnencryptedCookie(SettingsService::THEME_COOKIE, 'lucado')
+        ->get(route('welcome'))
+        ->assertOk()
+        ->assertSee('los-hero', false);
+});
+
+test('every public page renders in the theme', function (string $route) {
+    $this->get(route($route))->assertSuccessful();
+})->with(['register', 'forgot.password.get', 'article.index']);
+
+test('every hotel page renders in the theme for a player', function (string $route) {
+    $this->actingAs(User::factory()->create())->get(route($route))->assertSuccessful();
+})->with([
+    'me.show', 'article.index', 'shop.index', 'music.index', 'hall-of-fame.index', 'suggestions.index', 'riddle.show',
+    'polls.index', 'radio.index', 'changelog.index', 'leaderboard.index', 'events.index', 'furni.index', 'values.index',
+    'catalog.index', 'daily-reward.show', 'social.index', 'notifications.index', 'settings.account.show',
+    'help-center.index', 'staff.index', 'teams.index', 'photos.index', 'gameboards.index',
+]);
+
+test('the header uses the Lucado logo by default', function () {
+    $this->seed(WebsiteSettingsSeeder::class);
+
+    expect(setting('cms_logo'))->toBe('/assets/images/lucado-logo.png');
+});
+
+test('the account settings let a player pick a theme and link Discord', function () {
+    $this->actingAs(User::factory()->create())->get(route('settings.account.show'))
+        ->assertOk()
+        ->assertSee(route('theme.switch', 'mercury'), false)
+        ->assertSee('Connected accounts');
+});
+
+test('switching theme returns to the page it came from', function () {
+    $this->withHeader('referer', url('/user/settings/account'))
+        ->get(route('theme.switch', 'mercury'))
+        ->assertRedirect('/user/settings/account');
+
+    $this->withHeader('referer', 'https://elsewhere.test/page')
+        ->get(route('theme.switch', 'mercury'))
+        ->assertRedirect('/');
+});

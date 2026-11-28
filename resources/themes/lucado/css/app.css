@@ -1,0 +1,113 @@
+@import "../../lucadoos/css/app.css";
+
+/* Lucado: the LucadoOS look as a normal website. The desktop, windows and taskbar are left out; the menu bar and footer take their place. */
+
+html.los-site,
+html.los-site body.los-site-body {
+    min-height: 100%;
+    background:
+        radial-gradient(900px 420px at 85% -80px, var(--bg-glow), transparent 70%),
+        radial-gradient(700px 360px at -10% 0, var(--glow-2), transparent 70%),
+        var(--bg);
+    background-attachment: fixed;
+}
+
+#app {
+    background: transparent;
+}
+
+.lucado-bar {
+    border-bottom: 1px solid var(--line);
+    background: var(--nav);
+    backdrop-filter: blur(10px);
+}
+
+.lucado-bar-inner {
+    display: flex;
+    min-height: 92px;
+    max-width: 80rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0 auto;
+    padding: 0.75rem 1rem;
+}
+
+.lucado-bar-logo {
+    max-height: 64px;
+    width: auto;
+    filter: drop-shadow(0 2px 6px rgb(0 0 0 / 0.35));
+}
+
+#app > nav.relative {
+    border-bottom: 1px solid var(--line);
+    background: var(--panel);
+    box-shadow: none;
+}
+
+#app > nav.relative .nav-item,
+#app > nav.relative [x-data] > button {
+    color: var(--text);
+    text-transform: none;
+}
+
+#app > nav.relative .nav-item:hover,
+#app > nav.relative [x-data] > button:hover {
+    color: var(--white);
+}
+
+#app > nav.relative [class*="border-b-[#eeb425]"] {
+    border-bottom-color: var(--accent) !important;
+}
+
+#app > nav.relative [class*="md:hover:border-b-[#eeb425]"]:hover,
+#app > nav.relative .nav-item:hover {
+    border-bottom-color: var(--accent) !important;
+}
+
+.lucado-footer {
+    margin-top: 2rem;
+    border-top: 1px solid var(--line);
+    background: var(--panel);
+    padding: 1.5rem 0;
+    text-align: center;
+    color: var(--muted);
+}
+
+.lucado-footer a {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.los-site-main > div > * {
+    animation: los-view-in 0.26s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.lucado-signin {
+    flex-shrink: 0;
+    align-self: center;
+    width: min(320px, 100%);
+    margin: 18px 0;
+}
+
+.lucado-signin ~ .los-hero-avatar {
+    display: none;
+}
+
+@media (max-width: 48rem) {
+    .los-hero:has(.lucado-signin) {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+@media (min-width: 64rem) {
+    #app > nav.relative .nav-item,
+    #app > nav.relative [x-data] > button {
+        font-size: 13px;
+    }
+
+    #app > nav.relative [x-data] > button {
+        gap: 0.35rem;
+    }
+}

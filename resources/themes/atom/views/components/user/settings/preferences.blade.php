@@ -1,6 +1,7 @@
 @php
     $themeCards = [
         'lucadoos' => ['LucadoOS', __('A desktop-style site with windows and apps.')],
+        'lucado' => ['Lucado', __('The LucadoOS look as a normal website, without the desktop.')],
         'atom' => [__('Classic site'), __('The original layout with a banner and a menu bar.')],
         'mercury' => ['Mercury', __('Light and friendly, with a red welcome area.')],
         'revpro' => ['RevPro', __('A grey page with a blue login card and a dark menu bar.')],
@@ -17,7 +18,7 @@
             <x-slot:title>{{ __('Appearance') }}</x-slot:title>
             <x-slot:under-title>{{ __('Pick how the site looks. Your choice is kept on this device.') }}</x-slot:under-title>
 
-            <div class="grid grid-cols-1 gap-3 px-2 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="grid grid-cols-1 gap-3 px-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                 @foreach ($themeChoices as $theme)
                     <a data-turbolinks="false" href="{{ route('theme.switch', $theme) }}" @class([
                         'flex flex-col gap-y-1 rounded border-2 p-3 text-sm transition dark:text-gray-100',

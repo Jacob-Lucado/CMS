@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html class="app dark los-site" data-theme="dark" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="turbolinks-cache-control" content="no-cache">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <meta name="theme-color" content="#0f1724">
+
+    <x-seo-meta />
+
+    <script>
+        (() => {
+            const root = document.documentElement;
+            let saved = null;
+            try { saved = localStorage.getItem('theme'); } catch { /* storage blocked: use the default */ }
+            const theme = saved === 'light' || saved === 'dark' ? saved : @js(setting('cms_color_mode') === 'light' ? 'light' : 'dark');
+            const apply = (dark) => { root.dataset.theme = dark ? 'dark' : 'light'; };
+            root.classList.toggle('dark', theme === 'dark');
+            apply(theme === 'dark');
+            new MutationObserver(() => apply(root.classList.contains('dark'))).observe(root, { attributes: true, attributeFilter: ['class'] });
+        })();
+    </script>
+
+    <link rel="icon" type="image/gif" sizes="18x17" href="{{ asset('assets/images/home_icon.gif') }}">
+
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
+
+    <script src="{{ asset('assets/js/popper.min.js') }}"></script>
+    <script src="{{ asset('assets/js/tippy-bundle.umd.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('assets/css/scale.min.css') }}"/>
+
+    @livewireStyles
+    @livewireScriptConfig
+    @vite(['resources/themes/' .  setting('theme', 'atom') . '/css/app.css', 'resources/themes/' .  setting('theme') . '/js/app.js'], 'build')
+    @stack('scripts')
+    <x-turnstile.scripts />
+</head>
+
+<body class="los-site-body flex min-h-screen flex-col">
+    @if(config('habbo.site.debug_mode_enabled') && config('habbo.site.site_environment') === 'production')
+        <div class="w-full py-2 px-4 text-center rounded text-white bg-red-500">
+            {{ __('It seems like debug mode is enabled while being in production. It is heavily recommended too set APP_DEBUG in the .env file to false in production mode') }}
+        </div>
+    @endif
+
+    <!-- Validation Errors -->
+    <x-messages.flash-messages />
+
+    <div id="app" class="bg-gray-100 dark:bg-gray-900">
+        {{-- Top header --}}
+        @auth
+            <x-top-header />
+        @endauth
+
+        {{-- Site Header --}}
+        <x-site-header />
+
+        {{-- Navigation --}}
+        <nav class="relative bg-white shadow-sm dark:bg-gray-900">
+            <div class="max-w-7xl min-h-[60px] px-4 md:flex md:items-center md:justify-between md:mx-auto">
+
+
+                <x-navigation.navigation-menu />
+
+                <div class="hidden lg:flex items-center">
+                    <x-navigation.theme-mode-switcher />
+
+                    <x-navigation.language-selector>
+                        <img src="/assets/images/icons/flags/{{ session()->has('locale') ? session()->get('locale') : config('habbo.site.default_language') }}.png"
+                             alt="">
+                    </x-navigation.language-selector>
+                </div>
+
+                <x-navigation.mobile-menu />
+            </div>
+        </nav>
+
+        {{-- Content --}}
+        <main class="los-content los-site-main">
+            <div class="mx-auto mt-10 grid max-w-7xl grid-cols-12 gap-x-3 gap-y-8 p-6 md:mt-0">
+                @if (filled(setting('site_announcement')))
+                    <div class="col-span-12 rounded border-2 border-amber-400 bg-amber-100 px-4 py-3 text-sm font-semibold text-amber-900" style="grid-column:1/-1">
+                        {{ setting('site_announcement') }}
+                    </div>
+                @endif
+                {{ $slot }}
+            </div>
+        </main>
+    </div>
+
+    <x-footer />
+
+    @if (setting('cloudflare_turnstile_enabled'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const turnstileWidget = document.querySelector('#cf-turnstile-widget');
+                const theme = localStorage.getItem('theme');
+
+                if (turnstileWidget && theme) {
+                    turnstileWidget.setAttribute('data-theme', theme);
+                }
+            });
+        </script>
+    @endif
+
+
+
+
+    @if (setting('google_recaptcha_enabled'))
+        @push('javascript')
+            <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        @endpush
+    @endif
+
+    <script defer src="{{ asset('assets/js/alpine-ui.js') }}"></script>
+
+    @stack('javascript')
+    </body>
+</html>

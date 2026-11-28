@@ -36,7 +36,7 @@ class AtomInstallCommand extends Command
         {--fresh : Drop every table in the target database before importing (destroys existing data)}
         {--skip-arcturus : Skip importing the bundled Arcturus base database and catalog}
         {--skip-catalog : Skip importing the bundled catalog on top of the base database}
-        {--theme= : Theme to activate and build (lucadoos, atom, dusk, mercury or revpro)}
+        {--theme= : Theme to activate and build (lucadoos, atom, dusk, mercury, revpro or lucado)}
         {--skip-build : Skip building required assets}
         {--headless : Install without a public PHP theme}
         {--frontend-url= : Origin of the independent frontend}
@@ -46,7 +46,7 @@ class AtomInstallCommand extends Command
 
     protected $description = 'One-command installer for a supported emulator';
 
-    private const THEMES = ['lucadoos', 'atom', 'dusk', 'mercury', 'revpro'];
+    private const THEMES = ['lucadoos', 'atom', 'dusk', 'mercury', 'revpro', 'lucado'];
 
     public function handle(EmulatorManager $emulators): int
     {
