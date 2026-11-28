@@ -188,9 +188,14 @@
         {{ __('Discord') }}
     </a>
 
-    <a href="{{ route('theme.switch', 'lucadoos') }}" data-turbolinks="false" class="nav-item dark:text-gray-200">
-        {{ __('Switch to LucadoOS') }}
-    </a>
+    @php
+        $themeNames = ['atom' => __('Classic site'), 'lucadoos' => 'LucadoOS', 'mercury' => 'Mercury'];
+    @endphp
+    @foreach (array_diff(config('theme.switchable', []), [setting('theme')]) as $switchTheme)
+        <a href="{{ route('theme.switch', $switchTheme) }}" data-turbolinks="false" class="nav-item dark:text-gray-200">
+            {{ __('Switch to :theme', ['theme' => $themeNames[$switchTheme] ?? ucfirst($switchTheme)]) }}
+        </a>
+    @endforeach
 
     <div class="w-full flex md:hidden gap-x-1 justify-center">
         <x-navigation.language-selector>

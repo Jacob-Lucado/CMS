@@ -197,7 +197,7 @@ class WebsiteSettingsSeeder extends Seeder
             ],
             [
                 'key' => 'cms_logo',
-                'value' => '/assets/images/kasja_atomlogo.png',
+                'value' => '/assets/images/lucado-logo.png',
                 'comment' => 'Default logo for the cms',
             ],
             [
