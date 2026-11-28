@@ -485,3 +485,28 @@ nav.relative.bg-white {
     margin: 0 0.4rem;
     opacity: 0.45;
 }
+
+/* Dark mode: light text on the dark menu bar and the dark login card */
+.dark .nav-item,
+.dark nav.relative [x-data] > button {
+    color: #d1d5db;
+}
+
+.dark .nav-item:hover,
+.dark nav.relative [x-data] > button:hover,
+.dark .nav-item[class*="border-b-[#eeb425]"],
+.dark nav.relative [class*="border-b-[#eeb425]"] > button {
+    color: #fff;
+}
+
+.dark #mobile-menu > * + *::before {
+    color: #4b5563;
+}
+
+.dark .mercury-login label,
+.dark .mercury-login a,
+.dark .mercury-login-divider,
+.dark .mercury-login .text-gray-500 {
+    color: #d1d5db;
+    opacity: 1;
+}
