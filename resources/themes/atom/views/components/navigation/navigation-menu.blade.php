@@ -188,24 +188,6 @@
         {{ __('Discord') }}
     </a>
 
-    @php
-        $themeNames = ['atom' => __('Classic site'), 'lucadoos' => 'LucadoOS', 'mercury' => 'Mercury', 'revpro' => 'RevPro'];
-        $otherThemes = array_values(array_diff(config('theme.switchable', []), [setting('theme')]));
-    @endphp
-    @if ($otherThemes !== [])
-        <x-navigation.dropdown icon="community" route-group="theme*">
-            {{ __('Themes') }}
-
-            <x-slot:children>
-                @foreach ($otherThemes as $switchTheme)
-                    <x-navigation.dropdown-child :route="route('theme.switch', $switchTheme)" :turbolink="false">
-                        {{ $themeNames[$switchTheme] ?? ucfirst($switchTheme) }}
-                    </x-navigation.dropdown-child>
-                @endforeach
-            </x-slot:children>
-        </x-navigation.dropdown>
-    @endif
-
     <div class="w-full flex md:hidden gap-x-1 justify-center">
         <x-navigation.language-selector>
             <img src="/assets/images/icons/flags/{{ session()->has('locale') ? session()->get('locale') : config('habbo.site.default_language') }}.png"

@@ -54,13 +54,6 @@ test('every hotel page renders in the theme for a player', function (string $rou
     'help-center.index', 'staff.index', 'teams.index', 'photos.index', 'gameboards.index',
 ]);
 
-test('the menu offers the other themes but not the current one', function () {
-    $this->get(route('welcome'))
-        ->assertSee(route('theme.switch', 'lucadoos'), false)
-        ->assertSee(route('theme.switch', 'atom'), false)
-        ->assertDontSee(route('theme.switch', 'mercury'), false);
-});
-
 test('the header uses the Lucado logo by default', function () {
     $this->seed(WebsiteSettingsSeeder::class);
 
