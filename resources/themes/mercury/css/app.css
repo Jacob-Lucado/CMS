@@ -17,6 +17,13 @@ body.site-bg,
 main.site-bg,
 .site-bg {
     background-color: var(--mercury-page);
+    background-image: none;
+}
+
+main.site-bg {
+    background-image: url(/assets/images/mercury/bg5.png);
+    background-position: right top;
+    background-repeat: no-repeat;
 }
 
 #app {
@@ -36,6 +43,7 @@ main.site-bg,
 }
 
 .mercury-banner-inner {
+    background: url(/assets/images/mercury/header.png) center bottom / auto 100% no-repeat;
     position: relative;
     margin: 0 auto;
     display: flex;
@@ -172,7 +180,18 @@ nav.relative.bg-white {
     content: "";
     position: absolute;
     inset: 0;
-    background-image: repeating-linear-gradient(45deg, rgb(255 255 255 / 0.04) 0 14px, transparent 14px 28px);
+    background: url(/assets/images/mercury/fundo2.gif) right / auto, rgb(124 33 33);
+    background-blend-mode: multiply;
+    opacity: 0.2;
+}
+
+.mercury-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url(/assets/images/mercury/fundo.png) right bottom / auto no-repeat;
+    opacity: 0.3;
+    pointer-events: none;
 }
 
 .mercury-hero-inner {
@@ -256,6 +275,25 @@ nav.relative.bg-white {
     gap: 0.75rem;
 }
 
+.mercury-lock {
+    position: relative;
+}
+
+.mercury-lock::before {
+    content: "";
+    position: absolute;
+    left: 0.75rem;
+    bottom: 0.7rem;
+    z-index: 1;
+    height: 16px;
+    width: 16px;
+    background: url(/assets/images/mercury/icons/lock.png) center / contain no-repeat;
+}
+
+.mercury-lock input {
+    padding-left: 2.25rem;
+}
+
 .mercury-login label {
     font-size: 14px;
     font-weight: 700;
@@ -337,6 +375,16 @@ nav.relative.bg-white {
     border-bottom-color: #111827;
 }
 
+.mercury-strip::before {
+    content: "";
+    position: relative;
+    top: -6px;
+    height: 68px;
+    width: 61px;
+    flex: none;
+    background: url(/assets/images/mercury/frank.gif) no-repeat;
+}
+
 .mercury-strip h2 {
     font-size: 15px;
     font-weight: 900;
@@ -385,6 +433,16 @@ nav.relative.bg-white {
 
 .mercury-news-card:hover {
     transform: translateY(-3px);
+}
+
+.mercury-news-card img.badge {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    box-sizing: content-box;
+    border-radius: 0.5rem;
+    background: rgb(0 0 0 / 0.2);
+    padding: 0.4rem;
 }
 
 .mercury-news-card span {

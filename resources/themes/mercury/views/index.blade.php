@@ -27,7 +27,7 @@
                                 <x-form.input error-bag="login" name="username" value="{{ old('username') }}" placeholder="{{ __('Username') }}" />
                             </div>
 
-                            <div>
+                            <div class="mercury-lock">
                                 <x-form.label for="password">{{ __('Password') }}</x-form.label>
                                 <x-form.input error-bag="login" name="password" placeholder="########" type="password" />
                             </div>
@@ -64,15 +64,31 @@
             </div>
         </div>
 
+        @php
+            $mercuryBadges = [1, 3, 4, 5];
+            $mercuryDefaults = [1 => 'article_default.gif', 2 => 'article_default2.gif', 3 => 'article_default3.gif', 4 => 'article_default4.gif'];
+        @endphp
+
         <div class="mercury-news">
-            @forelse ($articles as $article)
+            @foreach ($articles as $article)
+                @php
+                    $mercuryImage = filled($article->image)
+                        ? '/storage/' . $article->image
+                        : '/assets/images/mercury/' . $mercuryDefaults[($loop->index % 4) + 1];
+                @endphp
                 <a class="mercury-news-card" href="{{ route('article.show', $article->slug) }}"
-                    style="background-image: url('/storage/{{ $article->image }}')">
+                    style="background-image: url('{{ $mercuryImage }}')">
+                    <img class="badge" src="/assets/images/mercury/badges/emb{{ $mercuryBadges[$loop->index % 4] }}.gif" alt="">
                     <span class="truncate">{{ $article->title }}</span>
                 </a>
-            @empty
-                <x-filler-article-card />
-            @endforelse
+            @endforeach
+
+            @for ($i = $articles->count(); $i < 4; $i++)
+                <div class="mercury-news-card" style="background-image: url('/assets/images/mercury/{{ $mercuryDefaults[$i + 1] }}')">
+                    <img class="badge" src="/assets/images/mercury/badges/emb{{ $mercuryBadges[$i] }}.gif" alt="">
+                    <span class="truncate">{{ $i === 0 && $articles->isEmpty() ? __('No published articles') : setting('hotel_name') }}</span>
+                </div>
+            @endfor
         </div>
 
         @if ($photos->isNotEmpty())
